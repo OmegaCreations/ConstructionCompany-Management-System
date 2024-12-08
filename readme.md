@@ -1,4 +1,4 @@
-# Główne koncepty aplikacji
+# Główne koncepty aplikacji (English at the bottom)
 
 ## Frontend
 
@@ -30,12 +30,20 @@ Opis modułów
 
 ### Opis struktury plików
 
-- controllers: Obsługa żądań HTTP. Odbiera dane oraz deleguje logikę do services
+Aby zrozumieć poniższą strukturę plików, stworzyłem prosty endpoint /api/hello w app.ts - wystarczy prześledzić importy które obsługują ten endpoint, aby zrozumieć cały flow architektury.
+
 - middlewares: Przechwytywanie i modyfikowanie żądań (np. weryfikacja JWT)
-- models: Definicje schematów danych dla bazy (w tym przypadku PostgreSQL)
-- routes: Definicje tras API (np. /api/auth, /api/employees)
-- services: Logika biznesowa (zapytania do bazy danych, obliczenia)
-- utils: Pomocnicze funkcje (szyfrowanie haseł, generowanie JWT itp.)
+- routes: Definicje tras API (np. /api/auth, /api/employees) - ustala które endpointy mają odpowiadać za dane rządania HTTP i deleguje zapytania do kontrolerów.
+- controllers: Obsługa żądań HTTP. Odbiera dane oraz deleguje logikę biznesową do services. Generalnie nie przechowuje dużej i skomplikowanej logiki tylko obsługuje przepływ danych od klienta do bazy danych i spowrotem.
+- services: Logika biznesowa (zapytania do bazy danych, obliczenia, walidacje danych, transformacje danych, rozmowa z zewnętrznymi API). Generalnie tutaj jest ta bardziej złożona logika. Nie przechowuje tutaj danych ponieważ są one przekazywane z kontrolera bądź modelu.
+
+Service Validation: Employees for the bartender position must be 21 or over, and approved by a manager.
+
+- models: Definicje schematów danych dla bazy (w tym przypadku PostgreSQL). Zazwyczaj zawiera logikę z zapytaniami do bazy danych oraz deinicje struktur, które są później mapowane na tabele w bazie danych.
+
+Model Validation: Employee must have a id, first and last name, and birthday.
+
+- utils: Pomocnicze funkcje (szyfrowanie haseł, generowanie JWT, walidatory danych itp.)
 - config: Konfiguracja bazy danych, zmiennych środowiskowych itp.
 - app.ts: Konfiguracja serwera, główny plik
 - server.ts: Start aplikacji.
