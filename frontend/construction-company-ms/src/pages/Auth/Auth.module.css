@@ -1,0 +1,88 @@
+.authContainer {
+  display: flex;
+  flex-direction: column;
+  height: 75vh;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 25px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+
+  align-items: center;
+  justify-content: center;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 350px;
+}
+
+form input {
+  border: none;
+  border-radius: 25px;
+
+  background-color: var(--grey);
+  padding: 10px 15px;
+  height: 20px;
+}
+
+/* submit button + hover animation */
+form button {
+  min-width: 350px;
+  padding: 15px 0;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid var(--primary);
+  background-color: var(--secondary);
+
+  transition: 0.3s;
+  overflow: hidden;
+}
+
+form button::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  content: "";
+  background: var(--primary);
+  transition: transform 0.5s;
+
+  right: auto;
+  bottom: auto;
+  width: 200%;
+  height: 100%;
+  transform-origin: right top;
+  transform: skewX(-30deg) scale(0, 1);
+}
+
+form button:hover {
+  cursor: pointer;
+}
+
+form button:hover span {
+  color: var(--secondary);
+  z-index: 1;
+}
+
+form button:hover::before {
+  transform-origin: left top;
+  transform: skewX(-30deg) scale(1, 1);
+}

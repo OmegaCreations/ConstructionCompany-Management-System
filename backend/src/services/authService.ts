@@ -41,6 +41,29 @@ export const verifyToken = (token: string) => {
   }
 };
 
+export const updatePassword = async (
+  userId: number,
+  currentPassword: string,
+  newPassword: string
+) => {
+  const user = await userModel.findUserById(userId);
+  if (!user) {
+    throw new Error("User with given credentials does not exists.");
+  }
+
+  // check current password
+  const isPasswordValid = await bcrypt.compare(currentPassword, user.haslo);
+  if (!isPasswordValid) {
+    throw new Error("Incorrect credentials.");
+  }
+
+  // Hashowanie nowego hasła
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  // Aktualizacja hasła
+  await userModel.updatePassword(userId, hashedPassword);
+};
+
 // interface for user's data
 interface CreateUserInput {
   imie: string;
@@ -59,7 +82,7 @@ export const createNewUser = async (userData: CreateUserInput) => {
   // check if user already exists
   const existingUser = await userModel.findUserByEmail(email);
   if (existingUser) {
-    throw new Error("Użytkownik z takim adresem email już istnieje.");
+    throw new Error("User with given email already exists.");
   }
 
   // not too safe in my opinion - thats why we need to inform user to change their password

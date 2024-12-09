@@ -19,6 +19,12 @@ export const findUserByEmail = async (email: string) => {
   return result.rows[0];
 };
 
+export const findUserById = async (id: number) => {
+  const query = "SELECT * FROM pracownik WHERE pracownik_id = $1";
+  const result: QueryResult<Pracownik> = await client.query(query, [id]);
+  return result.rows[0];
+};
+
 // creates new user in database
 export const create = async (userData: CreateUserInput) => {
   // input data to db query
@@ -45,4 +51,13 @@ export const create = async (userData: CreateUserInput) => {
     stanowisko_id,
   ]);
   return result.rows[0]; // return back newly created user
+};
+
+// updates user's password
+export const updatePassword = async (
+  userId: number,
+  newPassword: string
+): Promise<void> => {
+  const query = `UPDATE pracownik SET haslo = $1 WHERE pracownik_id = $2`;
+  await client.query(query, [newPassword, userId]);
 };

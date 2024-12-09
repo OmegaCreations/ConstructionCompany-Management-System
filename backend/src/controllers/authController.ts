@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { loginUser, createNewUser } from "../services/authService";
+import {
+  loginUser,
+  createNewUser,
+  updatePassword,
+} from "../services/authService";
 
 // controller for logging in user
 export const userLogin: any = async (req: Request, res: Response) => {
@@ -21,6 +25,27 @@ export const userLogin: any = async (req: Request, res: Response) => {
   }
 };
 
+// changes user's password
+export const changeUserPassword: any = async (req: any, res: Response) => {
+  const userId = req.user.pracownik_id; // get user id
+  const { currentPassword, newPassword } = req.body;
+
+  // check if data is passed properly
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await updatePassword(userId, currentPassword, newPassword);
+    res.status(200).json({ message: "Password has been changed." });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during changing password",
+    });
+  }
+};
+
 // creates new user
 export const createUser: any = async (req: Request, res: Response) => {
   // password will be generated
@@ -36,9 +61,7 @@ export const createUser: any = async (req: Request, res: Response) => {
     !stawka_godzinowa ||
     !stanowisko_id
   ) {
-    return res
-      .status(400)
-      .json({ error: "Proszę podać wszystkie wymagane dane." });
+    return res.status(400).json({ error: "Please provide all the data." });
   }
 
   // creating new user

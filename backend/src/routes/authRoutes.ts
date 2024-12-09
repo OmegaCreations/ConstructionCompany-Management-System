@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { userLogin, createUser } from "../controllers/authController";
+import {
+  userLogin,
+  createUser,
+  changeUserPassword,
+} from "../controllers/authController";
 import {
   authenticateUserJWT,
   checkAuthorizedRole,
@@ -10,6 +14,7 @@ const router = Router();
 
 // login endpoint
 router.post("/login", userLogin);
+router.put("/change-password", authenticateUserJWT, changeUserPassword);
 
 // the idea is: only manager can create new workers who will change their password later.
 // Whole system administrator can create first manager of the company.
