@@ -6,10 +6,9 @@ import "./style.css";
 
 // Routes
 import ProtectedRoute from "./components/ProtectedRoute";
-import WorkerDashboard from "./pages/WorkerDashboard/WorkerDashboard";
-import ManagerDashboard from "./pages/ManagerDashboard/ManagerDashboard";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import Dashboard from "./pages/Dashboard/Dashboard";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -21,11 +20,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/auth" element={<Auth />} />
 
           {/* Protected route checks if user has allowed role and returns auth component or passed child component */}
-          <Route element={<ProtectedRoute allowedRoles={["worker"]} />}>
-            <Route path="/dashboard" element={<WorkerDashboard />} />
-          </Route>
-          <Route element={<ProtectedRoute allowedRoles={["manager"]} />}>
-            <Route path="/dashboard" element={<ManagerDashboard />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>

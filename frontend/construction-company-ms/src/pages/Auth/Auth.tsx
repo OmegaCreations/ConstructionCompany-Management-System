@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import style from "./Auth.module.css";
+import { useDispatch } from "react-redux";
+import { login } from "../../store/slices/authSlice";
 
 const Auth: React.FC = () => {
   // auth variables
@@ -8,7 +10,7 @@ const Auth: React.FC = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const dispatch = useDispatch(); // redux hook used for invoking slices functions
   // indicates if frontend is waiting for server response
   const [loading, setLoading] = useState(false);
 
@@ -20,12 +22,12 @@ const Auth: React.FC = () => {
 
     try {
       // fetch login endpoint
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email, haslo: password }),
       });
 
       // if status != 200
@@ -36,8 +38,9 @@ const Auth: React.FC = () => {
         return;
       }
 
-      const { token } = await response.json();
+      const { token, role } = await response.json();
       localStorage.setItem("jwt", token); // save jwt to local storage
+      dispatch(login({ token, role }));
       navigate("/dashboard");
     } catch (err) {
       console.error("Błąd podczas logowania:", err);
@@ -74,12 +77,12 @@ const Auth: React.FC = () => {
             required
             style={{ width: "100%", padding: "0.5rem" }}
           />
-          {error && (
-            <div className="error-message">
-              <span>{error}</span>
-            </div>
-          )}
         </div>
+        {error && (
+          <div className="error-message">
+            <span>{error}</span>
+          </div>
+        )}
         <button type="submit" disabled={loading}>
           <span>{loading ? "Logowanie..." : "Zaloguj się"}</span>
         </button>

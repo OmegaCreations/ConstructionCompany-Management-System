@@ -2,6 +2,7 @@ import * as userModel from "../models/userModel";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { getRoleByPositionId } from "../utils/appTypes";
 
 dotenv.config();
 const JWT_SECRET = String(process.env.JWT_SECRET); // secret key for JWT
@@ -29,7 +30,8 @@ export const loginUser = async (email: string, haslo: string) => {
     }
   );
 
-  return { token };
+  const role = getRoleByPositionId(user.stanowisko_id);
+  return { token, role };
 };
 
 // verify token sent by user

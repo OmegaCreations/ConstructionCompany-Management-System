@@ -3,8 +3,8 @@
 // one manager with stanowisko_id=1
 // many worker roles with multiple stanowisko_id != 1
 export enum CompanyRoles {
-  manager = "MANAGER",
-  worker = "WORKER",
+  manager = "manager",
+  worker = "worker",
 }
 
 // Function to get role by job position ID
