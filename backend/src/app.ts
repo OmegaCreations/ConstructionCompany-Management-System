@@ -4,10 +4,11 @@ import helmet from "helmet";
 
 // routes
 import helloRoutes from "./routes/helloRoutes";
-import loggerMiddleware from "./middlewares/loggerMiddleware";
 
-// importing routes here
-// TODO: import authRoutes from "./routes/authRoutes";
+// middleware
+import loggerMiddleware from "./middlewares/loggerMiddleware";
+import authRoutes from "./routes/authRoutes";
+import { checkAuthorizedRole } from "./middlewares/authMiddleware";
 
 // Middleware for error handling
 // TODO: import errorHandler from "./middlewares/errorHandler";
@@ -23,7 +24,16 @@ app.use(loggerMiddleware); // will log all requests with data and endpoints
 //app.use(errorHandler);
 
 // All routes ================================================================
-// app.use("/api/auth", authRoutes);
+// user auth routes
+app.use("/api/auth", authRoutes);
+//app.use("/api/worker", workerRoutes);
+// router.get(
+//     "/worker/working-hours",
+//     checkAuthorizedRole(CompanyRoles.worker),
+//     (req, res) => {
+//       res.json({ message: "Hello worker!" });
+//     }
+//   );
 
 // Endpoint to show how project structure works :)
 app.use("/api", helloRoutes);
