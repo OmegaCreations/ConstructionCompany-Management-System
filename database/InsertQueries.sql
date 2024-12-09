@@ -10,8 +10,10 @@ insert into stanowisko (nazwa, opis) values
 -- =========================================
 -- wstawianie danych do tabeli pracownik
 -- =========================================
+
+-- zahashowane haslo = 'root'
 insert into pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
-select 'Jan', 'Kowalski', '123456789', 'jan.kowalski@company.com', 'haslo111', 80.99, stanowisko_id
+select 'Jan', 'Kowalski', '123456789', 'jan.kowalski@company.com', '$2a$10$5Q29Z9oryUiNC6FW6ZBGDeJRMgcNku1STgjV6VC0D2eNvWIAPoNDO', 80.99, stanowisko_id
 from stanowisko where nazwa = 'manager';
 
 insert into pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 

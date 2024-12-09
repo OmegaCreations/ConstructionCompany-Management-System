@@ -6,6 +6,24 @@ create schema construction_company;
 set search_path to construction_company;
 
 
+-- new user
+CREATE USER construction_company_admin WITH PASSWORD '<secret-password>';
+
+-- create new role for this schema
+CREATE ROLE construction_company_admin_role;
+ALTER ROLE construction_company_admin SET search_path TO construction_company -- construction company as a base schema
+
+-- permissions
+GRANT USAGE, CREATE ON SCHEMA construction_company TO construction_company_admin_role;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA construction_company TO construction_company_admin_role;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA construction_company TO construction_company_admin_role;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA construction_company TO construction_company_admin_role;
+
+-- add role to user
+GRANT construction_company_admin_role TO construction_company_admin;
+
+
+
 -- =========================================
 -- tabela: stanowisko
 -- =========================================

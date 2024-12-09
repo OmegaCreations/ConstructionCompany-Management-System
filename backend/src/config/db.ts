@@ -4,7 +4,7 @@ import { Client } from "pg";
 dotenv.config();
 
 // Postgres client that we will use to connect to db
-const client = new Client({
+export const client = new Client({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   host: process.env.DB_HOST,
@@ -20,7 +20,10 @@ const client = new Client({
 export const connectToDatabase = async () => {
   try {
     await client.connect(); // waits for the connection
-    console.log("✅ Connected to database.");
+    const schema = await client.query(`SELECT current_schema();`);
+    console.log(
+      "✅ Connected to database. With schema " + schema.rows[0].current_schema
+    );
   } catch (err) {
     console.error("❌ Error connecting to PostgreSQL database: ", err);
   }

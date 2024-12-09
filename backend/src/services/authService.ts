@@ -7,7 +7,7 @@ dotenv.config();
 const JWT_SECRET = String(process.env.JWT_SECRET); // secret key for JWT
 
 // login user and send back generated token
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, haslo: string) => {
   const user = await userModel.findUserByEmail(email); // if found returns "pracownik" object from db
 
   if (!user) {
@@ -15,7 +15,7 @@ export const loginUser = async (email: string, password: string) => {
   }
 
   // we check if encrytped passwords match each other
-  const isPasswordValid = await bcrypt.compare(password, user.haslo);
+  const isPasswordValid = await bcrypt.compare(haslo, user.haslo);
   if (!isPasswordValid) {
     throw new Error("Invalid credentials.");
   }
@@ -39,4 +39,46 @@ export const verifyToken = (token: string) => {
   } catch (error) {
     throw new Error("Invalid or expired token");
   }
+};
+
+// interface for user's data
+interface CreateUserInput {
+  imie: string;
+  nazwisko: string;
+  telefon: string;
+  stawka_godzinowa: number;
+  email: string;
+  stanowisko_id: number;
+}
+
+// creates new user
+export const createNewUser = async (userData: CreateUserInput) => {
+  const { imie, nazwisko, telefon, stawka_godzinowa, email, stanowisko_id } =
+    userData;
+
+  // check if user already exists
+  const existingUser = await userModel.findUserByEmail(email);
+  if (existingUser) {
+    throw new Error("Użytkownik z takim adresem email już istnieje.");
+  }
+
+  // not too safe in my opinion - thats why we need to inform user to change their password
+  const generated_password = Math.random().toString(36).slice(-8);
+
+  // hashing generated password
+  // 10 rounds of hashing is considered good enough with nice speed performance
+  const hashedPassword = await bcrypt.hash(generated_password, 10);
+
+  // creating new user
+  const newUser = await userModel.create({
+    imie,
+    nazwisko,
+    telefon,
+    email,
+    haslo: hashedPassword,
+    stawka_godzinowa,
+    stanowisko_id,
+  });
+
+  return { ...newUser, wygenerowane_haslo: generated_password };
 };

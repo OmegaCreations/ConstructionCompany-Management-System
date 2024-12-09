@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.closeConnectionToDatabase = exports.connectToDatabase = void 0;
+exports.disconnectFromDatabase = exports.connectToDatabase = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
-const pg_1 = require("pg"); // module for PostgreSQL connections
+const pg_1 = require("pg");
 dotenv_1.default.config();
 // Postgres client that we will use to connect to db
 const client = new pg_1.Client({
@@ -23,28 +23,30 @@ const client = new pg_1.Client({
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     database: process.env.DB_NAME,
+    ssl: {
+        // important - this database have no ssl certificate to authorize - we use free version of it
+        rejectUnauthorized: false,
+    },
 });
-// connects to database
+// Connect to database
 const connectToDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
-    client
-        .connect() // returns Promise object
-        .then(() => {
+    try {
+        yield client.connect(); // waits for the connection
         console.log("✅ Connected to database.");
-    })
-        .catch((err) => {
+    }
+    catch (err) {
         console.error("❌ Error connecting to PostgreSQL database: ", err);
-    });
+    }
 });
 exports.connectToDatabase = connectToDatabase;
-// closes connection to database
-const closeConnectionToDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
-    client
-        .end() // returns Promise object
-        .then(() => {
-        console.log("✅ Connection to PostgreSQL closed");
-    })
-        .catch((err) => {
-        console.error("❌ Error closing connection", err);
-    });
+// Optional: Close the database connection (useful in cleanup/exit process)
+const disconnectFromDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield client.end();
+        console.log("✅ Disconnected from database.");
+    }
+    catch (err) {
+        console.error("❌ Error disconnecting from PostgreSQL database: ", err);
+    }
 });
-exports.closeConnectionToDatabase = closeConnectionToDatabase;
+exports.disconnectFromDatabase = disconnectFromDatabase;
