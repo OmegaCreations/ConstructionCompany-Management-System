@@ -8,10 +8,11 @@
   --blue1: #22333b;
   --brown1: #eae0d5;
   --brown2: #c6ac8f;
-  --brown3: 5e503F;
+  --brown3: #5e503f;
 }
 
 body {
+  line-height: 1.5rem;
   color: var(--primary);
   background-color: var(--secondary);
   font-family: "Poppins", sans-serif;
