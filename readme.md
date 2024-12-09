@@ -1,47 +1,48 @@
-
 # Main Concepts of the Application (Polish at the bottom)
 
 ## Frontend
 
 ### Why Vite?
 
--   A great bundler with fast application builds.
+- A great bundler with fast application builds.
 
 ### Module Descriptions:
 
--   I am using plain React (instead of something like Remix) to demonstrate skills in this project—hence the use of plain CSS.
--   **React-router:** for routing within the application.
--   **Redux:** to manage user state (logged in/logged out + worker/manager roles).
+- I am using plain React (instead of something like Remix) to demonstrate skills in this project—hence the use of plain CSS.
+- **React-router:** for routing within the application.
+- **Redux:** to manage user state (logged in/logged out + worker/manager roles).
 
 ## Backend
 
 ### Application Functionality:
 
--   **MVC architecture** (Model, View, Controller).
--   **User authentication** using JWT tokenization.
+- **MVC architecture** (Model, View, Controller).
+- **User authentication** using JWT tokenization.
 
 ### Module Descriptions:
 
--   **TypeScript:** Useful for type-checking logic, especially in larger applications.
--   **Node.js + Express:** Backend framework.
--   **pg:** A module for connecting to a PostgreSQL database.
--   **Helmet:** Provides basic security measures for Express apps (e.g., against cross-site scripting).
--   **dotenv:** Ensures sensitive information like keys, addresses, and passwords (e.g., for databases) are not exposed.
--   **Nodemon:** Automatically reloads the server after changes, eliminating the need to restart it manually.
+- **TypeScript:** Useful for type-checking logic, especially in larger applications.
+- **Node.js + Express:** Backend framework.
+- **pg:** A module for connecting to a PostgreSQL database.
+- **Helmet:** Provides basic security measures for Express apps (e.g., against cross-site scripting).
+- **dotenv:** Ensures sensitive information like keys, addresses, and passwords (e.g., for databases) are not exposed.
+- **Nodemon:** Automatically reloads the server after changes, eliminating the need to restart it manually.
+- **jsonwebtoken** - JWT
+- **bcrypt** - password encryption
 
 ### File Structure Description:
 
 To understand the file structure below, I created a simple `/api/hello` endpoint in `app.ts`. Following the imports used to handle this endpoint will provide insight into the flow of the architecture.
 
--   **middlewares:** Intercepts and modifies requests (e.g., JWT verification).
--   **routes:** Defines API routes (e.g., `/api/auth`, `/api/employees`). Determines which endpoints handle specific HTTP requests and delegates these to controllers.
--   **controllers:** Handles HTTP requests. Receives data and delegates business logic to services. Typically does not store complex logic but manages data flow between the client and database.
--   **services:** Contains business logic (e.g., database queries, computations, data validation, data transformations, and interactions with external APIs). This is where more complex logic resides, but it does not store data; instead, it operates on data passed from controllers or models.
--   **models:** Defines database schemas (in this case, for PostgreSQL). Usually contains logic for database queries and defines structures that map to database tables.
--   **utils:** Helper functions (e.g., password hashing, JWT generation, data validators, etc.).
--   **config:** Configuration for the database, environment variables, etc.
--   **app.ts:** Server configuration and main entry file.
--   **server.ts:** Application startup.
+- **middlewares:** Intercepts and modifies requests (e.g., JWT verification).
+- **routes:** Defines API routes (e.g., `/api/auth`, `/api/employees`). Determines which endpoints handle specific HTTP requests and delegates these to controllers.
+- **controllers:** Handles HTTP requests. Receives data and delegates business logic to services. Typically does not store complex logic but manages data flow between the client and database.
+- **services:** Contains business logic (e.g., database queries, computations, data validation, data transformations, and interactions with external APIs). This is where more complex logic resides, but it does not store data; instead, it operates on data passed from controllers or models.
+- **models:** Defines database schemas (in this case, for PostgreSQL). Usually contains logic for database queries and defines structures that map to database tables.
+- **utils:** Helper functions (e.g., password hashing, JWT generation, data validators, etc.).
+- **config:** Configuration for the database, environment variables, etc.
+- **app.ts:** Server configuration and main entry file.
+- **server.ts:** Application startup.
 
 # Główne koncepty aplikacji (English at the top)
 
@@ -77,6 +78,10 @@ To understand the file structure below, I created a simple `/api/hello` endpoint
 - **dotenv** - nie chcemy pokazywać kluczy, adresów i haseł np do bazy danych :)
 
 - **nodemon** - reloading serwera przy każdych zapisanych zmianach żeby nie robić tego ręcznie
+
+- **jsonwebtoken** - JWT
+
+- **bcrypt** - szyfrowanie haseł
 
 ### Opis struktury plików
 
