@@ -24,3 +24,10 @@ h2 {
   font-size: 2.2em;
   font-weight: 500;
 }
+
+main {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
