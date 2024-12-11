@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Navbar from "./components/Navbar/Navbar";
+import Profile from "./pages/Profile/Profile";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -28,6 +29,9 @@ createRoot(document.getElementById("root")!).render(
             {/* Protected route checks if user has allowed role and returns auth component or passed child component */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+            <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>
         </main>

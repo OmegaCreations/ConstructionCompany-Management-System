@@ -1,11 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import style from "./Auth.module.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/slices/authSlice";
+import { RootState } from "../../store/store";
 
 const Auth: React.FC = () => {
   // auth variables
+  const { isUserAuthenticated, role } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -40,6 +44,7 @@ const Auth: React.FC = () => {
 
       const { token, role } = await response.json();
       localStorage.setItem("jwt", token); // save jwt to local storage
+      localStorage.setItem("userRole", role); // save role to local storage
       dispatch(login({ token, role }));
       navigate("/dashboard");
     } catch (err) {
@@ -49,6 +54,24 @@ const Auth: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const checkLocalStorage = () => {
+    if (!isUserAuthenticated || !role) {
+      const token: string | null = localStorage.getItem("jwt");
+      const user_role: string | null = localStorage.getItem("userRole");
+
+      if (token && user_role) {
+        console.log("hello", token, user_role);
+        dispatch(login({ token: token, role: user_role }));
+        navigate("/dashboard");
+      }
+    }
+  };
+
+  // we want to run it once on load to check if user has jwt in local storage
+  useEffect(() => {
+    checkLocalStorage();
+  }, []); // blank dependency array for single invoke of hook
 
   return (
     <div className={style.authContainer}>
