@@ -9,6 +9,7 @@ import helloRoutes from "./routes/helloRoutes";
 import loggerMiddleware from "./middlewares/loggerMiddleware";
 import authRoutes from "./routes/authRoutes";
 import { checkAuthorizedRole } from "./middlewares/authMiddleware";
+import userRoutes from "./routes/userRoutes";
 
 // Middleware for error handling
 // TODO: import errorHandler from "./middlewares/errorHandler";
@@ -25,15 +26,8 @@ app.use(loggerMiddleware); // will log all requests with data and endpoints
 
 // All routes ================================================================
 // user auth routes
-app.use("/api/auth", authRoutes);
-//app.use("/api/worker", workerRoutes);
-// router.get(
-//     "/worker/working-hours",
-//     checkAuthorizedRole(CompanyRoles.worker),
-//     (req, res) => {
-//       res.json({ message: "Hello worker!" });
-//     }
-//   );
+app.use("/api/auth", authRoutes); // authentication routes
+app.use("/api/user", userRoutes); // user management routes
 
 // Endpoint to show how project structure works :)
 app.use("/api", helloRoutes);
