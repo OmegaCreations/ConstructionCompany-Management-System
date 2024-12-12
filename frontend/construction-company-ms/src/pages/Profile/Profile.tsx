@@ -5,13 +5,12 @@ import { RootState } from "../../store/store";
 import useGetFetch from "../../hooks/useGetFetch";
 import Loading from "../../components/Loading/Loading";
 import Popup from "../../components/Popup/Popup";
+import { endpoint } from "../../utils/endpoints";
 
 const Profile: React.FC = () => {
   const [userData, setUserData] = useState(initialUserState);
   const user: UserData = useSelector((state: RootState) => state.user);
-  const { data, error, loading } = useGetFetch(
-    "http://localhost:5000/api/user"
-  );
+  const { data, error, loading } = useGetFetch(endpoint.USER_GET);
 
   // load user data from store or fetch if needed
   useEffect(() => {

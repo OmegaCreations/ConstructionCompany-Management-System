@@ -4,6 +4,7 @@ import style from "./Auth.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/slices/authSlice";
 import { RootState } from "../../store/store";
+import { endpoint } from "../../utils/endpoints";
 
 const Auth: React.FC = () => {
   // auth variables
@@ -26,7 +27,7 @@ const Auth: React.FC = () => {
 
     try {
       // fetch login endpoint
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(endpoint.USER_LOGIN, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
