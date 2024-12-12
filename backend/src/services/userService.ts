@@ -18,7 +18,10 @@ export const getUserData = async (userId: number) => {
     throw new Error("User with given credentials does not exist.");
   }
 
-  return existingUser;
+  // we dont wanna return to frontend important info about db architecture
+  return (({ haslo, stanowisko_id, pracownik_id, ...obj }) => obj)(
+    existingUser
+  );
 };
 
 // creates new user
