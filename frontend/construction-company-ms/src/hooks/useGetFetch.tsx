@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import { logout } from "../store/slices/authSlice";
+import { useNavigate } from "react-router";
 
 // implemented url data fetching hook to prevent copying code
 const useGetFetch = (url: string) => {
@@ -8,27 +10,35 @@ const useGetFetch = (url: string) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const { token } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     (() => {
+      console.log("Hello");
       setLoading(true);
       fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer: ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       })
         .then((res) => {
+          if (res.status !== 200) {
+            dispatch(logout());
+            navigate("/auth");
+          }
           return res.json();
         })
         .then((data) => {
+          console.log("AAAA: ", data);
           setData(data);
           setLoading(false);
         })
         .catch((err) => setError(err));
     })(); // self invoking function :)
-  }, [url]);
+  }, []);
 
   return { data, error, loading };
 };

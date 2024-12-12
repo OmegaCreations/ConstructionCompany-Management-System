@@ -16,7 +16,7 @@
 
 ### Application Functionality:
 
-- **MVC architecture** (Model, View, Controller).
+- **MVCS architecture** (Model, View, Controller, Service).
 - **User authentication** using JWT tokenization.
 
 ### Module Descriptions:
