@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
-import { logout } from "../store/slices/authSlice";
-import { useNavigate } from "react-router";
-import { UserData } from "../utils/types";
+import { initialUserState, UserData } from "../utils/types";
+import { setUserData } from "../store/slices/userSlice";
 
 // implemented url data fetching hook to prevent copying code
 const useGetFetch = (url: string) => {
@@ -13,10 +12,9 @@ const useGetFetch = (url: string) => {
   const { token } = useSelector((state: RootState) => state.auth);
   const user: UserData = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
+    if (user === initialUserState) {
       // only fetch if there is no user data
       (() => {
         console.log("Hello");
@@ -29,14 +27,10 @@ const useGetFetch = (url: string) => {
           },
         })
           .then((res) => {
-            if (res.status !== 200) {
-              dispatch(logout());
-              navigate("/auth");
-            }
             return res.json();
           })
           .then((data) => {
-            console.log("AAAA: ", data);
+            dispatch(setUserData({ userData: data }));
             setData(data);
             setLoading(false);
           })

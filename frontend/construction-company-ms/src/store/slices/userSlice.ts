@@ -7,12 +7,14 @@ const userSlice = createSlice({
   initialState: initialUserState, // initial state of the slice
   reducers: {
     // set current user's data
-    setData: (state, action: PayloadAction<{ userData: UserData }>) => {
-      state = { ...action.payload.userData };
+    setUserData: (state, action: PayloadAction<{ userData: UserData }>) => {
+      // Redux Toolkit doesn't allow passing new object to state so we need to assign it
+      Object.assign(state, action.payload.userData);
+      console.log("STATE: " + action.payload.userData);
     },
   },
 });
 
 // export actions and reducers
-export const { setData } = userSlice.actions;
+export const { setUserData } = userSlice.actions;
 export default userSlice.reducer;
