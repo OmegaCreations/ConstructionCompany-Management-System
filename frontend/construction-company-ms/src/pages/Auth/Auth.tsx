@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/slices/authSlice";
 import { RootState } from "../../store/store";
 import { endpoint } from "../../utils/endpoints";
+import { clearUserData } from "../../store/slices/userSlice";
 
 const Auth: React.FC = () => {
   // auth variables
@@ -21,6 +22,7 @@ const Auth: React.FC = () => {
 
   // sumbits form data and tries to log in
   const handleSubmit = async (e: React.FormEvent) => {
+    dispatch(clearUserData());
     e.preventDefault();
     setError("");
     setLoading(true);

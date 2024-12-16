@@ -1,0 +1,62 @@
+.profileContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 450px;
+  gap: 35px;
+  padding: 45px 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  max-width: 100vw;
+}
+
+/* Inputs */
+.inputField {
+  padding: 10px;
+  border: 1px solid var(--brown1);
+  border-radius: 5px;
+  width: 100%;
+  background-color: var(--brown1);
+  margin-top: 10px;
+}
+
+.inputField:disabled {
+  background-color: var(--gray-light);
+  cursor: not-allowed;
+}
+
+.inputError {
+  border-color: red;
+}
+
+.errorText {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Save btn */
+.saveButton {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--brown2);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.saveButton:disabled {
+  background-color: var(--gray-light);
+  cursor: not-allowed;
+}
+
+.saveButton:hover:enabled {
+  background-color: var(--brown3);
+}

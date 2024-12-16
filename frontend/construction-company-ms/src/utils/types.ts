@@ -6,6 +6,7 @@ export interface UserData {
   email: string;
   stawka_godzinowa: number;
   rola: string | null;
+  stanowisko: string;
 }
 
 export const initialUserState: UserData = {
@@ -15,4 +16,5 @@ export const initialUserState: UserData = {
   email: "",
   stawka_godzinowa: 0,
   rola: null,
+  stanowisko: "",
 };

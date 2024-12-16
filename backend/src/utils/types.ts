@@ -8,4 +8,5 @@ interface Pracownik {
   haslo: string;
   stawka_godzinowa: number;
   stanowisko_id: number;
+  stanowisko: string;
 }

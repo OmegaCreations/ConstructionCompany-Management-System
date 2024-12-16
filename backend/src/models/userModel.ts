@@ -14,14 +14,17 @@ interface CreateUserInput {
 
 // finding user with given email address
 export const findUserByEmail = async (email: string) => {
-  const query = "SELECT * FROM pracownik WHERE email = $1";
+  const query =
+    "SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1";
   const result: QueryResult<Pracownik> = await client.query(query, [email]);
   return result.rows[0];
 };
 
 export const findUserById = async (id: number) => {
-  const query = "SELECT * FROM pracownik WHERE pracownik_id = $1";
+  const query =
+    "SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE pracownik_id = $1";
   const result: QueryResult<Pracownik> = await client.query(query, [id]);
+  console.log(result.rows[0]);
   return result.rows[0];
 };
 

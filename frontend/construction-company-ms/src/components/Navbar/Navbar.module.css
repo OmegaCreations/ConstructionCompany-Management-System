@@ -91,6 +91,7 @@
 .logout {
   justify-self: flex-end;
   align-self: flex-end;
+  margin-top: 10px;
 }
 
 /* hovers */
