@@ -239,11 +239,148 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- =========================================
+--                Dni pracy
+-- =========================================
 
--- Dni pracy
+-- =========================================
+-- Funkcja: Zwraca dni pracy dla danego miesiąca i roku
+-- =========================================
+CREATE OR REPLACE FUNCTION get_dzienpracy_by_month(year_param INT, month_param INT, pracownik_id_param INT DEFAULT NULL)
+RETURNS TABLE (
+    pracownik_id INT,
+    zlecenie_id INT,
+    data DATE,
+    godzina_rozpoczecia TIME,
+    godzina_zakonczenia TIME
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        dp.pracownik_id,
+        dp.zlecenie_id,
+        dp.data,
+        dp.godzina_rozpoczecia,
+        dp.godzina_zakonczenia
+    FROM dzien_pracy dp
+    WHERE EXTRACT(YEAR FROM dp.data) = year_param
+      AND EXTRACT(MONTH FROM dp.data) = month_param
+      AND pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param;
+END;
+$$ LANGUAGE plpgsql;
 
 
--- Magazyn
+-- =========================================
+-- Funkcja: Zwraca dni pracy dla danej daty
+-- =========================================
+CREATE OR REPLACE FUNCTION get_dzienpracy_by_date(pracownik_id_param INT, year_param INT, month_param INT, day_param INT)
+RETURNS TABLE (
+    pracownik_id INT,
+    zlecenie_id INT,
+    data DATE,
+    godzina_rozpoczecia TIME,
+    godzina_zakonczenia TIME
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        dp.pracownik_id,
+        dp.zlecenie_id,
+        dp.data,
+        dp.godzina_rozpoczecia,
+        dp.godzina_zakonczenia
+    FROM dzien_pracy dp
+    WHERE EXTRACT(YEAR FROM dp.data) = year_param
+      AND EXTRACT(MONTH FROM dp.data) = month_param
+      AND EXTRACT(DAY FROM dp.data) = day_param
+      AND dp.pracownik_id = pracownik_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =========================================
+--                Magazyn
+-- =========================================
+
+-- =========================================
+-- Funkcja: Zwraca wszystkie magazyny
+-- =========================================
+CREATE OR REPLACE FUNCTION get_magazyny()
+RETURNS TABLE (
+    magazyn_id INT,
+    nazwa VARCHAR,
+    lokalizacja TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        magazyn_id,
+        nazwa,
+        lokalizacja
+    FROM magazyn;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- =========================================
+-- Funkcja: Zwraca wszystkie zasoby danego magazynu
+-- =========================================
+CREATE OR REPLACE FUNCTION get_zasoby_magazynu(magazyn_id_param INT)
+RETURNS TABLE (
+    magazyn_zasob_id INT,
+    zasob_id INT,
+    nazwa_zasobu VARCHAR,
+    jednostka VARCHAR,
+    typ VARCHAR,
+    ilosc INT,
+    koszt_jednostkowy DECIMAL,
+    opis TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        mz.magazyn_zasob_id,
+        z.zasob_id,
+        z.nazwa AS nazwa_zasobu,
+        z.jednostka,
+        z.typ,
+        mz.ilosc,
+        z.koszt_jednostkowy,
+        z.opis
+    FROM magazyn_zasob mz
+    JOIN zasob z ON mz.zasob_id = z.zasob_id
+    WHERE mz.magazyn_id = magazyn_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =========================================
+-- Funkcja: Zwraca wszystkie zasoby magazynu dla widoku pracownika (bez kosztów jednostkowych)
+-- =========================================
+CREATE OR REPLACE FUNCTION get_zasoby_magazynu_pracownik(magazyn_id_param INT)
+RETURNS TABLE (
+    magazyn_id INT,
+    nazwa_magazynu VARCHAR,
+    zasob_id INT,
+    nazwa_zasobu VARCHAR,
+    jednostka VARCHAR,
+    typ VARCHAR,
+    ilosc INT,
+    opis TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        magazyn_id,
+        nazwa_magazynu,
+        zasob_id,
+        nazwa_zasobu,
+        jednostka,
+        typ,
+        ilosc,
+        opis
+    FROM view_zasoby_magazynu_pracownik
+    WHERE magazyn_id = magazyn_id_param;
+END;
+$$ LANGUAGE plpgsql;
 
 
 -- Stanowiska

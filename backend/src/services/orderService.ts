@@ -1,11 +1,6 @@
 import * as orderModel from "../models/orderModel";
 import * as clientModel from "../models/clientModel";
-import {
-  Klient,
-  Zlecenie,
-  ZlecenieKoszty,
-  ZlecenieZasob,
-} from "../utils/types";
+import { Klient, Zlecenie, ZlecenieZasob } from "../utils/types";
 
 // ================================
 //        GET REQUESTS

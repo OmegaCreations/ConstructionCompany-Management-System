@@ -63,6 +63,16 @@ export interface ZlecenieKoszty {
   koszty_zasobow: number;
 }
 
+// db returning workdat type for user
+export interface DzienPracy {
+  pracownik_id: number;
+  zlecenie_id: number;
+  data: string;
+  godzina_rozpoczecia: string;
+  godzina_zakonczenia: string;
+}
+
+// ===================================
 // OTHER
 export interface CreateUserInput {
   imie: string;
