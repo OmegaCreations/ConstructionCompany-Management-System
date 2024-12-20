@@ -129,9 +129,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =========================================
--- Funkcja: Pobiera informacje o zleceniach wraz z zasobami
+-- Funkcja: Pobiera informacje o zleceniach
 -- =========================================
-CREATE OR REPLACE FUNCTION get_zlecenie_info(zlecenie_id_param INT)
+CREATE OR REPLACE FUNCTION get_zlecenie_info(zlecenie_id_param INT DEFAULT NULL)
 RETURNS TABLE (
     zlecenie_id INT,
     klient_imie VARCHAR,
@@ -141,15 +141,7 @@ RETURNS TABLE (
     data_zlozenia DATE,
     data_rozpoczecia DATE,
     data_zakonczenia DATE,
-    lokalizacja VARCHAR,
-    zasob_nazwa VARCHAR,
-    jednostka VARCHAR,
-    typ TEXT,
-    koszt_jednostkowy DECIMAL,
-    magazyn_id INT,
-    magazyn_nazwa VARCHAR,
-    ilosc INT,
-    ilosc_potrzebna INT
+    lokalizacja VARCHAR
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -162,22 +154,41 @@ BEGIN
         z.data_zlozenia,
         z.data_rozpoczecia,
         z.data_zakonczenia,
-        z.lokalizacja,
-        zas.nazwa AS zasob_nazwa,
-        zas.jednostka,
-        zas.typ,
-        zas.koszt_jednostkowy,
-        mz.magazyn_id,
-        m.nazwa AS magazyn_nazwa,
-        mz.ilosc,
-        zz.ilosc_potrzebna
+        z.lokalizacja
     FROM zlecenie z
     JOIN klient k ON z.klient_id = k.klient_id
-    JOIN zasob_zlecenie zz ON z.zlecenie_id = zz.zlecenie_id
-    JOIN magazyn_zasob mz ON zz.magazyn_zasob_id = mz.magazyn_zasob_id
-    JOIN zasob zas ON mz.zasob_id = zas.zasob_id
-    JOIN magazyn m ON mz.magazyn_id = m.magazyn_id
-    WHERE z.zlecenie_id = zlecenie_id_param;
+    WHERE zlecenie_id_param IS NULL OR z.zlecenie_id = zlecenie_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+-- =========================================
+-- Funkcja: Pobiera informacje o zasobach danego zlecenia
+-- =========================================
+CREATE OR REPLACE FUNCTION get_zlecenie_zasoby(zlecenie_id_param INT)
+RETURNS TABLE (
+    zlecenie_id INT,
+    zasob_id INT,
+    nazwa_zasobu VARCHAR,
+    jednostka VARCHAR,
+    typ TEXT,
+    koszt_jednostkowy NUMERIC,
+    ilosc_potrzebna INT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        z.zlecenie_id,
+        mz.zasob_id,
+        r.nazwa,
+        r.jednostka,
+        r.typ,
+        r.koszt_jednostkowy,
+        zz.ilosc_potrzebna
+    FROM zasob_zlecenie zz
+    JOIN magazyn_zasob mz using(magazyn_zasob_id)
+    JOIN zasob r using(zasob_id)
+    JOIN zlecenie z using(zlecenie_id)
+    WHERE zz.zlecenie_id = zlecenie_id_param;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -197,6 +208,10 @@ BEGIN
     JOIN zasob zas using(zasob_id)
     WHERE zz.zlecenie_id = zlecenie_id_param AND zas.typ = 'material';
 
+    IF koszt IS NULL OR koszt < 0 THEN
+        koszt := 0;
+    END;
+
     RETURN koszt;
 END;
 $$ LANGUAGE plpgsql;
@@ -213,9 +228,9 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT 
-        COUNT(DISTINCT dp.pracownik_id) AS liczba_pracownikow,
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) AS przepracowane_godziny_zlecenia,
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600 * p.stawka_godzinowa) AS koszty_pracownikow
+        COALESCE(COUNT(DISTINCT dp.pracownik_id), 0) AS liczba_pracownikow,
+        COALESCE(SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600), 0) AS przepracowane_godziny,
+        COALESCE(SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600 * p.stawka_godzinowa), 0) AS koszty_pracownikow
     FROM dzien_pracy dp
     JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
     WHERE dp.zlecenie_id = zlecenie_id_param

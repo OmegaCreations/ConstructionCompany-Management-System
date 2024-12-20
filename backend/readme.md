@@ -3,7 +3,7 @@
 Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplementowania pełni funkcjonalności aplikacji.
 
 ✅ - zaimplementowane w całym backendzie
-☑️ - zaimplementowane na froncie
+☑️ - zaimplementowane na frontendzie
 🧪 - przetestowane w Postman'ie
 
 ## ZAPYTANIA GET
@@ -37,16 +37,18 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 #### Zapytania DB
 
 `select * from get_klient_zlecenia(klient_id);` - zlecenia klienta
-`select * from get_zlecenie_info(zlecenie_id);` - informacje o zleceniu
+`select * from get_zlecenie_info(zlecenie_id/null);` - informacje o zleceniu lub wszystkich zleceniach
+`select * from get_zlecenie_zasoby(zlecenie_id);` - informacje o wszystkich zasobach przypisanych dla zlecenia
 `select * from get_pracownicy_koszty(zlecenie_id);` - koszty utrzymania pracowników dla danego zlecenia
 `select * from get_dodatkowe_koszty(zlecenie_id);` - dodatkowe koszty brakujących materiałów dla zlecenia
 
 #### Endpointy
 
-- "http://localhost:5000/api/order" - zwraca informacje o wszystkich zleceniach
-- "http://localhost:5000/api/order/?id" - zwraca informacje o konkretnym zleceniu
-- "http://localhost:5000/api/order/client/:id" - zwraca informacje o wszystkich zleceniach klienta
-- "http://localhost:5000/api/order/:id/koszty" - zwraca koszty dla danego zlecenia (pracownicy + materiały)
+✅🧪 - "http://localhost:5000/api/order" - zwraca informacje o wszystkich zleceniach
+✅🧪 - "http://localhost:5000/api/order/:id" - zwraca informacje o konkretnym zleceniu
+✅🧪 - "http://localhost:5000/api/order/client/:id" - zwraca informacje o wszystkich zleceniach klienta
+✅🧪 - "http://localhost:5000/api/order/:id/costs" - zwraca koszty dla danego zlecenia (pracownicy + materiały)
+✅🧪 - "http://localhost:5000/api/order/:id/resources" - zwraca zasoby dla danego zlecenia
 
 ### Dni pracy
 
