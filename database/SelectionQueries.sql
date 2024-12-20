@@ -62,10 +62,12 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT * FROM klient
-    WHERE klient_id_param IS NULL OR klient_id = klient_id_param;
+    SELECT k.klient_id, k.imie, k.nazwisko, k.firma, k.telefon, k.email, k.adres
+    FROM klient k
+    WHERE klient_id_param IS NULL OR k.klient_id = klient_id_param;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- =========================================
 -- Funkcja: Pobiera dane klienta oraz jego zleceń
@@ -167,8 +169,8 @@ BEGIN
         SUM((zz.ilosc_potrzebna - mz.ilosc) * zas.koszt_jednostkowy)
     INTO koszt
     FROM zasob_zlecenie zz
-    JOIN magazyn_zasob mz ON zz.magazyn_zasob_id = mz.magazyn_zasob_id
-    JOIN zasob zas ON mz.zasob_id = zas.zasob_id
+    JOIN magazyn_zasob mz using(magazyn_zasob_id)
+    JOIN zasob zas using(zasob_id)
     WHERE zz.zlecenie_id = zlecenie_id_param AND zas.typ = 'material';
 
     RETURN koszt;
@@ -180,7 +182,7 @@ $$ LANGUAGE plpgsql;
 -- =========================================
 CREATE OR REPLACE FUNCTION get_pracownicy_koszty(zlecenie_id_param INT)
 RETURNS TABLE (
-    liczba_pracownikow INT,
+    liczba_pracownikow BIGINT,
     przepracowane_godziny DECIMAL,
     koszty_pracownikow DECIMAL
 ) AS $$
@@ -188,11 +190,12 @@ BEGIN
     RETURN QUERY
     SELECT 
         COUNT(DISTINCT dp.pracownik_id) AS liczba_pracownikow,
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) AS przepracowane_godziny,
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) * p.stawka_godzinowa AS koszty_pracownikow
+        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) AS przepracowane_godziny_zlecenia,
+        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600 * p.stawka_godzinowa) AS koszty_pracownikow
     FROM dzien_pracy dp
     JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
-    WHERE dp.zlecenie_id = zlecenie_id_param;
+    WHERE dp.zlecenie_id = zlecenie_id_param
+    GROUP BY dp.zlecenie_id;
 END;
 $$ LANGUAGE plpgsql;
 
