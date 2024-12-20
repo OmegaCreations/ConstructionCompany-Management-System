@@ -59,7 +59,6 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 ### Magazyn
 
 - "http://localhost:5000/api/warehouse" - zwraca informacje o wszystkich magazynach
-- "http://localhost:5000/api/warehouse/:id" - zwraca informacje o konkretnym magazynie
 - "http://localhost:5000/api/warehouse/:id/resources" - zwraca informacje o zasobach konkretnego magazynu
 
 ### Stanowiska

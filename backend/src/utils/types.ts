@@ -63,13 +63,38 @@ export interface ZlecenieKoszty {
   koszty_zasobow: number;
 }
 
-// db returning workdat type for user
+// db returning workday type for user
 export interface DzienPracy {
   pracownik_id: number;
   zlecenie_id: number;
   data: string;
   godzina_rozpoczecia: string;
   godzina_zakonczenia: string;
+}
+
+// db returning warehouse type
+export interface Magazyn {
+  magazyn_id: number;
+  nazwa: string;
+  lokalizacja: string;
+}
+
+// db returning resource type for specific warehouse
+// ! for non-authorized worker view !
+export interface MagazynZasob {
+  magazyn_zasob_id: number;
+  zasob_id: number;
+  nazwa_zasobu: string;
+  jednostka: string;
+  typ: string;
+  ilosc: number;
+  opis: string;
+}
+
+// db returning resource type for specific warehouse
+// ! for authorized view !
+export interface MagazynZasobExtended extends MagazynZasob {
+  koszt_jednostkowy: number;
 }
 
 // ===================================

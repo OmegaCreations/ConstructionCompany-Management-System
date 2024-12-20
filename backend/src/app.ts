@@ -9,6 +9,7 @@ import clientRoutes from "./routes/clientRoutes";
 import authRoutes from "./routes/authRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import workdayRoutes from "./routes/workdayRoutes";
+import warehouseRoutes from "./routes/warehouseRoutes";
 
 // middleware
 import loggerMiddleware from "./middlewares/loggerMiddleware";
@@ -29,6 +30,7 @@ app.use("/api/user", userRoutes); // user management routes
 app.use("/api/client", clientRoutes); // client management routes
 app.use("/api/order", orderRoutes); // order management routes
 app.use("/api/workday", workdayRoutes); // work days management routes
+app.use("/api/warehouse", warehouseRoutes); // warehouses management routes
 
 // Endpoint to show how project structure works :)
 app.use("/api", helloRoutes);

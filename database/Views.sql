@@ -12,3 +12,6 @@ SELECT
 FROM magazyn_zasob mz
 JOIN magazyn m ON mz.magazyn_id = m.magazyn_id
 JOIN zasob z ON mz.zasob_id = z.zasob_id;
+
+-- permisje
+GRANT SELECT ON view_zasoby_magazynu_pracownik TO construction_company_admin_role;

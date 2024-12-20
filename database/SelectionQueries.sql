@@ -308,17 +308,19 @@ CREATE OR REPLACE FUNCTION get_magazyny()
 RETURNS TABLE (
     magazyn_id INT,
     nazwa VARCHAR,
-    lokalizacja TEXT
+    lokalizacja VARCHAR
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        magazyn_id,
-        nazwa,
-        lokalizacja
-    FROM magazyn;
+        m.magazyn_id,
+        m.nazwa,
+        m.lokalizacja
+    FROM magazyn m;
 END;
 $$ LANGUAGE plpgsql;
+select * from get_magazyny();
+
 
 
 -- =========================================
@@ -330,7 +332,7 @@ RETURNS TABLE (
     zasob_id INT,
     nazwa_zasobu VARCHAR,
     jednostka VARCHAR,
-    typ VARCHAR,
+    typ TEXT,
     ilosc INT,
     koszt_jednostkowy DECIMAL,
     opis TEXT
@@ -362,23 +364,23 @@ RETURNS TABLE (
     zasob_id INT,
     nazwa_zasobu VARCHAR,
     jednostka VARCHAR,
-    typ VARCHAR,
+    typ TEXT,
     ilosc INT,
     opis TEXT
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        magazyn_id,
-        nazwa_magazynu,
-        zasob_id,
-        nazwa_zasobu,
-        jednostka,
-        typ,
-        ilosc,
-        opis
-    FROM view_zasoby_magazynu_pracownik
-    WHERE magazyn_id = magazyn_id_param;
+        v.magazyn_id,
+        v.nazwa_magazynu,
+        v.zasob_id,
+        v.nazwa_zasobu,
+        v.jednostka,
+        v.typ,
+        v.ilosc,
+        v.opis
+    FROM view_zasoby_magazynu_pracownik v
+    WHERE v.magazyn_id = magazyn_id_param;
 END;
 $$ LANGUAGE plpgsql;
 
