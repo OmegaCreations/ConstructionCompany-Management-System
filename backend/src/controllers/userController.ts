@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { createNewUser, getUserData } from "../services/userService";
+import {
+  createNewUser,
+  getUserData,
+  updateUserData,
+} from "../services/userService";
 
 // gets user's data
 export const getUser: any = async (req: any, res: Response) => {
@@ -16,6 +20,40 @@ export const getUser: any = async (req: any, res: Response) => {
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during fetching user data.",
+    });
+  }
+};
+
+// update user's data
+export const updateUser: any = async (req: Request, res: Response) => {
+  const { imie, nazwisko, telefon, email, stawka_godzinowa, stanowisko_id } =
+    req.body;
+
+  if (
+    !imie ||
+    !nazwisko ||
+    !email ||
+    !telefon ||
+    !stawka_godzinowa ||
+    !stanowisko_id
+  ) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    const updatedUser = await updateUserData({
+      imie,
+      nazwisko,
+      telefon,
+      email,
+      stawka_godzinowa,
+      stanowisko_id,
+    });
+
+    res.status(201).json({ message: "User updated.", user: updateUser });
+  } catch (err) {
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Error during user updating.",
     });
   }
 };

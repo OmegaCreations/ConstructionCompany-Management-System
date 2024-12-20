@@ -1,5 +1,6 @@
 import * as userModel from "../models/userModel";
 import bcrypt from "bcrypt";
+import { Pracownik, updateUserInput } from "../utils/types";
 
 // interface for user's data
 interface CreateUserInput {
@@ -22,6 +23,11 @@ export const getUserData = async (userId: number) => {
   return (({ haslo, stanowisko_id, pracownik_id, ...obj }) => obj)(
     existingUser
   );
+};
+
+// updates user's data
+export const updateUserData = async (userData: updateUserInput) => {
+  const updatedUser = await userModel.update(userData);
 };
 
 // creates new user

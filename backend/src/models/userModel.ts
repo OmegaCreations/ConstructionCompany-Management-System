@@ -1,16 +1,6 @@
 import { QueryResult } from "pg";
-import "../utils/types";
 import { client } from "../config/db";
-
-interface CreateUserInput {
-  imie: string;
-  nazwisko: string;
-  telefon: string;
-  email: string;
-  haslo: string;
-  stawka_godzinowa: number;
-  stanowisko_id: number;
-}
+import { CreateUserInput, Pracownik, updateUserInput } from "../utils/types";
 
 // finding user with given email address
 export const findUserByEmail = async (email: string) => {
@@ -25,6 +15,17 @@ export const findUserById = async (id: number) => {
     "SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE pracownik_id = $1";
   const result: QueryResult<Pracownik> = await client.query(query, [id]);
   console.log(result.rows[0]);
+  return result.rows[0];
+};
+
+export const update = async (userData: updateUserInput) => {
+  const query = `INSERT INTO pracownik 
+        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+
+  const result: QueryResult<Pracownik> = await client.query(query, [
+    ...[userData],
+  ]);
   return result.rows[0];
 };
 

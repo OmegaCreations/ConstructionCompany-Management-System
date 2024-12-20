@@ -23,111 +23,80 @@ GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA construction_company TO construc
 GRANT construction_company_admin_role TO construction_company_admin;
 
 
-
--- =========================================
--- tabela: stanowisko
--- =========================================
-create table stanowisko (
-    stanowisko_id serial primary key,
-    nazwa varchar(50) not null unique,
-    opis text
+-- ==========================================
+--          Tworzenie bazy danych
+-- ==========================================
+CREATE TABLE stanowisko (
+    stanowisko_id SERIAL PRIMARY KEY,
+    nazwa VARCHAR(50) NOT NULL UNIQUE,
+    opis TEXT
 );
 
--- =========================================
--- tabela: pracownik
--- =========================================
-create table pracownik (
-    pracownik_id serial primary key,
-    imie varchar(50) not null,
-    nazwisko varchar(50) not null,
-    telefon varchar(15),
-    email varchar(50) unique,
-    haslo varchar(255) not null,
-    stawka_godzinowa decimal(10, 2) not null check (stawka_godzinowa > 0),
-    stanowisko_id int not null references stanowisko(stanowisko_id) on delete set null
+CREATE TABLE pracownik (
+    pracownik_id SERIAL PRIMARY KEY,
+    imie VARCHAR(50) NOT NULL,
+    nazwisko VARCHAR(50) NOT NULL,
+    telefon VARCHAR(15),
+    email VARCHAR(50) UNIQUE,
+    haslo VARCHAR(255) NOT NULL,
+    stawka_godzinowa DECIMAL NOT NULL,
+    stanowisko_id INT NOT NULL REFERENCES stanowisko(stanowisko_id)
 );
 
--- =========================================
--- tabela: klient
--- =========================================
-create table klient (
-    klient_id serial primary key,
-    imie varchar(50),
-    nazwisko varchar(50),
-    firma varchar(50),
-    telefon varchar(15),
-    email varchar(50) unique,
-    adres text
+CREATE TABLE klient (
+    klient_id SERIAL PRIMARY KEY,
+    imie VARCHAR(50),
+    nazwisko VARCHAR(50),
+    firma VARCHAR(50),
+    telefon VARCHAR(15),
+    email VARCHAR(50) UNIQUE,
+    adres TEXT
 );
 
-
--- =========================================
--- tabela: zlecenie
--- =========================================
-create table zlecenie (
-    zlecenie_id serial primary key,
-    klient_id int not null references klient(klient_id) on delete cascade,
-    opis text not null,
-    data_zlozenia date not null,
-    data_rozpoczecia date,
-    data_zakonczenia date,
-    lokalizacja varchar(150) not null,
-    constraint check_data check (data_zakonczenia is null or data_rozpoczecia <= data_zakonczenia)
+CREATE TABLE zlecenie (
+    zlecenie_id SERIAL PRIMARY KEY,
+    klient_id INT NOT NULL REFERENCES klient(klient_id),
+    opis TEXT NOT NULL,
+    data_zlozenia DATE NOT NULL,
+    data_rozpoczecia DATE,
+    data_zakonczenia DATE,
+    lokalizacja VARCHAR(150) NOT NULL
 );
 
-
--- =========================================
--- tabela: sprzet
--- =========================================
-create table sprzet (
-    sprzet_id serial primary key,
-    nazwa varchar(50) not null,
-    opis text,
-    koszt_jednostkowy decimal(10, 2) not null check (koszt_jednostkowy >= 0)
+CREATE TABLE dzien_pracy (
+    pracownik_id INT NOT NULL REFERENCES pracownik(pracownik_id),
+    zlecenie_id INT NOT NULL REFERENCES zlecenie(zlecenie_id),
+    data DATE NOT NULL,
+    godzina_rozpoczecia TIME,
+    godzina_zakonczenia TIME,
+    PRIMARY KEY (pracownik_id, zlecenie_id, data)
 );
 
-
--- =========================================
--- tabela: magazyn
--- =========================================
-create table magazyn (
-    magazyn_id serial primary key,
-    nazwa varchar(50) not null,
-    lokalizacja varchar(150) not null
+CREATE TABLE zasob (
+    zasob_id SERIAL PRIMARY KEY,
+    nazwa VARCHAR(50) NOT NULL,
+    jednostka VARCHAR(20) NOT NULL,
+    typ TEXT CHECK (typ IN ('material', 'sprzet')) NOT NULL, -- enum? :)
+    koszt_jednostkowy DECIMAL NOT NULL,
+    opis TEXT
 );
 
-
--- TABELE ASOCJACYJNE
-
--- =========================================
--- tabela: dzien_pracy
--- =========================================
-create table dzien_pracy (
-    pracownik_id int not null references pracownik(pracownik_id) on delete cascade,
-    zlecenie_id int not null references zlecenie(zlecenie_id) on delete cascade,
-    data date not null,
-    godzina_rozpoczecia time,
-    godzina_zakonczenia time,
-    primary key (pracownik_id, zlecenie_id, data)
+CREATE TABLE magazyn (
+    magazyn_id SERIAL PRIMARY KEY,
+    nazwa VARCHAR(50) NOT NULL,
+    lokalizacja VARCHAR(150) NOT NULL
 );
 
--- =========================================
--- tabela: magazyn_sprzet
--- =========================================
-create table magazyn_sprzet (
-    magazyn_id int not null references magazyn(magazyn_id) on delete cascade,
-    sprzet_id int not null references sprzet(sprzet_id) on delete cascade,
-    ilosc int not null check (ilosc >= 0),
-    primary key (magazyn_id, sprzet_id)
+CREATE TABLE magazyn_zasob (
+	magazyn_zasob_id SERIAL primary key,
+    ilosc INT NOT NULL,
+    magazyn_id INT NOT NULL REFERENCES magazyn(magazyn_id),
+    zasob_id INT NOT NULL REFERENCES zasob(zasob_id)
 );
 
--- =========================================
--- tabela: sprzet_zlecenie
--- =========================================
-create table sprzet_zlecenie (
-    sprzet_id int not null references sprzet(sprzet_id) on delete cascade,
-    zlecenie_id int not null references zlecenie(zlecenie_id) on delete cascade,
-    ilosc_potrzebna int not null check (ilosc_potrzebna >= 0),
-    ilosc_zapewniona int not null check (ilosc_zapewniona >= 0 and ilosc_zapewniona <= ilosc_potrzebna),
-    primary key (sprzet_id, zlecenie_id)
+CREATE TABLE zasob_zlecenie (
+    magazyn_zasob_id INT NOT NULL REFERENCES magazyn_zasob(magazyn_zasob_id),
+    zlecenie_id INT NOT NULL REFERENCES zlecenie(zlecenie_id),
+    ilosc_potrzebna INT NOT NULL,
+    PRIMARY KEY (magazyn_zasob_id, zlecenie_id)
 );
