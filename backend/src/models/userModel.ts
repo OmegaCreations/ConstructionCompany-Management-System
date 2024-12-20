@@ -1,33 +1,57 @@
 import { QueryResult } from "pg";
 import { client } from "../config/db";
-import { CreateUserInput, Pracownik, updateUserInput } from "../utils/types";
+import {
+  AuthPracownik,
+  CreateUserInput,
+  Paycheck,
+  Pracownik,
+  updateUserInput,
+} from "../utils/types";
 
-// finding user with given email address
-export const findUserByEmail = async (email: string) => {
-  const query =
-    "SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1";
-  const result: QueryResult<Pracownik> = await client.query(query, [email]);
-  return result.rows[0];
+// ================================
+//        GET REQUESTS
+// ================================
+
+// finding all user's
+// returns Pracownik[] type
+export const getAll = async () => {
+  const query = "select * from get_pracownicy()";
+  const result: QueryResult<Pracownik> = await client.query(query, []);
+  return result.rows;
 };
 
-export const findUserById = async (id: number) => {
-  const query =
-    "SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE pracownik_id = $1";
-  const result: QueryResult<Pracownik> = await client.query(query, [id]);
-  console.log(result.rows[0]);
-  return result.rows[0];
-};
-
-export const update = async (userData: updateUserInput) => {
-  const query = `INSERT INTO pracownik 
-        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
-
+// find user with given pracownik_id
+// returns Pracownik type
+export const findById = async (pracownik_id: number) => {
+  const query = "select * from get_pracownicy($1)";
   const result: QueryResult<Pracownik> = await client.query(query, [
-    ...[userData],
+    pracownik_id,
   ]);
   return result.rows[0];
 };
+
+// find user with given email address
+// returns AuthPracownik type
+export const findByEmail = async (email: string) => {
+  const query =
+    "SELECT p.pracownik_id, p.imie, p.nazwisko, p.telefon, p.email, p.haslo, p.stawka_godzinowa, s.stanowisko_id, s.nazwa as stanowisko_nazwa FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1";
+  const result: QueryResult<AuthPracownik> = await client.query(query, [email]);
+  return result.rows[0];
+};
+
+// get user's paycheck for current month
+// returns: Paycheck type
+export const getPaycheckStatus = async (pracownik_id: number) => {
+  const query = "select * from get_wyplata_status($1)";
+  const result: QueryResult<Paycheck> = await client.query(query, [
+    pracownik_id,
+  ]);
+  return result.rows[0];
+};
+
+// ================================
+//         POST REQUESTS
+// ================================
 
 // creates new user in database
 export const create = async (userData: CreateUserInput) => {
@@ -55,6 +79,22 @@ export const create = async (userData: CreateUserInput) => {
     stanowisko_id,
   ]);
   return result.rows[0]; // return back newly created user
+};
+
+// ================================
+//          PUT REQUESTS
+// ================================
+
+// updates user's data
+export const update = async (userData: updateUserInput) => {
+  const query = `INSERT INTO pracownik 
+        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+
+  const result: QueryResult<Pracownik> = await client.query(query, [
+    ...[userData],
+  ]);
+  return result.rows[0];
 };
 
 // updates user's password

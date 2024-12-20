@@ -7,7 +7,7 @@ set search_path to construction_company;
 
 
 -- new user
-CREATE USER construction_company_admin WITH PASSWORD '<secret-password>';
+CREATE USER construction_company_admin WITH PASSWORD '<secret-password-to-tembo>';
 
 -- create new role for this schema
 CREATE ROLE construction_company_admin_role;

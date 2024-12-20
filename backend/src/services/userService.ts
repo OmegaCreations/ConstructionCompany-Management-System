@@ -12,23 +12,38 @@ interface CreateUserInput {
   stanowisko_id: number;
 }
 
-// returns existing user
-export const getUserData = async (userId: number) => {
-  const existingUser: Pracownik | null = await userModel.findUserById(userId);
+// ================================
+//        GET REQUESTS
+// ================================
+
+// returns all users
+export const getAllUsers = async () => {
+  return await userModel.getAll();
+};
+
+// returns existing user with pracownik_id
+export const getUser = async (pracownik_id: number) => {
+  const existingUser: Pracownik | null = await userModel.findById(pracownik_id);
   if (!existingUser) {
     throw new Error("User with given credentials does not exist.");
   }
 
-  // we dont wanna return to frontend important info about db architecture
-  return (({ haslo, stanowisko_id, pracownik_id, ...obj }) => obj)(
-    existingUser
-  );
+  return existingUser;
 };
 
-// updates user's data
-export const updateUserData = async (userData: updateUserInput) => {
-  const updatedUser = await userModel.update(userData);
+// returns user's payckeck for current month
+export const getUserPaychckeck = async (pracownik_id: number) => {
+  const existingUser: Pracownik | null = await userModel.findById(pracownik_id);
+  if (!existingUser) {
+    throw new Error("User with given credentials does not exist.");
+  }
+
+  return await userModel.getPaycheckStatus(pracownik_id);
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
 
 // creates new user
 export const createNewUser = async (userData: CreateUserInput) => {
@@ -36,7 +51,7 @@ export const createNewUser = async (userData: CreateUserInput) => {
     userData;
 
   // check if user already exists
-  const existingUser: Pracownik | null = await userModel.findUserByEmail(email);
+  const existingUser: Pracownik | null = await userModel.findByEmail(email);
   if (existingUser) {
     throw new Error("User with given email already exists.");
   }
@@ -60,4 +75,13 @@ export const createNewUser = async (userData: CreateUserInput) => {
   });
 
   return { ...newUser, wygenerowane_haslo: generated_password };
+};
+
+// ================================
+//        PUT REQUESTS
+// ================================
+// updates user's data
+export const updateUser = async (userData: updateUserInput) => {
+  const updatedUser = await userModel.update(userData);
+  return updatedUser;
 };

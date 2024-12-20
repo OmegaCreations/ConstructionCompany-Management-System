@@ -1,20 +1,36 @@
 import { Request, Response } from "express";
-import {
-  createNewUser,
-  getUserData,
-  updateUserData,
-} from "../services/userService";
+import * as userService from "../services/userService";
+import { Paycheck } from "../utils/types";
+import { getRoleByPositionId } from "../utils/appTypes";
+
+// ================================
+//        GET REQUESTS
+// ================================
+
+// gets all user's data
+export const getAllUsers: any = async (req: any, res: Response) => {
+  try {
+    const userData = await userService.getAllUsers();
+    return res.status(200).json(userData);
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during fetching users.",
+    });
+  }
+};
 
 // gets user's data
 export const getUser: any = async (req: any, res: Response) => {
-  const userId = req.user.pracownik_id;
+  const pracownik_id = req.user.pracownik_id; // authenticated user id
+  const request_pracownik_id = Number(req.params.id); // requested user id in url
 
-  if (!userId) {
+  if (!pracownik_id || !request_pracownik_id) {
     return res.status(400).json({ error: "Invalid credentials." });
   }
 
   try {
-    const userData = await getUserData(userId);
+    const userData = await userService.getUser(request_pracownik_id);
     return res.status(200).json(userData);
   } catch (err) {
     res.status(500).json({
@@ -24,39 +40,39 @@ export const getUser: any = async (req: any, res: Response) => {
   }
 };
 
-// update user's data
-export const updateUser: any = async (req: Request, res: Response) => {
-  const { imie, nazwisko, telefon, email, stawka_godzinowa, stanowisko_id } =
-    req.body;
+// gets user's paycheck for current month
+export const getUserPaycheck: any = async (req: any, res: Response) => {
+  const pracownik_id: number = req.user.pracownik_id;
+  const request_pracownik_id: number = Number(req.params.id);
 
   if (
-    !imie ||
-    !nazwisko ||
-    !email ||
-    !telefon ||
-    !stawka_godzinowa ||
-    !stanowisko_id
+    !pracownik_id ||
+    !request_pracownik_id ||
+    // if its not manager we want user to only access his own paycheck data
+    (getRoleByPositionId(req.user.stanowisko_id) === "worker" &&
+      pracownik_id !== request_pracownik_id)
   ) {
-    return res.status(400).json({ error: "Please provide all the data." });
+    return res.status(400).json({ error: "Invalid credentials." });
   }
 
   try {
-    const updatedUser = await updateUserData({
-      imie,
-      nazwisko,
-      telefon,
-      email,
-      stawka_godzinowa,
-      stanowisko_id,
-    });
-
-    res.status(201).json({ message: "User updated.", user: updateUser });
+    const payckeck: Paycheck = await userService.getUserPaychckeck(
+      request_pracownik_id
+    );
+    return res.status(200).json(payckeck);
   } catch (err) {
     res.status(500).json({
-      error: err instanceof Error ? err.message : "Error during user updating.",
+      error:
+        err instanceof Error
+          ? err.message
+          : "Error during fetching user's paycheck.",
     });
   }
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
 
 // creates new user
 export const createUser: any = async (req: Request, res: Response) => {
@@ -78,7 +94,7 @@ export const createUser: any = async (req: Request, res: Response) => {
 
   // creating new user
   try {
-    const newUser = await createNewUser({
+    const newUser = await userService.createNewUser({
       imie,
       nazwisko,
       telefon,
@@ -94,3 +110,45 @@ export const createUser: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//        PUT REQUESTS
+// ================================
+
+// update user's data
+export const updateUser: any = async (req: Request, res: Response) => {
+  const { imie, nazwisko, telefon, email, stawka_godzinowa, stanowisko_id } =
+    req.body;
+
+  if (
+    !imie ||
+    !nazwisko ||
+    !email ||
+    !telefon ||
+    !stawka_godzinowa ||
+    !stanowisko_id
+  ) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    const updatedUser = await userService.updateUser({
+      imie,
+      nazwisko,
+      telefon,
+      email,
+      stawka_godzinowa,
+      stanowisko_id,
+    });
+
+    res.status(201).json({ message: "User updated.", user: updatedUser });
+  } catch (err) {
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Error during user updating.",
+    });
+  }
+};
+
+// ================================
+//        DELETE REQUESTS
+// ================================

@@ -9,6 +9,7 @@ RETURNS TABLE (
     telefon VARCHAR,
     email VARCHAR,
     stawka_godzinowa DECIMAL,
+    stanowisko_id INT,
     stanowisko_nazwa VARCHAR
 ) AS $$
 BEGIN
@@ -20,6 +21,7 @@ BEGIN
         p.telefon, 
         p.email, 
         p.stawka_godzinowa, 
+        s.stanowisko_id,
         s.nazwa AS stanowisko_nazwa
     FROM pracownik p
     JOIN stanowisko s ON p.stanowisko_id = s.stanowisko_id
@@ -28,22 +30,44 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =========================================
--- Funkcja: Oblicza przepracowane godziny i status wypłaty dla pracownika
+-- Funkcja: Oblicza przepracowane godziny i status wypłaty dla pracownika dla aktualnego miesiąca
 -- =========================================
 CREATE OR REPLACE FUNCTION get_wyplata_status(pracownik_id_param INT)
 RETURNS TABLE (
     przepracowane_godziny DECIMAL,
     wyplata_status DECIMAL
-) AS $$
+) AS $$ 
+DECLARE
+    godziny DECIMAL := 0;
+    stawka DECIMAL := 0;
 BEGIN
-    RETURN QUERY
+    
     SELECT 
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) AS przepracowane_godziny,
-        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) * p.stawka_godzinowa AS wyplata_status
+        SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600)  
+    INTO godziny
     FROM dzien_pracy dp
-    JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
-    WHERE p.pracownik_id = pracownik_id_param
-    GROUP BY p.stawka_godzinowa;
+    WHERE dp.pracownik_id = pracownik_id_param 
+      AND dp.godzina_zakonczenia IS NOT NULL
+      AND dp.data >= date_trunc('month', CURRENT_DATE)  -- tylko dni z tego miesiąca
+      AND dp.data < (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month');
+
+    -- stawka godzinowa
+    SELECT 
+        p.stawka_godzinowa
+    INTO stawka
+    FROM pracownik p
+    WHERE p.pracownik_id = pracownik_id_param;
+
+    -- jeśli nie ma przepracowanych to zwraca NULL'a, a chcemy 0.
+    IF godziny IS NULL THEN
+        wyplata_status := 0;
+        przepracowane_godziny := 0;
+    ELSE
+        przepracowane_godziny := godziny;
+        wyplata_status := godziny * stawka;
+    END IF;
+
+    RETURN NEXT;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -218,69 +242,5 @@ $$ LANGUAGE plpgsql;
 
 
 
--- =========================================
--- pracownicy i ich stanowiska
--- =========================================
-select p.pracownik_id, p.imie, p.nazwisko, p.telefon, p.email, p.stawka_godzinowa, s.nazwa as stanowisko
-    from pracownik p
-        join stanowisko s on p.stanowisko_id = s.stanowisko_id; -- mozna tutaj zmienic na konkretne stanowisko w razie potrzeby
-
-
--- =========================================
--- wszystkie zlecenia od danego klienta
--- =========================================
-select z.zlecenie_id, z.opis, z.data_zlozenia, z.data_rozpoczecia, z.data_zakonczenia, z.lokalizacja,
-       k.imie as klient_imie, k.nazwisko as klient_nazwisko, k.firma as klient_firma, k.telefon as klient_telefon
-from zlecenie z
-    join klient k on z.klient_id = k.klient_id;
-
-
--- =========================================
--- wszystkie dni pracy pracowników dla danego zlecenia
--- =========================================
-select dp.data, dp.godzina_rozpoczecia, dp.godzina_zakonczenia,
-       p.imie, p.nazwisko, z.opis as zlecenie
-    from dzien_pracy dp
-        join pracownik p on dp.pracownik_id = p.pracownik_id
-        join zlecenie z on dp.zlecenie_id = z.zlecenie_id
-where z.zlecenie_id = 1; 
-
-
--- =========================================
--- lista sprzętu w magazynach
--- =========================================
-select m.nazwa as magazyn, m.lokalizacja, s.nazwa as sprzet, s.opis, ms.ilosc
-    from magazyn_sprzet ms
-        join magazyn m on ms.magazyn_id = m.magazyn_id
-        join sprzet s on ms.sprzet_id = s.sprzet_id;
-
-
--- =========================================
--- aktualne koszty wynagrodzenia pracowników dla danego zlecenia
--- =========================================
-select z.opis as zlecenie, sum(extract(epoch from (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600 * p.stawka_godzinowa) as koszt_pracy
-    from dzien_pracy dp
-        join pracownik p on dp.pracownik_id = p.pracownik_id
-        join zlecenie z on dp.zlecenie_id = z.zlecenie_id
-group by z.zlecenie_id, z.opis;
-
-
--- =========================================
--- aktualna ilosc godzin pracy pracowników dla danego zlecenia
--- =========================================
-select p.imie, p.nazwisko, z.opis as zlecenie,
-        sum(extract(epoch from (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600) as przepracowane_godziny
-    from dzien_pracy dp
-        join pracownik p on dp.pracownik_id = p.pracownik_id
-        join zlecenie z on dp.zlecenie_id = z.zlecenie_id
-group by p.pracownik_id, p.imie, p.nazwisko, z.zlecenie_id, z.opis;
-
-
--- =========================================
--- sprzęt wymagany do realizacji zlecenia wraz z brakami
--- =========================================
-select z.opis as zlecenie, s.nazwa as sprzet, sz.ilosc_potrzebna, (sz.ilosc_potrzebna - sz.ilosc_zapewniona) as brakujace
-    from sprzet_zlecenie sz
-        join sprzet s on sz.sprzet_id = s.sprzet_id
-        join zlecenie z on sz.zlecenie_id = z.zlecenie_id
-where sz.ilosc_zapewniona < sz.ilosc_potrzebna;
+-- znajdz pracownika z danym adresem email
+SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1

@@ -23,11 +23,11 @@ END $$;
 -- =========================================
 INSERT INTO stanowisko (stanowisko_id, nazwa, opis)
 VALUES
-(1, 'Inżynier', 'Zarządzanie projektami technicznymi'),
+(1, 'Manager', 'Nadzór nad zespołem pracowników'),
 (2, 'Technik', 'Wsparcie techniczne przy realizacji zleceń'),
-(3, 'Kierownik', 'Nadzór nad zespołem pracowników'),
+(3, 'Inżynier', 'Zarządzanie projektami technicznymi'),
 (4, 'Logistyk', 'Planowanie dostaw i zasobów'),
-(5, 'Administrator', 'Obsługa systemów informatycznych'),
+(5, 'Informatyk', 'Obsługa systemów informatycznych'),
 (6, 'Serwisant', 'Naprawa urządzeń i maszyn'),
 (7, 'Specjalista ds. sprzedaży', 'Kontakt z klientami i oferta sprzedaży'),
 (8, 'Magazynier', 'Obsługa magazynu i zasobów'),
@@ -36,20 +36,20 @@ VALUES
 
 
 -- =========================================
--- Tabela: pracownik
+-- Tabela: pracownik  - !!! hasło to: root  
 -- =========================================
 INSERT INTO pracownik (pracownik_id, imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
 VALUES
-(1, 'Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com', 'haslo', 50.00, 1),
-(2, 'Anna', 'Nowak', '987654321', 'anna.nowak@example.com', 'haslo', 45.00, 2),
-(3, 'Piotr', 'Zieliński', '564738291', 'piotr.zielinski@example.com', 'haslo', 55.00, 3),
-(4, 'Maria', 'Wiśniewska', '748392615', 'maria.wisniewska@example.com', 'haslo', 48.00, 4),
-(5, 'Krzysztof', 'Krawczyk', '123789456', 'krzysztof.krawczyk@example.com', 'haslo', 60.00, 5),
-(6, 'Agnieszka', 'Dąbrowska', '321654987', 'agnieszka.dabrowska@example.com', 'haslo', 52.00, 6),
-(7, 'Paweł', 'Wójcik', '456789123', 'pawel.wojcik@example.com', 'haslo', 49.00, 7),
-(8, 'Zofia', 'Kamińska', '654321789', 'zofia.kaminska@example.com', 'haslo', 47.00, 8),
-(9, 'Tomasz', 'Lewandowski', '987123654', 'tomasz.lewandowski@example.com', 'haslo', 50.00, 9),
-(10, 'Ewa', 'Szymańska', '789654123', 'ewa.szymanska@example.com', 'haslo', 53.00, 10);
+(1, 'Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 50.00, 1),
+(2, 'Anna', 'Nowak', '987654321', 'anna.nowak@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 45.00, 2),
+(3, 'Piotr', 'Zieliński', '564738291', 'piotr.zielinski@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 55.00, 3),
+(4, 'Maria', 'Wiśniewska', '748392615', 'maria.wisniewska@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 48.00, 4),
+(5, 'Krzysztof', 'Krawczyk', '123789456', 'krzysztof.krawczyk@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 60.00, 5),
+(6, 'Agnieszka', 'Dąbrowska', '321654987', 'agnieszka.dabrowska@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 52.00, 6),
+(7, 'Paweł', 'Wójcik', '456789123', 'pawel.wojcik@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 49.00, 7),
+(8, 'Zofia', 'Kamińska', '654321789', 'zofia.kaminska@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 47.00, 8),
+(9, 'Tomasz', 'Lewandowski', '987123654', 'tomasz.lewandowski@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 50.00, 9),
+(10, 'Ewa', 'Szymańska', '789654123', 'ewa.szymanska@example.com', '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 53.00, 10);
 
 -- =========================================
 -- Tabela: klient

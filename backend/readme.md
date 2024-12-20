@@ -2,22 +2,51 @@
 
 Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplementowania pełni funkcjonalności aplikacji.
 
+✅ - zaimplementowane w całym backendzie
+☑️ - zaimplementowane na froncie
+🧪 - przetestowane w Postman'ie
+
 ## ZAPYTANIA GET
 
 ### Użytkownik
 
-- "http://localhost:5000/api/user" - zwraca informacje o wszystkich użytkownikach
-- "http://localhost:5000/api/user/:id" - zwraca informacje o konkretnym użytkowniku
+#### Zapytania DB
+
+`select * from get_pracownicy(int/null);`
+`select * from get_wyplata_status(pracownik_id);` - aktualny stan wyplaty na ten miesiac
+
+#### Endpointy
+
+✅🧪 - "http://localhost:5000/api/user" - zwraca informacje o wszystkich użytkownikach
+✅🧪 - "http://localhost:5000/api/user/:id" - zwraca informacje o konkretnym użytkowniku
+✅🧪 - "http://localhost:5000/api/user/:id/paycheck" - zwraca informacje o wypłacie konkretnego użytkownika
 
 ### Klient
 
-- "http://localhost:5000/api/client" - zwraca informacje o wszystkich klientach
-- "http://localhost:5000/api/client/?id" - zwraca informacje o konkretnym kliencie
+#### Zapytania DB
+
+`select * from get_klienci(int/null);`
+
+#### Endpointy
+
+✅🧪 - "http://localhost:5000/api/client" - zwraca informacje o wszystkich klientach
+✅🧪 - "http://localhost:5000/api/client/:id" - zwraca informacje o konkretnym kliencie
 
 ### Zlecenie
 
+#### Zapytania DB
+
+`select * from get_klient_zlecenia(klient_id);` - zlecenia klienta
+`select * from get_zlecenie_info(zlecenie_id);` - informacje o zleceniu
+`select * from get_pracownicy_koszty(zlecenie_id);` - koszty utrzymania pracowników dla danego zlecenia
+`select * from get_dodatkowe_koszty(zlecenie_id);` - dodatkowe koszty brakujących materiałów dla zlecenia
+
+#### Endpointy
+
 - "http://localhost:5000/api/order" - zwraca informacje o wszystkich zleceniach
 - "http://localhost:5000/api/order/?id" - zwraca informacje o konkretnym zleceniu
+- "http://localhost:5000/api/order/client/:id" - zwraca informacje o wszystkich zleceniach klienta
+- "http://localhost:5000/api/order/:id/koszty" - zwraca koszty dla danego zlecenia (pracownicy + materiały)
 
 ### Dni pracy
 

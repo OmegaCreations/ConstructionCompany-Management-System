@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { getRoleByPositionId } from "../utils/appTypes";
+import { AuthPracownik } from "../utils/types";
 
 dotenv.config();
 const JWT_SECRET = String(process.env.JWT_SECRET); // secret key for JWT
 
 // login user and send back generated token
 export const loginUser = async (email: string, haslo: string) => {
-  const user = await userModel.findUserByEmail(email); // if found returns "pracownik" object from db
+  const user: AuthPracownik = await userModel.findByEmail(email); // if found returns "pracownik" object from db
 
   if (!user) {
     throw new Error("Invalid credentials.");
@@ -48,13 +49,16 @@ export const updatePassword = async (
   currentPassword: string,
   newPassword: string
 ) => {
-  const user = await userModel.findUserById(userId);
+  const user = await userModel.findById(userId);
   if (!user) {
     throw new Error("User with given credentials does not exists.");
   }
 
   // check current password
-  const isPasswordValid = await bcrypt.compare(currentPassword, user.haslo);
+  const isPasswordValid = await bcrypt.compare(
+    currentPassword,
+    (user as AuthPracownik).haslo
+  );
   if (!isPasswordValid) {
     throw new Error("Incorrect credentials.");
   }
