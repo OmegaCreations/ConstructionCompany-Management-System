@@ -12,8 +12,8 @@ export const userLogin: any = async (req: Request, res: Response) => {
 
   // tries to log in with credentials
   try {
-    const { token, role } = await loginUser(email, haslo);
-    res.json({ token, role });
+    const { token, role, pracownik_id } = await loginUser(email, haslo);
+    res.json({ token, role, user_id: pracownik_id });
   } catch (err) {
     res
       .status(401)

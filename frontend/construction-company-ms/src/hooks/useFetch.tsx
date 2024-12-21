@@ -5,7 +5,7 @@ import { initialUserState, UserData } from "../utils/types";
 import { setUserData } from "../store/slices/userSlice";
 
 // implemented url data fetching hook to prevent copying code
-const useGetFetch = (url: string) => {
+const useFetchUser = (url: string) => {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -42,4 +42,4 @@ const useGetFetch = (url: string) => {
   return { data, error, loading };
 };
 
-export default useGetFetch;
+export default useFetchUser;

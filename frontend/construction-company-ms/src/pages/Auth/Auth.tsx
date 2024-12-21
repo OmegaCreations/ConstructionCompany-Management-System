@@ -29,7 +29,7 @@ const Auth: React.FC = () => {
 
     try {
       // fetch login endpoint
-      const response = await fetch(endpoint.USER_LOGIN, {
+      const response = await fetch(endpoint.USER_LOGIN(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -45,10 +45,11 @@ const Auth: React.FC = () => {
         return;
       }
 
-      const { token, role } = await response.json();
+      const { token, role, user_id } = await response.json();
       localStorage.setItem("jwt", token); // save jwt to local storage
       localStorage.setItem("userRole", role); // save role to local storage
-      dispatch(login({ token, role }));
+      localStorage.setItem("userID", user_id); // save role to local storage
+      dispatch(login({ token, role, user_id }));
       navigate("/dashboard");
     } catch (err) {
       console.error("Błąd podczas logowania:", err);
@@ -62,10 +63,13 @@ const Auth: React.FC = () => {
     if (!isUserAuthenticated || !role) {
       const token: string | null = localStorage.getItem("jwt");
       const user_role: string | null = localStorage.getItem("userRole");
+      const user_id: string | null = localStorage.getItem("userID");
 
       if (token && user_role) {
-        console.log("hello", token, user_role);
-        dispatch(login({ token: token, role: user_role }));
+        console.log("hello", token, user_role, user_id);
+        dispatch(
+          login({ token: token, role: user_role, user_id: Number(user_id) })
+        );
         navigate("/dashboard");
       }
     }

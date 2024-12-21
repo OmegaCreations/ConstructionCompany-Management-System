@@ -1,17 +1,18 @@
 import { UserData } from "../../utils/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import useGetFetch from "../../hooks/useGetFetch";
 import Loading from "../../components/Loading/Loading";
 import Popup from "../../components/Popup/Popup";
 import { endpoint } from "../../utils/endpoints";
 import { useState } from "react";
 import style from "./Profile.module.css";
+import useFetchUser from "../../hooks/useFetch";
 
 const Profile: React.FC = () => {
   const user: UserData = useSelector((state: RootState) => state.user);
-  const { error, loading } = useGetFetch(endpoint.USER_GET);
-  const [isSaving, setIsSaving] = useState(false);
+  const { user_id } = useSelector((state: RootState) => state.auth);
+  const { error, loading } = useFetchUser(endpoint.USER_GET(user_id));
+  //const [isSaving, setIsSaving] = useState(false);
 
   const [editableData, setEditableData] = useState({
     telefon: user.telefon,
@@ -63,7 +64,7 @@ const Profile: React.FC = () => {
     return <Popup type="error" text="Error loading data." />;
   }
 
-  const isManager = user.stanowisko === "manager";
+  const isManager = user.stanowisko_id === 1;
 
   return (
     <div>
@@ -91,7 +92,7 @@ const Profile: React.FC = () => {
               <strong>Current position: </strong>
               <input
                 type="text"
-                value={user.stanowisko}
+                value={user.stanowisko_nazwa}
                 disabled
                 className={style.inputField}
               />

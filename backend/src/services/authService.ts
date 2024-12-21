@@ -32,7 +32,7 @@ export const loginUser = async (email: string, haslo: string) => {
   );
 
   const role = getRoleByPositionId(user.stanowisko_id);
-  return { token, role };
+  return { token, role, pracownik_id: user.pracownik_id };
 };
 
 // verify token sent by user
