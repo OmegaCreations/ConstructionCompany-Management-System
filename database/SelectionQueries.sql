@@ -387,9 +387,44 @@ $$ LANGUAGE plpgsql;
 
 -- Stanowiska
 
+CREATE OR REPLACE FUNCTION get_stanowiska()
+RETURNS TABLE (
+    stanowisko_id INT,
+    nazwa VARCHAR,
+    opis TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.stanowisko_id,
+        s.nazwa,
+        s.opis
+    FROM stanowisko s;
+END;
+$$ LANGUAGE plpgsql;
+
 
 -- Zasób
 
+CREATE OR REPLACE FUNCTION get_zasoby()
+RETURNS TABLE (
+    zasob_id INT,
+    nazwa VARCHAR,
+    jednostka VARCHAR,
+    typ TEXT,
+    opis TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        z.zasob_id,
+        z.nazwa,
+        z.jednostka,
+        z.typ,
+        z.opis
+    FROM zasob z;
+END;
+$$ LANGUAGE plpgsql;
 
 
 

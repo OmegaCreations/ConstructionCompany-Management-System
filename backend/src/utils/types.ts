@@ -97,6 +97,22 @@ export interface MagazynZasobExtended extends MagazynZasob {
   koszt_jednostkowy: number;
 }
 
+// db returning resource type for specific position
+export interface Stanowisko {
+  stanowisko_id: number;
+  nazwa: string;
+  opis: string;
+}
+
+// db returning resource type for specific resource
+export interface Zasob {
+  zasob_id: number;
+  nazwa: string;
+  jednostka: string;
+  typ: string;
+  opis: string;
+}
+
 // ===================================
 // OTHER
 export interface CreateUserInput {
