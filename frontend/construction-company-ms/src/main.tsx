@@ -11,6 +11,11 @@ import store from "./store/store";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Navbar from "./components/Navbar/Navbar";
 import Profile from "./pages/Profile/Profile";
+import Workers from "./pages/Workers/Workers";
+import Clients from "./pages/Clients/Clients";
+import WarehouseData from "./pages/WarehouseData/WarehouseData";
+import Resources from "./pages/Resources/Resources";
+import Orders from "./pages/Orders/Orders";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -21,16 +26,33 @@ createRoot(document.getElementById("root")!).render(
 
       <BrowserRouter>
         {/* Navbar for all routes */}
-        <Navbar />
+        <div className="navContainer">
+          <Navbar />
+        </div>
         <main>
           <Routes>
             <Route path="/auth" element={<Auth />} />
 
             {/* Protected route checks if user has allowed role and returns auth component or passed child component */}
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute admin_route={false} />}>
               <Route path="/dashboard" element={<Dashboard />} />
             </Route>
-            <Route element={<ProtectedRoute />}>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/workers" element={<Workers />} />
+            </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/clients" element={<Clients />} />
+            </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/orders" element={<Orders />} />
+            </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/warehouse/items" element={<Resources />} />
+            </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/warehouse/data" element={<WarehouseData />} />
+            </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>

@@ -11,6 +11,7 @@ const Navbar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [submenu, setSubmenu] = useState(false);
+  const [submenuWarehouse, setSubmenuWarehouse] = useState(false);
   const [menu, setMenu] = useState(false);
 
   const handleToggleMenu = () => {
@@ -21,6 +22,11 @@ const Navbar: React.FC = () => {
   const handleToggleSubMenu = () => {
     if (!menu) setMenu(true);
     setSubmenu((prev) => !prev);
+  };
+
+  const handleToggleSubMenuWarehouse = () => {
+    if (!menu) setMenu(true);
+    setSubmenuWarehouse((prev) => !prev);
   };
 
   const handleLogOut = () => {
@@ -104,7 +110,7 @@ const Navbar: React.FC = () => {
           className={`${style.dropdownBtn} ${style.logout}`}
           onClick={handleLogOut}
         >
-          <a href="#">
+          <a href="">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               height="24px"
@@ -157,7 +163,7 @@ const Navbar: React.FC = () => {
           </li>
           <li>
             <button className={style.dropdownBtn} onClick={handleToggleSubMenu}>
-              <a href="#">
+              <a>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   height="24px"
@@ -213,14 +219,46 @@ const Navbar: React.FC = () => {
                   Zlecenia
                 </NavLink>
               </li>
-              <li>
-                <NavLink
-                  to="/warehouse"
-                  className={({ isActive }) => (isActive ? style.active : "")}
-                >
-                  Magazyny
-                </NavLink>
-              </li>
+              <button
+                className={style.dropdownBtn}
+                onClick={handleToggleSubMenuWarehouse}
+              >
+                <a>
+                  <span>Magazyny</span>
+                  <svg
+                    className={submenuWarehouse ? "" : style.rotate}
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#e8eaed"
+                  >
+                    <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+                  </svg>
+                </a>
+              </button>
+              <ul
+                className={
+                  submenuWarehouse ? style.subMenuWarehouseShow : style.subMenu
+                }
+              >
+                <li>
+                  <NavLink
+                    to="/warehouse/data"
+                    className={({ isActive }) => (isActive ? style.active : "")}
+                  >
+                    Zasoby Dostępne
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink
+                    to="/warehouse/items"
+                    className={({ isActive }) => (isActive ? style.active : "")}
+                  >
+                    Baza Zasobów
+                  </NavLink>
+                </li>
+              </ul>
             </ul>
           </li>
           <li>

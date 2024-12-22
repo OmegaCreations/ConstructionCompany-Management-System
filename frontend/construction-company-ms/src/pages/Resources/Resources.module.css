@@ -1,0 +1,14 @@
+.resourcesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 25px;
+
+  padding: 25px;
+}
+
+.resourcesContainer h3 {
+  max-width: 450px;
+  font-weight: 400;
+}

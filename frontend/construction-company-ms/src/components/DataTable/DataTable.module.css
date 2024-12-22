@@ -1,0 +1,129 @@
+/* Popup styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary);
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inputsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.popup input {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 5px;
+}
+
+.popup button {
+  background-color: var(--blue1);
+  color: var(--secondary);
+  font-weight: 500;
+  border: none;
+  padding: 15px 10px;
+
+  transition: 0.3s ease;
+}
+
+.popup button:hover {
+  background-color: var(--primary);
+  cursor: pointer;
+}
+
+/* Buttons */
+.addBtn {
+  background-color: var(--blue1);
+  padding: 15px 25px;
+  color: var(--secondary);
+  font-weight: 500;
+  margin: 10px 0px;
+  border: none;
+
+  transition: 0.3s ease;
+}
+
+.addBtn:hover {
+  background-color: var(--primary);
+  cursor: pointer;
+}
+
+/* DATA TABLE */
+.dataContainer {
+  max-width: 90vw;
+  max-height: 100vh;
+  overflow-x: auto;
+  overflow-y: auto;
+  font-size: 0.7em;
+}
+
+.dataContainer table {
+  border-radius: 15px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.dataContainer th {
+  background-color: var(--blue1);
+  color: var(--secondary);
+}
+
+.dataContainer tr:nth-child(even) {
+  background-color: var(--grey);
+}
+
+.dataContainer tr:nth-child(odd) {
+  background-color: var(--grey2);
+}
+
+.dataContainer tr:hover {
+  background-color: var(--brown1);
+}
+
+.dataContainer td,
+.dataContainer th {
+  padding: 15px 25px;
+  white-space: nowrap;
+}
+
+.actionBtns {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.dataContainer table button {
+  border-color: var(--brown1);
+  border-radius: 5px;
+  background-color: var(--brown2);
+  padding: 10px 15px;
+  color: var(--grey);
+  font-size: 0.8em;
+
+  transition: 0.3s ease;
+}
+
+.dataContainer table button:nth-child(2) {
+  background-color: var(--blue1);
+  color: var(--grey);
+  border: none;
+}
+.dataContainer table button:nth-child(2):hover {
+  background-color: var(--primary);
+}
+
+.dataContainer table button:hover {
+  cursor: pointer;
+  background-color: var(--brown3);
+}

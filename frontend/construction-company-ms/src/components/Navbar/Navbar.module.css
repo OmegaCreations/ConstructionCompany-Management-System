@@ -7,7 +7,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   width: 250px;
   padding: 5px 1em;
   background-color: var(--primary);
@@ -16,6 +16,7 @@
   top: 0;
   transition: 300ms ease-in-out;
   overflow-x: hidden;
+  overflow-y: auto;
   text-wrap: nowrap;
 }
 
@@ -40,6 +41,12 @@
   display: flex;
   justify-content: flex-end;
   margin-bottom: 16px;
+}
+
+.logo button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo button svg {
@@ -76,7 +83,7 @@
 
 .dropdownBtn svg {
   transition: 300ms ease;
-  transform: rotate(0deg);
+  transform: rotate(180deg);
 }
 
 .active {
@@ -106,7 +113,7 @@
   transition: 300ms ease-in-out;
 }
 
-.subMenu li {
+.subMenu ul li {
   opacity: 0;
   padding-left: 2em;
   transition: 500ms ease-in-out;
@@ -117,10 +124,15 @@
   transition: 300ms ease-in-out;
 }
 
-.subMenuShow li {
+.subMenuShow ul li {
   opacity: 1;
   padding-left: 2em;
   transition: 500ms ease-in-out;
+}
+
+/* Parent selector :) - W3C's Selectors Level 4 Working Draft includes a :has() pseudo-class. All major browsers support this selector. */
+.subMenuShow:has(> .subMenuWarehouseShow) {
+  height: 400px;
 }
 
 /* toggle whole menu */
@@ -145,6 +157,7 @@
 
 .closed .logo button svg {
   rotate: 180deg;
+  margin-right: 10px;
 }
 
 .closed .dropdownBtn svg:last-child {
@@ -157,7 +170,7 @@
   overflow: hidden;
 }
 
-/* TODO: MOBILE VERSION */
+/* MOBILE VERSION */
 @media (max-width: 800px) {
   .sidebar {
     width: 100%;

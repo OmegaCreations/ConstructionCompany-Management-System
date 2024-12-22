@@ -6,7 +6,7 @@ import Popup from "../../components/Popup/Popup";
 import { endpoint } from "../../utils/endpoints";
 import { useState } from "react";
 import style from "./Profile.module.css";
-import useFetchUser from "../../hooks/useFetch";
+import useFetchUser from "../../hooks/useFetchUser";
 
 const Profile: React.FC = () => {
   const user: UserData = useSelector((state: RootState) => state.user);

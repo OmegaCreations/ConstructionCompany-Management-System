@@ -17,7 +17,6 @@ const useFetchUser = (url: string) => {
     if (user === initialUserState) {
       // only fetch if there is no user data
       (() => {
-        console.log("Hello");
         setLoading(true);
         fetch(url, {
           method: "GET",

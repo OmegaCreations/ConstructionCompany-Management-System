@@ -5,10 +5,16 @@
   --primary: #0a0908;
   --secondary: #fff;
   --grey: #f7f7f8;
+  --grey2: #ededed;
   --blue1: #22333b;
   --brown1: #eae0d5;
   --brown2: #c6ac8f;
   --brown3: #5e503f;
+}
+
+#root {
+  display: flex;
+  flex-direction: row;
 }
 
 body {
@@ -30,4 +36,22 @@ main {
   flex-direction: row;
   align-items: center;
   justify-content: space-around;
+  width: 100%;
+}
+
+.navContainer {
+  width: 65px;
+  height: 100vh;
+}
+
+/* MOBILE VERSION */
+@media (max-width: 800px) {
+  #root {
+    flex-direction: column;
+  }
+
+  .navContainer {
+    width: 100vw;
+    height: 65px;
+  }
 }
