@@ -94,6 +94,9 @@ export const getSpecificWorkDay: any = async (req: any, res: Response) => {
       month,
       day
     );
+    if (!workdayData) {
+      return res.status(200).json({});
+    }
     return res.status(200).json(workdayData);
   } catch (err) {
     res.status(500).json({

@@ -23,12 +23,13 @@ export const useFetchData = (url: string) => {
           return res.json();
         })
         .then((data) => {
+          console.log(data);
           setData(data);
           setLoading(false);
         })
         .catch((err) => setError(err));
     })(); // self invoking function :)
-  }, []);
+  }, [url, token]);
 
   return { data, error, loading };
 };

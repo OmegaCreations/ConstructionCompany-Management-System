@@ -7,9 +7,11 @@
   --grey: #f7f7f8;
   --grey2: #ededed;
   --blue1: #22333b;
+  --blue2: #ebf0f3;
   --brown1: #eae0d5;
   --brown2: #c6ac8f;
   --brown3: #5e503f;
+  --green1: #81b29a;
 }
 
 #root {
@@ -37,6 +39,7 @@ main {
   align-items: center;
   justify-content: space-around;
   width: 100%;
+  padding: 10px 0;
 }
 
 .navContainer {

@@ -18,6 +18,7 @@ import Resources from "./pages/Resources/Resources";
 import Orders from "./pages/Orders/Orders";
 import ClientDetails from "./pages/Clients/Details/ClientDetails";
 import OrderDetails from "./pages/Orders/Details/OrderDetails";
+import Calendar from "./pages/Calendar/Calendar";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -39,6 +40,11 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<ProtectedRoute admin_route={false} />}>
               <Route path="/dashboard" element={<Dashboard />} />
             </Route>
+
+            <Route element={<ProtectedRoute admin_route={false} />}>
+              <Route path="/calendar" element={<Calendar />} />
+            </Route>
+
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/workers" element={<Workers />} />
             </Route>

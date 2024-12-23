@@ -1,0 +1,178 @@
+.calendarContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background-color: var(--grey2);
+}
+
+/* Calendar section */
+.calendarSection {
+  flex: 1; /* Rozciąga się, zajmując całą dostępną szerokość */
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.calendarHeader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 45px;
+  padding: 10px;
+}
+
+.monthYearDisplay {
+  text-align: center;
+  font-weight: 600;
+  width: 150px;
+}
+
+.calendarHeader button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--grey2);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.calendarHeader svg {
+  fill: var(--blue1);
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.day {
+  text-align: center;
+  padding: 5px;
+  color: #999fa6;
+  font-weight: 500;
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(40px, 1fr);
+  gap: 5px;
+  flex-grow: 1;
+}
+
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  margin: auto;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  max-width: 50px;
+  max-height: 50px;
+  transition: 0.2s ease;
+}
+
+.date:hover {
+  color: var(--secondary);
+  background-color: var(--blue1);
+}
+
+.date.active {
+  color: var(--secondary);
+  background-color: var(--brown2);
+}
+
+.date.selected {
+  color: var(--secondary);
+  background-color: var(--brown3);
+}
+
+.workday {
+  background-color: var(--green1);
+  color: var(--blue1);
+  font-weight: 900;
+}
+
+.date.inactive {
+  color: #d2d2d2;
+}
+
+.date.inactive:hover {
+  color: var(--secondary);
+}
+
+/* Work info section */
+.workInfo {
+  width: 350px; /* Stała szerokość */
+  background-color: var(--secondary);
+  color: var(--blue1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 35px 5px;
+  border: none;
+  border-radius: 15px;
+}
+
+.workInfo h1 {
+  font-size: 2em;
+}
+
+.workInfo h2 {
+  font-size: 1.6em;
+  position: relative;
+  top: 50%;
+}
+
+.workInfo .inputs {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.inputs div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputs input,
+.inputs textarea {
+  background-color: var(--secondary);
+  border: 1px solid var(--blue1);
+  border-radius: 10px;
+  padding: 10px 15px;
+}
+
+.inputs button {
+  background-color: var(--brown2);
+  border: 1px solid var(--brown2);
+  color: var(--secondary);
+  border-radius: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+
+  transition: 0.3s ease;
+}
+
+.inputs button:hover {
+  background-color: var(--secondary);
+  border: 1px solid var(--brown2);
+  color: var(--brown2);
+}
