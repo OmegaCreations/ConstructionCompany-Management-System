@@ -16,6 +16,8 @@ import Clients from "./pages/Clients/Clients";
 import WarehouseData from "./pages/WarehouseData/WarehouseData";
 import Resources from "./pages/Resources/Resources";
 import Orders from "./pages/Orders/Orders";
+import ClientDetails from "./pages/Clients/Details/ClientDetails";
+import OrderDetails from "./pages/Orders/Details/OrderDetails";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -40,19 +42,28 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/workers" element={<Workers />} />
             </Route>
+
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/clients" element={<Clients />} />
             </Route>
             <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/clients/details/:id" element={<ClientDetails />} />
+            </Route>
+
+            <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/orders" element={<Orders />} />
             </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route path="/orders/details/:id" element={<OrderDetails />} />
+            </Route>
+
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/warehouse/items" element={<Resources />} />
             </Route>
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/warehouse/data" element={<WarehouseData />} />
             </Route>
-            <Route element={<ProtectedRoute admin_route={true} />}>
+            <Route element={<ProtectedRoute admin_route={false} />}>
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>

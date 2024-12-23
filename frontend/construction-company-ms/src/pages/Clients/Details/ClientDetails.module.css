@@ -1,0 +1,15 @@
+.clientContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 25px;
+
+  padding: 25px;
+}
+
+.clientData {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

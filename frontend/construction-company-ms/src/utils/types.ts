@@ -22,3 +22,34 @@ export const initialUserState: UserData = {
   stanowisko_nazwa: "",
   rola: null,
 };
+
+// client data
+export interface ClientData {
+  klient_id: number;
+  imie: string;
+  nazwisko: string;
+  firma: string;
+  telefon: string;
+  email: string;
+  adres: string;
+}
+
+// order data
+export interface OrderData {
+  zlecenie_id: number;
+  klient_imie: string;
+  klient_nazwisko: string;
+  klient_firma: string;
+  opis: string;
+  data_zlozenia: string;
+  data_rozpoczenia: string;
+  data_zakonczenia: string;
+  lokalizacja: string;
+}
+
+export interface OrderCosts {
+  liczba_pracownikow: number;
+  przepracowane_godziny: number;
+  koszty_pracownikow: number;
+  koszty_zasobow: number;
+}

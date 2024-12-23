@@ -17,7 +17,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- ✅🧪 - "http://localhost:5000/api/user" - zwraca informacje o wszystkich użytkownikach
+- ✅🧪☑️ - "http://localhost:5000/api/user" - zwraca informacje o wszystkich użytkownikach
 - ✅🧪 - "http://localhost:5000/api/user/:id" - zwraca informacje o konkretnym użytkowniku
 - ✅🧪 - "http://localhost:5000/api/user/:id/paycheck" - zwraca informacje o wypłacie konkretnego użytkownika
 
@@ -29,8 +29,8 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- ✅🧪 - "http://localhost:5000/api/client" - zwraca informacje o wszystkich klientach
-- ✅🧪 - "http://localhost:5000/api/client/:id" - zwraca informacje o konkretnym kliencie
+- ✅🧪☑️ - "http://localhost:5000/api/client" - zwraca informacje o wszystkich klientach
+- ✅🧪☑️ - "http://localhost:5000/api/client/:id" - zwraca informacje o konkretnym kliencie
 
 ### Zlecenie
 
@@ -44,7 +44,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- ✅🧪 - "http://localhost:5000/api/order" - zwraca informacje o wszystkich zleceniach
+- ✅🧪☑️ - "http://localhost:5000/api/order" - zwraca informacje o wszystkich zleceniach
 - ✅🧪 - "http://localhost:5000/api/order/:id" - zwraca informacje o konkretnym zleceniu
 - ✅🧪 - "http://localhost:5000/api/order/client/:id" - zwraca informacje o wszystkich zleceniach klienta
 - ✅🧪 - "http://localhost:5000/api/order/:id/costs" - zwraca koszty dla danego zlecenia (pracownicy + materiały)
@@ -73,7 +73,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- ✅🧪 - "http://localhost:5000/api/warehouse" - zwraca informacje o wszystkich magazynach
+- ✅🧪☑️ - "http://localhost:5000/api/warehouse" - zwraca informacje o wszystkich magazynach
 - ✅🧪 - "http://localhost:5000/api/warehouse/:id/resources" - zwraca informacje o zasobach konkretnego magazynu
 
 ### Stanowiska
@@ -96,7 +96,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 (w razie potrzeby dostania informacji o jednym zasobie wystarczy filtrowanie na poziomie js'a)
 
-- ✅🧪 - "http://localhost:5000/api/resource" - zwraca informacje o wszystkich zasobach
+- ✅🧪☑️ - "http://localhost:5000/api/resource" - zwraca informacje o wszystkich zasobach
 
 ## ZAPYTANIA POST
 

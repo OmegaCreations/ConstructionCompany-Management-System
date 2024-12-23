@@ -14,7 +14,7 @@ const Clients: React.FC = () => {
         endpoint={endpoint.CLIENT_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={"TODO"}
-        doSubpageDetails={true}
+        subPageURL={"/clients/details"}
       />
     </div>
   );

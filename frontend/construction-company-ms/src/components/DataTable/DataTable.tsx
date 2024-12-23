@@ -8,14 +8,14 @@ interface DataTableProps {
   endpoint: string;
   editEndpoint: string | null;
   addEndpoint: string | null;
-  doSubpageDetails: boolean;
+  subPageURL: string | null;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   endpoint,
   editEndpoint,
   addEndpoint,
-  doSubpageDetails = false,
+  subPageURL,
 }) => {
   const { data, error, loading } = useFetchData(endpoint);
   const [editingItem, setEditingItem] = useState<Record<
@@ -62,7 +62,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
   if (loading) return <Loading />;
   if (error) return error;
-  if (data.length === 0) return "No data.";
+  if (data.length === 0) return <h1>Brak</h1>;
 
   return (
     <div className={style.dataContainer}>
@@ -91,14 +91,14 @@ const DataTable: React.FC<DataTableProps> = ({
                   >
                     Edytuj
                   </button>
-                  {doSubpageDetails && (
+                  {subPageURL && (
                     <button
                       onClick={() => {
                         const idKey = Object.keys(obj).find((key) =>
                           key.toLowerCase().includes("id")
                         );
                         const idValue = idKey ? obj[idKey] : "";
-                        navigate(`details/${idValue}`);
+                        navigate(`${subPageURL}/${idValue}`);
                       }}
                     >
                       Więcej
