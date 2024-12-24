@@ -75,8 +75,8 @@ const Profile: React.FC = () => {
           <h1>Your data</h1>
           <p>
             {isManager
-              ? "This data will be shared to every personnel and your clients as contact information. If there are any issues, please update it below."
-              : "This data is visible to your manager and other personnel. If there are any errors, please contact your manager."}
+              ? "Dane te będą udostępniane każdemu personelowi i Twoim klientom jako dane kontaktowe. Jeśli wystąpią jakiekolwiek problemy, zaktualizuj je poniżej."
+              : "Dane te są widoczne dla Twojego menedżera i innego personelu. Jeśli wystąpią jakiekolwiek błędy, skontaktuj się ze swoim menadżerem."}
           </p>
           <div className={style.profileInfo}>
             <div>

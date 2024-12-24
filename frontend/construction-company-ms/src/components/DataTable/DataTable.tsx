@@ -71,9 +71,7 @@ const DataTable: React.FC<DataTableProps> = ({
         <thead>
           <tr>
             {Object.keys(data[0] as Record<string, unknown>).map((dataKey) => (
-              <th key={dataKey}>
-                {dataKey.split("_")[0]} {dataKey.split("_")[1]}
-              </th>
+              <th key={dataKey}>{dataKey.split("_").join(" ")}</th>
             ))}
             {editEndpoint && <th>Akcje</th>}
           </tr>
@@ -119,9 +117,7 @@ const DataTable: React.FC<DataTableProps> = ({
               .filter(([key]) => !key.toLowerCase().includes("id"))
               .map(([key]) => (
                 <div key={key}>
-                  <label>
-                    {key.split("_")[0]} {key.split("_")[1]}
-                  </label>
+                  <label>{key.split("_").join(" ")}</label>
                   <input
                     type="text"
                     value={editedData[key] as string}

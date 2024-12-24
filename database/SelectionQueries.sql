@@ -172,23 +172,26 @@ RETURNS TABLE (
     jednostka VARCHAR,
     typ TEXT,
     koszt_jednostkowy NUMERIC,
-    ilosc_potrzebna INT
+    ilosc_potrzebna INT,
+    ilosc_w_magazynie BIGINT
 ) AS $$
 BEGIN
     RETURN QUERY
     SELECT 
         z.zlecenie_id,
-        mz.zasob_id,
+        r.zasob_id,
         r.nazwa,
         r.jednostka,
         r.typ,
         r.koszt_jednostkowy,
-        zz.ilosc_potrzebna
+        zz.ilosc_potrzebna,
+        COALESCE(SUM(mz.ilosc), 0) AS ilosc_w_magazynie
     FROM zasob_zlecenie zz
-    JOIN magazyn_zasob mz using(magazyn_zasob_id)
-    JOIN zasob r using(zasob_id)
-    JOIN zlecenie z using(zlecenie_id)
-    WHERE zz.zlecenie_id = zlecenie_id_param;
+    JOIN zlecenie z ON zz.zlecenie_id = z.zlecenie_id
+    JOIN zasob r ON zz.magazyn_zasob_id IS NOT NULL AND r.zasob_id = (SELECT mz2.zasob_id FROM magazyn_zasob mz2 WHERE mz2.magazyn_zasob_id = zz.magazyn_zasob_id)
+    LEFT JOIN magazyn_zasob mz ON r.zasob_id = mz.zasob_id
+    WHERE zz.zlecenie_id = zlecenie_id_param
+    GROUP BY z.zlecenie_id, r.zasob_id, r.nazwa, r.jednostka, r.typ, r.koszt_jednostkowy, zz.ilosc_potrzebna;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -249,7 +252,14 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION get_dzienpracy_by_month(year_param INT, month_param INT, pracownik_id_param INT DEFAULT NULL)
 RETURNS TABLE (
     pracownik_id INT,
+    pracownik_imie VARCHAR,
+    pracownik_nazwisko VARCHAR,
     zlecenie_id INT,
+    zlecenie_opis TEXT,
+    zlecenie_lokalizacja VARCHAR,
+    klient_imie VARCHAR,
+    klient_nazwisko VARCHAR,
+    klient_firma VARCHAR,
     data DATE,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
@@ -258,17 +268,26 @@ BEGIN
     RETURN QUERY
     SELECT
         dp.pracownik_id,
+        p.imie AS pracownik_imie,
+        p.nazwisko AS pracownik_nazwisko,
         dp.zlecenie_id,
+        z.opis AS zlecenie_opis,
+        z.lokalizacja AS zlecenie_lokalizacja,
+        k.imie AS klient_imie,
+        k.nazwisko AS klient_nazwisko,
+        k.firma AS klient_firma,
         dp.data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
+    JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
+    JOIN zlecenie z ON dp.zlecenie_id = z.zlecenie_id
+    JOIN klient k ON z.klient_id = k.klient_id
     WHERE EXTRACT(YEAR FROM dp.data) = year_param
       AND EXTRACT(MONTH FROM dp.data) = month_param
-      AND pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param;
+      AND (pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param);
 END;
 $$ LANGUAGE plpgsql;
-
 
 -- =========================================
 -- Funkcja: Zwraca dni pracy dla danej daty
@@ -276,20 +295,37 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION get_dzienpracy_by_date(pracownik_id_param INT, year_param INT, month_param INT, day_param INT)
 RETURNS TABLE (
     pracownik_id INT,
+    pracownik_imie VARCHAR,
+    pracownik_nazwisko VARCHAR,
     zlecenie_id INT,
+    zlecenie_opis TEXT,
+    zlecenie_lokalizacja VARCHAR,
+    klient_imie VARCHAR,
+    klient_nazwisko VARCHAR,
+    klient_firma VARCHAR,
     data DATE,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
+    SELECT
         dp.pracownik_id,
+        p.imie AS pracownik_imie,
+        p.nazwisko AS pracownik_nazwisko,
         dp.zlecenie_id,
+        z.opis AS zlecenie_opis,
+        z.lokalizacja AS zlecenie_lokalizacja,
+        k.imie AS klient_imie,
+        k.nazwisko AS klient_nazwisko,
+        k.firma AS klient_firma,
         dp.data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
+    JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
+    JOIN zlecenie z ON dp.zlecenie_id = z.zlecenie_id
+    JOIN klient k ON z.klient_id = k.klient_id
     WHERE EXTRACT(YEAR FROM dp.data) = year_param
       AND EXTRACT(MONTH FROM dp.data) = month_param
       AND EXTRACT(DAY FROM dp.data) = day_param

@@ -53,3 +53,19 @@ export interface OrderCosts {
   koszty_pracownikow: number;
   koszty_zasobow: number;
 }
+
+// WORKDAY DATA
+export interface WorkDay {
+  pracownik_id: number;
+  zlecenie_id: number;
+  data: string;
+  godzina_rozpoczecia: string | null;
+  godzina_zakonczenia: string | null;
+  pracownik_imie: string;
+  pracownik_nazwisko: string;
+  zlecenie_opis: string;
+  zlecenie_lokalizacja: string;
+  klient_imie: string;
+  klient_nazwisko: string;
+  klient_firma: string;
+}

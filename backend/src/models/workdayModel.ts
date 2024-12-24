@@ -8,8 +8,10 @@ import { DzienPracy } from "../utils/types";
 
 // Finds all workdays for all users
 // returns DzienPracy[] type
+
 export const getAllByMonthAndYear = async (year: number, month: number) => {
   const query = "select * from get_dzienpracy_by_month($1, $2, null)";
+
   const result: QueryResult<DzienPracy> = await client.query(query, [
     year,
     month,

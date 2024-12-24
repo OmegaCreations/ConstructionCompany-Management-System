@@ -73,8 +73,8 @@ VALUES
 -- =========================================
 INSERT INTO zlecenie (zlecenie_id, klient_id, opis, data_zlozenia, data_rozpoczecia, data_zakonczenia, lokalizacja)
 VALUES 
-(1, 1, 'Instalacja sprzętu IT', '2024-12-01', '2024-12-02', '2024-12-05', 'Kraków'),
-(2, 2, 'Naprawa maszyn przemysłowych', '2024-12-03', '2024-12-04', '2024-12-10', 'Warszawa'),
+(1, 1, 'Instalacja sprzętu IT', '2024-12-01', '2024-12-02', '2024-12-05', 'Kraków, ul. Czarnowiejska 7'),
+(2, 2, 'Naprawa maszyn przemysłowych', '2024-12-03', '2024-12-04', '2024-12-10', 'Kraków, os. Dywizjonu 303 44'),
 (3, 3, 'Projektowanie wnętrz biurowych', '2024-12-05', '2024-12-06', '2024-12-12', 'Łódź'),
 (4, 4, 'Budowa hali produkcyjnej', '2024-12-07', '2024-12-08', '2024-12-20', 'Wrocław'),
 (5, 5, 'Automatyzacja linii produkcyjnej', '2024-12-09', '2024-12-10', '2024-12-15', 'Gdańsk'),
@@ -93,7 +93,11 @@ VALUES
 (1, 2, '2024-12-03'),
 (1, 3, '2024-12-07'),
 (2, 2, '2024-12-04'),
-(3, 3, '2024-12-06'),
+(2, 2, '2024-12-05'),
+(2, 2, '2024-12-06'),
+(2, 1, '2024-12-07'),
+(2, 1, '2024-12-20'),
+(3, 3, '2024-12-08'),
 (4, 4, '2024-12-11'),
 (5, 5, '2024-12-10'),
 (6, 6, '2024-12-12'),
@@ -131,16 +135,17 @@ VALUES
 -- =========================================
 INSERT INTO magazyn_zasob (magazyn_zasob_id, ilosc, magazyn_id, zasob_id)
 VALUES
-(1, 500, 1, 1),  -- 500 kg stali w magazynie 1
+(1, 5, 1, 1),  -- 5 kg stali w magazynie 1
 (2, 300, 1, 2),  -- 300 m kabla w magazynie 1
 (3, 50, 2, 3),   -- 50 monitorów w magazynie 2
 (4, 20, 2, 4),   -- 20 laptopów w magazynie 2
 (5, 100, 1, 5),  -- 100 m³ drewna w magazynie 1
 (6, 40, 1, 6),   -- 40 litrów farby w magazynie 1
 (7, 1000, 1, 7), -- 1000 śrub w magazynie 1
-(8, 200, 2, 8),  -- 200 płyt gipsowych w magazynie 2
+(8, 20, 2, 8),  -- 20 płyt gipsowych w magazynie 2
 (9, 10, 2, 9),   -- 10 drukarek w magazynie 2
-(10, 15, 2, 10); -- 15 routerów w magazynie 2
+(10, 15, 2, 10), -- 15 routerów w magazynie 2
+(11, 5, 2, 1);  -- 5 kg stali w magazynie 2
 
 
 -- =========================================
@@ -148,7 +153,9 @@ VALUES
 -- =========================================
 INSERT INTO zasob_zlecenie (magazyn_zasob_id, zlecenie_id, ilosc_potrzebna)
 VALUES
-(1, 1, 20),   -- 20 kg stali użyte do instalacji sprzętu IT
+(1, 1, 200),   -- 20 kg stali użyte do instalacji sprzętu IT
+(5, 1, 300),
+(8, 1, 30),
 (2, 2, 50),   -- 50 m kabla użyte do naprawy maszyn przemysłowych
 (3, 3, 2),    -- 2 monitory dostarczone do projektu wnętrz
 (4, 4, 1),    -- 1 laptop do budowy hali produkcyjnej

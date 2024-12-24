@@ -5,6 +5,7 @@ import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
+import { UserData, WorkDay } from "../../utils/types";
 
 const Calendar: React.FC = () => {
   const [startHour, setStartHour] = useState("");
@@ -22,30 +23,36 @@ const Calendar: React.FC = () => {
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
 
-  const { user_id } = useSelector((state: RootState) => state.auth);
+  const { user_id, role } = useSelector((state: RootState) => state.auth);
+  const [chosenUserID, setChosenUserID] = useState(user_id);
+
   const [apiUrl, setApiUrl] = useState("");
   const [monthApiUrl, setMonthApiUrl] = useState("");
+
+  // fetching data
   const { data: workdayData, error, loading } = useFetchData(apiUrl);
   const { data: monthWorkdayData } = useFetchData(monthApiUrl);
+  const { data: userFetchedData } = useFetchData(endpoint.USER_GET_ALL());
+  const userData: UserData[] = userFetchedData as unknown as UserData[];
 
   useEffect(() => {
     const newUrl = endpoint.WORKDAY_GET_BY_DATE(
-      user_id,
+      chosenUserID,
       activeDate.getFullYear(),
       activeDate.getMonth() + 1,
       activeDate.getDate()
     );
     setApiUrl(newUrl);
-  }, [activeDate, user_id]);
+  }, [activeDate, chosenUserID]);
 
   useEffect(() => {
     const newMonthUrl = endpoint.WORKDAY_GET_BY_MONTH(
-      user_id,
+      chosenUserID,
       currentYear,
       currentMonth
     );
     setMonthApiUrl(newMonthUrl);
-  }, [currentDate, user_id]);
+  }, [currentDate, chosenUserID]);
 
   const updateCalendar = () => {
     const firstDay = new Date(currentYear, currentMonth - 1, 1);
@@ -141,7 +148,6 @@ const Calendar: React.FC = () => {
   }, [Dates]);
 
   const handleSave = () => {};
-
   return (
     <div className={style.calendarContainer}>
       <section className={style.calendarSection}>
@@ -158,6 +164,20 @@ const Calendar: React.FC = () => {
               <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
             </svg>
           </button>
+          {role === "manager" && (
+            <select
+              onChange={(e) => {
+                setChosenUserID(Number(e.target.value));
+              }}
+              defaultValue={chosenUserID}
+            >
+              {userData.map((user: UserData) => (
+                <option value={user.pracownik_id}>
+                  {user.imie} {user.nazwisko}
+                </option>
+              ))}
+            </select>
+          )}
           <div className={style.monthYearDisplay}>{monthYear}</div>
           <button onClick={setNextDate}>
             <svg
@@ -199,11 +219,36 @@ const Calendar: React.FC = () => {
               <h2>Dzień wolny, brak pracy</h2>
             ) : (
               <div className={style.inputs}>
+                <h3>
+                  {(workdayData as unknown as WorkDay).pracownik_imie}{" "}
+                  {(workdayData as unknown as WorkDay).pracownik_nazwisko}
+                </h3>
+                <span>
+                  <strong>Lokalizacja: </strong>
+                  <a>
+                    {(workdayData as unknown as WorkDay).zlecenie_lokalizacja}
+                  </a>
+                </span>
+                <span>
+                  <strong>Zleceniodawca:</strong>
+                  {(workdayData as unknown as WorkDay).klient_imie}{" "}
+                  {(workdayData as unknown as WorkDay).klient_nazwisko} -
+                  {(workdayData as unknown as WorkDay).klient_firma}
+                </span>
+                <p>
+                  <strong>Opis zleceniodawcy:</strong>
+                  {(workdayData as unknown as WorkDay).zlecenie_opis}
+                </p>
                 <div>
                   <label>Godzina rozpoczęcia:</label>
                   <input
                     type="time"
-                    value={startHour}
+                    value={
+                      !(workdayData as unknown as WorkDay).godzina_rozpoczecia
+                        ? "12:00"
+                        : (workdayData as unknown as WorkDay)
+                            .godzina_rozpoczecia
+                    }
                     onChange={(e) => setStartHour(e.target.value)}
                   />
                 </div>
@@ -211,7 +256,12 @@ const Calendar: React.FC = () => {
                   <label>Godzina zakończenia:</label>
                   <input
                     type="time"
-                    value={endHour}
+                    value={
+                      !(workdayData as unknown as WorkDay).godzina_zakonczenia
+                        ? "12:00"
+                        : (workdayData as unknown as WorkDay)
+                            .godzina_zakonczenia
+                    }
                     onChange={(e) => setEndHour(e.target.value)}
                   />
                 </div>

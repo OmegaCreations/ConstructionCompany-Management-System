@@ -53,6 +53,7 @@ export interface ZlecenieZasob {
   typ: string;
   koszt_jednostkowy: number;
   ilosc_potrzebna: number;
+  ilosc_w_magazynie: number;
 }
 
 // needed costs for the specific order
@@ -70,6 +71,13 @@ export interface DzienPracy {
   data: string;
   godzina_rozpoczecia: string;
   godzina_zakonczenia: string;
+  pracownik_imie: string;
+  pracownik_nazwisko: string;
+  zlecenie_opis: string;
+  zlecenie_lokalizacja: string;
+  klient_imie: string;
+  klient_nazwisko: string;
+  klient_firma: string;
 }
 
 // db returning warehouse type
