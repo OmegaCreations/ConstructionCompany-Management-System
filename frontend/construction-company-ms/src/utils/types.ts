@@ -58,6 +58,8 @@ export interface OrderCosts {
 export interface WorkDay {
   pracownik_id: number;
   zlecenie_id: number;
+  opis_pracownika: string;
+  opis_managera: string;
   data: string;
   godzina_rozpoczecia: string | null;
   godzina_zakonczenia: string | null;
@@ -68,4 +70,20 @@ export interface WorkDay {
   klient_imie: string;
   klient_nazwisko: string;
   klient_firma: string;
+}
+
+// warehouse data
+export interface Warehouse {
+  magazyn_id: number;
+  nazwa: string;
+  lokalizacja: string;
+}
+
+// Resource data
+export interface Resource {
+  zasob_id: number;
+  nazwa: string;
+  jednostka: string;
+  typ: string;
+  opis: string;
 }

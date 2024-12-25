@@ -14,6 +14,7 @@ const WarehouseData: React.FC = () => {
         endpoint={endpoint.WAREHOUSE_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={"TODO"}
+        subPageURL={"/warehouse/data/details"}
       />
     </div>
   );

@@ -260,6 +260,8 @@ RETURNS TABLE (
     klient_imie VARCHAR,
     klient_nazwisko VARCHAR,
     klient_firma VARCHAR,
+    opis_pracownika TEXT,
+    opis_managera TEXT,
     data DATE,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
@@ -276,6 +278,8 @@ BEGIN
         k.imie AS klient_imie,
         k.nazwisko AS klient_nazwisko,
         k.firma AS klient_firma,
+        dp.opis_pracownika,
+        dp.opis_managera,
         dp.data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
@@ -288,6 +292,7 @@ BEGIN
       AND (pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param);
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- =========================================
 -- Funkcja: Zwraca dni pracy dla danej daty
@@ -303,6 +308,8 @@ RETURNS TABLE (
     klient_imie VARCHAR,
     klient_nazwisko VARCHAR,
     klient_firma VARCHAR,
+    opis_pracownika TEXT,
+    opis_managera TEXT,
     data DATE,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
@@ -319,6 +326,8 @@ BEGIN
         k.imie AS klient_imie,
         k.nazwisko AS klient_nazwisko,
         k.firma AS klient_firma,
+        dp.opis_pracownika,
+        dp.opis_managera,
         dp.data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia

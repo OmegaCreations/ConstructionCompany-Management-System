@@ -1,0 +1,23 @@
+.orderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 25px;
+
+  padding: 25px;
+}
+
+.orderData {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 15px;
+}
+
+.orderCosts {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 10px;
+}

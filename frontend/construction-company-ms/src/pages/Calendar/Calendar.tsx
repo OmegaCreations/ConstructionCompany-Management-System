@@ -10,10 +10,6 @@ import { UserData, WorkDay } from "../../utils/types";
 const Calendar: React.FC = () => {
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
-  const [employeeComment, setEmployeeComment] = useState("");
-  const [managerComment, setManagerComment] = useState(
-    "Przykładowy komentarz menedżera"
-  );
 
   const [monthYear, setMonthYear] = useState("");
   const [Dates, setDates] = useState("");
@@ -30,7 +26,14 @@ const Calendar: React.FC = () => {
   const [monthApiUrl, setMonthApiUrl] = useState("");
 
   // fetching data
-  const { data: workdayData, error, loading } = useFetchData(apiUrl);
+  const { data, error, loading } = useFetchData(apiUrl);
+  const workdayData: WorkDay = data as unknown as WorkDay;
+  const [employeeComment, setEmployeeComment] = useState(
+    workdayData.opis_pracownika
+  );
+  const [managerComment, setManagerComment] = useState(
+    workdayData.opis_managera
+  );
   const { data: monthWorkdayData } = useFetchData(monthApiUrl);
   const { data: userFetchedData } = useFetchData(endpoint.USER_GET_ALL());
   const userData: UserData[] = userFetchedData as unknown as UserData[];
@@ -220,20 +223,25 @@ const Calendar: React.FC = () => {
             ) : (
               <div className={style.inputs}>
                 <h3>
-                  {(workdayData as unknown as WorkDay).pracownik_imie}{" "}
-                  {(workdayData as unknown as WorkDay).pracownik_nazwisko}
+                  {workdayData.pracownik_imie} {workdayData.pracownik_nazwisko}
                 </h3>
                 <span>
                   <strong>Lokalizacja: </strong>
-                  <a>
-                    {(workdayData as unknown as WorkDay).zlecenie_lokalizacja}
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${(
+                      workdayData as unknown as WorkDay
+                    ).zlecenie_lokalizacja
+                      .split(" ")
+                      .join("+")}`}
+                    target="_blank"
+                  >
+                    {workdayData.zlecenie_lokalizacja}
                   </a>
                 </span>
                 <span>
                   <strong>Zleceniodawca:</strong>
-                  {(workdayData as unknown as WorkDay).klient_imie}{" "}
-                  {(workdayData as unknown as WorkDay).klient_nazwisko} -
-                  {(workdayData as unknown as WorkDay).klient_firma}
+                  {workdayData.klient_imie} {workdayData.klient_nazwisko} -
+                  {workdayData.klient_firma}
                 </span>
                 <p>
                   <strong>Opis zleceniodawcy:</strong>
@@ -244,10 +252,9 @@ const Calendar: React.FC = () => {
                   <input
                     type="time"
                     value={
-                      !(workdayData as unknown as WorkDay).godzina_rozpoczecia
+                      !workdayData.godzina_rozpoczecia
                         ? "12:00"
-                        : (workdayData as unknown as WorkDay)
-                            .godzina_rozpoczecia
+                        : workdayData.godzina_rozpoczecia
                     }
                     onChange={(e) => setStartHour(e.target.value)}
                   />
@@ -257,24 +264,31 @@ const Calendar: React.FC = () => {
                   <input
                     type="time"
                     value={
-                      !(workdayData as unknown as WorkDay).godzina_zakonczenia
+                      !workdayData.godzina_zakonczenia
                         ? "12:00"
-                        : (workdayData as unknown as WorkDay)
-                            .godzina_zakonczenia
+                        : workdayData.godzina_zakonczenia
                     }
                     onChange={(e) => setEndHour(e.target.value)}
                   />
                 </div>
                 <div>
-                  <label>Twój komentarz</label>
+                  <label>
+                    {role === "worker"
+                      ? "Twój komentarz"
+                      : "Komentarz pracownika"}
+                  </label>
                   <textarea
                     value={employeeComment}
                     onChange={(e) => setEmployeeComment(e.target.value)}
+                    readOnly={role === "manager"}
                   ></textarea>
                 </div>
                 <div>
                   <label>Komentarz od menedżera</label>
-                  <textarea value={managerComment} readOnly></textarea>
+                  <textarea
+                    value={managerComment}
+                    readOnly={role === "worker"}
+                  ></textarea>
                 </div>
                 <button onClick={handleSave}>Zapisz</button>
               </div>

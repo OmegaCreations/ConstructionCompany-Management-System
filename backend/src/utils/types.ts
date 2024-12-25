@@ -69,6 +69,8 @@ export interface DzienPracy {
   pracownik_id: number;
   zlecenie_id: number;
   data: string;
+  opis_pracownika: string;
+  opis_managera: string;
   godzina_rozpoczecia: string;
   godzina_zakonczenia: string;
   pracownik_imie: string;

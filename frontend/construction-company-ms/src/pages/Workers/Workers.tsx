@@ -14,6 +14,15 @@ const Workers: React.FC = () => {
         endpoint={endpoint.USER_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={"TODO"}
+        subPageURL={""}
+        editOptionalObjects={[
+          {
+            field_name: "stanowisko_nazwa",
+            endpoint: endpoint.POSITION_GET_ALL(),
+            data_id_name: "stanowisko_id",
+            data_name: "nazwa",
+          },
+        ]}
       />
     </div>
   );

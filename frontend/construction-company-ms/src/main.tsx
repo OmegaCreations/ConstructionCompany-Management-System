@@ -19,6 +19,7 @@ import Orders from "./pages/Orders/Orders";
 import ClientDetails from "./pages/Clients/Details/ClientDetails";
 import OrderDetails from "./pages/Orders/Details/OrderDetails";
 import Calendar from "./pages/Calendar/Calendar";
+import WarehouseDetails from "./pages/WarehouseData/Details/WarehouseDetails";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -69,6 +70,13 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<ProtectedRoute admin_route={true} />}>
               <Route path="/warehouse/data" element={<WarehouseData />} />
             </Route>
+            <Route element={<ProtectedRoute admin_route={true} />}>
+              <Route
+                path="/warehouse/data/details/:id"
+                element={<WarehouseDetails />}
+              />
+            </Route>
+
             <Route element={<ProtectedRoute admin_route={false} />}>
               <Route path="/profile" element={<Profile />} />
             </Route>

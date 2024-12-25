@@ -1,21 +1,32 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../Loading/Loading";
 import style from "./DataTable.module.css";
 import { useNavigate } from "react-router";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+
+interface EditOptionalObject {
+  field_name: string;
+  endpoint: string;
+  data_id_name: string;
+  data_name: string;
+}
 
 interface DataTableProps {
   endpoint: string;
   editEndpoint: string | null;
   addEndpoint: string | null;
   subPageURL: string | null;
+  editOptionalObjects?: EditOptionalObject[];
 }
 
 const DataTable: React.FC<DataTableProps> = ({
   endpoint,
   editEndpoint,
   addEndpoint,
-  subPageURL,
+  subPageURL = null,
+  editOptionalObjects = [],
 }) => {
   const { data, error, loading } = useFetchData(endpoint);
   const [editingItem, setEditingItem] = useState<Record<
@@ -23,8 +34,38 @@ const DataTable: React.FC<DataTableProps> = ({
     unknown
   > | null>(null);
   const [editedData, setEditedData] = useState<Record<string, unknown>>({});
+  const [dropdownData, setDropdownData] = useState<Record<string, unknown[]>>(
+    {}
+  );
+  const { token } = useSelector((state: RootState) => state.auth);
 
   const navigate = useNavigate();
+
+  const fetchDropdownData = async () => {
+    const promises = editOptionalObjects.map(async (obj) => {
+      const response = await fetch(obj.endpoint, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const result = await response.json();
+      return { [obj.field_name]: result };
+    });
+    const results = await Promise.all(promises);
+    const dataMap = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+    console.log(
+      dataMap[editOptionalObjects[0].field_name].map(
+        (item) => item[editOptionalObjects[0].data_id_name]
+      )
+    );
+    setDropdownData(dataMap);
+  };
+
+  useEffect(() => {
+    fetchDropdownData();
+  }, [editOptionalObjects]);
 
   const handleEdit = (item: Record<string, unknown>) => {
     setEditingItem(item);
@@ -118,11 +159,45 @@ const DataTable: React.FC<DataTableProps> = ({
               .map(([key]) => (
                 <div key={key}>
                   <label>{key.split("_").join(" ")}</label>
-                  <input
-                    type="text"
-                    value={editedData[key] as string}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                  />
+                  {dropdownData[key] ? (
+                    <select
+                      value={editedData[key] as string}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                    >
+                      {dropdownData[key].map((item) => (
+                        <option
+                          key={
+                            item[
+                              editOptionalObjects.find(
+                                (obj) => obj.field_name === key
+                              )?.data_id_name
+                            ]
+                          }
+                          value={
+                            item[
+                              editOptionalObjects.find(
+                                (obj) => obj.field_name === key
+                              )?.data_name
+                            ]
+                          }
+                        >
+                          {
+                            item[
+                              editOptionalObjects.find(
+                                (obj) => obj.field_name === key
+                              )?.data_name
+                            ]
+                          }
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      value={editedData[key] as string}
+                      onChange={(e) => handleChange(key, e.target.value)}
+                    />
+                  )}
                 </div>
               ))}
           </div>

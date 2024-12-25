@@ -66,6 +66,8 @@ CREATE TABLE zlecenie (
 CREATE TABLE dzien_pracy (
     pracownik_id INT NOT NULL REFERENCES pracownik(pracownik_id),
     zlecenie_id INT NOT NULL REFERENCES zlecenie(zlecenie_id),
+    opis_pracownika TEXT,
+    opis_managera TEXT,
     data DATE NOT NULL,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME,
