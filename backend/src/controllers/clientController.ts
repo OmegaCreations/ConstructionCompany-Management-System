@@ -39,3 +39,40 @@ export const getClient: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new client
+export const createClient: any = async (req: Request, res: Response) => {
+  const { imie, nazwisko, firma, telefon, email, adres } = req.body;
+
+  // check if required data was passed
+  if (!imie || !nazwisko || !firma || !email || !telefon || !adres) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  // creating new client
+  try {
+    // I feel that there is no need to return new client data especially
+    // because frontend shows returned data after post request.
+    await clientService.createNewClient({
+      imie,
+      nazwisko,
+      firma,
+      telefon,
+      email,
+      adres,
+    });
+
+    res.status(201).json({
+      info: "Klient został utworzony!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during client creation.",
+    });
+  }
+};

@@ -94,7 +94,7 @@ export const createUser: any = async (req: Request, res: Response) => {
 
   // creating new user
   try {
-    const newUser = await userService.createNewUser({
+    const generated_password = await userService.createNewUser({
       imie,
       nazwisko,
       telefon,
@@ -103,7 +103,10 @@ export const createUser: any = async (req: Request, res: Response) => {
       stanowisko_id,
     });
 
-    res.status(201).json({ message: "User created.", user: newUser });
+    res.status(201).json({
+      ...generated_password,
+      info: "Zapamiętaj to hasło i przekaż swojemu pracownikowi",
+    });
   } catch (err) {
     res.status(500).json({
       error: err instanceof Error ? err.message : "Error during user creation.",

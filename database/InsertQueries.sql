@@ -167,3 +167,11 @@ VALUES
 (10, 10, 2);  -- 2 routery do transportu specjalistycznego
 
 -- PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
+
+
+
+-- inne ważne inserty:
+INSERT INTO pracownik 
+        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
+    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *; -- dodawanie nowego pracownika
+

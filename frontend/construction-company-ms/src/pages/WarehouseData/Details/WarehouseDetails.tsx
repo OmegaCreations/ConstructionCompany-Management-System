@@ -4,13 +4,19 @@ import { endpoint } from "../../../utils/endpoints";
 import style from "./WarehouseDetails.module.css";
 import Loading from "../../../components/Loading/Loading";
 import DataTable from "../../../components/DataTable/DataTable";
-import { Warehouse } from "../../../utils/types";
+import { initialResourceState, Warehouse } from "../../../utils/types";
 
 const WarehouseDetails: React.FC = () => {
   const { id } = useParams();
 
   const { data, error, loading } = useFetchData(endpoint.WAREHOUSE_GET_ALL());
-  const warehouseData: Warehouse = data[Number(id) - 1] as unknown as Warehouse;
+  const warehouseData = data
+    ? (data[Number(id) - 1] as unknown as Warehouse)
+    : undefined;
+
+  if (!warehouseData) {
+    return <div>Nie znaleziono magazynu o podanym ID</div>;
+  }
 
   if (error) return error;
   return (
@@ -40,6 +46,7 @@ const WarehouseDetails: React.FC = () => {
           editEndpoint={"TODO"}
           addEndpoint={"TODO"}
           subPageURL={""}
+          initialObjectState={(({ zasob_id, ...o }) => o)(initialResourceState)}
         />
       </div>
     </div>

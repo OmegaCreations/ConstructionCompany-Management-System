@@ -1,5 +1,5 @@
 import * as clientModel from "../models/clientModel";
-import { Klient } from "../utils/types";
+import { CreateClientInput, Klient } from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -18,4 +18,28 @@ export const getClient = async (klient_id: number) => {
   }
 
   return existingClient;
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+export const createNewClient = async (clientData: CreateClientInput) => {
+  const { imie, nazwisko, firma, telefon, email, adres } = clientData;
+
+  // check if client already exists
+  const existingClient: Klient | null = await clientModel.findByEmail(email);
+  if (existingClient) {
+    throw new Error("Client with given email already exists.");
+  }
+  // creating new client
+  await clientModel.create({
+    imie,
+    nazwisko,
+    firma,
+    telefon,
+    email,
+    adres,
+  });
+
+  return;
 };

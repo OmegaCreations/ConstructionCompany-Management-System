@@ -64,7 +64,7 @@ export const createNewUser = async (userData: CreateUserInput) => {
   const hashedPassword = await bcrypt.hash(generated_password, 10);
 
   // creating new user
-  const newUser = await userModel.create({
+  await userModel.create({
     imie,
     nazwisko,
     telefon,
@@ -74,7 +74,7 @@ export const createNewUser = async (userData: CreateUserInput) => {
     stanowisko_id,
   });
 
-  return { ...newUser, wygenerowane_haslo: generated_password };
+  return { wygenerowane_haslo: generated_password };
 };
 
 // ================================

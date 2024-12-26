@@ -143,3 +143,17 @@ export interface updateUserInput {
   stawka_godzinowa: number;
   stanowisko_id: number;
 }
+
+export interface CreateClientInput {
+  imie: string;
+  nazwisko: string;
+  firma: string;
+  telefon: string;
+  email: string;
+  adres: string;
+}
+
+export interface CreatePositionInput {
+  nazwa: string;
+  opis: string;
+}

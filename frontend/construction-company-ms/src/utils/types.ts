@@ -79,11 +79,25 @@ export interface Warehouse {
   lokalizacja: string;
 }
 
+export const initialWarehouseState: Warehouse = {
+  magazyn_id: -1,
+  nazwa: "",
+  lokalizacja: "",
+};
+
 // Resource data
 export interface Resource {
   zasob_id: number;
   nazwa: string;
   jednostka: string;
-  typ: string;
+  typ: "material" | "sprzet";
   opis: string;
 }
+
+export const initialResourceState: Resource = {
+  zasob_id: -1,
+  nazwa: "",
+  jednostka: "",
+  typ: "material",
+  opis: "",
+};

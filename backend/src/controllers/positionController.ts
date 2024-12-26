@@ -20,3 +20,34 @@ export const getAllPositions: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new position
+export const createPosition: any = async (req: Request, res: Response) => {
+  const { nazwa, opis } = req.body;
+
+  // check if required data was passed
+  if (!nazwa || !opis) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  // creating new position
+  try {
+    await positionService.createNewPosition({
+      nazwa,
+      opis,
+    });
+
+    res.status(201).json({
+      info: "Nowe stanowisko zostało utworzone!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during position creation.",
+    });
+  }
+};

@@ -1,5 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
+import { initialWarehouseState } from "../../utils/types";
 import style from "./WarehouseData.module.css";
 
 const WarehouseData: React.FC = () => {
@@ -15,6 +16,9 @@ const WarehouseData: React.FC = () => {
         editEndpoint={"TODO"}
         addEndpoint={"TODO"}
         subPageURL={"/warehouse/data/details"}
+        initialObjectState={(({ magazyn_id, ...o }) => o)(
+          initialWarehouseState
+        )}
       />
     </div>
   );

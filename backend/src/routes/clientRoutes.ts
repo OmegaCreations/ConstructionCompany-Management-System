@@ -27,4 +27,15 @@ router.get(
   clientController.getClient
 );
 
+// ================================
+//        POST ROUTES
+// ================================
+
+router.post(
+  "/create",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  clientController.createClient
+);
+
 export default router;

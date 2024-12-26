@@ -1,5 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
+import { initialUserState } from "../../utils/types";
 import style from "./Workers.module.css";
 
 const Workers: React.FC = () => {
@@ -13,7 +14,7 @@ const Workers: React.FC = () => {
       <DataTable
         endpoint={endpoint.USER_GET_ALL()}
         editEndpoint={"TODO"}
-        addEndpoint={"TODO"}
+        addEndpoint={endpoint.USER_CREATE()}
         subPageURL={""}
         editOptionalObjects={[
           {
@@ -23,6 +24,8 @@ const Workers: React.FC = () => {
             data_name: "nazwa",
           },
         ]}
+        initialObjectState={(({ pracownik_id, rola, stanowisko_id, ...o }) =>
+          o)(initialUserState)}
       />
     </div>
   );

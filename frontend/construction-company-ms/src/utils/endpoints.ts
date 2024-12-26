@@ -10,6 +10,7 @@ export const endpoint = {
     `http://localhost:5000/api/user/${pracownik_id}/paycheck`,
 
   USER_UPDATE: () => ``,
+  USER_CREATE: () => `http://localhost:5000/api/user/create`,
 
   // client endpoints
   CLIENT_GET_ALL: () => `http://localhost:5000/api/client`,
