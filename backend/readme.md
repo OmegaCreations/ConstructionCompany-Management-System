@@ -129,16 +129,17 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 #### Endpointy
 
 - "http://localhost:5000/api/order/" - tworzy nowe zlecenie
+- "http://localhost:5000/api/order/resource/" - dodaje potrzebne zasoby dla zlecenia
 
 ### Dni pracy
 
 #### Zapytania DB
 
-- `INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data, opis_pracownika, opis_managera) VALUES (...);`
+- `SELECT dodaj_dzien_pracy(pracownik_id, zlecenie_id, data, opis_managera/null)` - tworzy nowy dzień pracy dla użytkownika
 
 #### Endpointy
 
-- "http://localhost:5000/api/order/workday" - tworzy nowy dzień pracy
+- "http://localhost:5000/api/order/workday/" - tworzy nowy dzień pracy
 
 ### Magazyn
 
@@ -150,7 +151,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 #### Endpointy
 
 - "http://localhost:5000/api/warehouse/" - tworzy nowy magazyn
-- "http://localhost:5000/api/warehouse/resource" - dodaje zasób do magazynu
+- "http://localhost:5000/api/warehouse/resource/" - dodaje zasób do magazynu
 
 ### Stanowiska
 

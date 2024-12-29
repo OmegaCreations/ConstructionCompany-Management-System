@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import * as workdayService from "../services/workdayService";
-import { DzienPracy } from "../utils/types";
+import { CreateWorkdayInput, DzienPracy } from "../utils/types";
 import { getRoleByPositionId } from "../utils/appTypes";
 
 // ================================
@@ -104,6 +104,37 @@ export const getSpecificWorkDay: any = async (req: any, res: Response) => {
         err instanceof Error
           ? err.message
           : "Error during fetching work day's data.",
+    });
+  }
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new workdays
+export const createNewWorkdays: any = async (req: Request, res: Response) => {
+  const data: CreateWorkdayInput[] = req.body;
+
+  // check if required data was passed
+  for (let resource of data) {
+    let { pracownik_id, zlecenie_id, data, opis_managera } = resource;
+    if (!zlecenie_id || !pracownik_id || !data) {
+      return res.status(400).json({ error: "Please provide all the data." });
+    }
+  }
+
+  // adding new workdays
+  try {
+    await workdayService.createWorkdays(data);
+
+    res.status(201).json({
+      info: "Nowe dni pracy zostały przydzielone!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during creating workdays.",
     });
   }
 };

@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 import { client } from "../config/db";
-import { DzienPracy } from "../utils/types";
+import { CreateWorkdayInput, DzienPracy } from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -51,4 +51,15 @@ export const getByFullDate = async (
     day,
   ]);
   return result.rows[0];
+};
+
+// creates new workday in database
+export const create = async (data: CreateWorkdayInput[]) => {
+  for (let workday of data) {
+    const { pracownik_id, zlecenie_id, data, opis_managera } = workday;
+    const query = `select dodaj_dzien_pracy($1, $2, $3, $4)`;
+    await client.query(query, [pracownik_id, zlecenie_id, data, opis_managera]);
+  }
+
+  return;
 };

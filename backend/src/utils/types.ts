@@ -190,3 +190,10 @@ export interface CreateOrderResourceInput {
   zasob_id: number;
   ilosc_potrzebna: number;
 }
+
+export interface CreateWorkdayInput {
+  pracownik_id: number;
+  zlecenie_id: number;
+  data: number;
+  opis_managera: string | null;
+}

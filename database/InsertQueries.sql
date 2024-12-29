@@ -246,7 +246,30 @@ END;
 $$ LANGUAGE plpgsql;
 
 
+-- funkcja dodająca dzień pracy dla pracownika
+CREATE OR REPLACE FUNCTION dodaj_dzien_pracy(
+    p_pracownik_id INT,
+    p_zlecenie_id INT,
+    p_data DATE,
+    p_opis_managera TEXT DEFAULT NULL
+)
+RETURNS VOID AS $$
+BEGIN
+    -- sprawdzenie czy zlecenie i pracownik istnieją
+    IF NOT EXISTS (SELECT 1 FROM pracownik WHERE pracownik_id = p_pracownik_id) THEN
+        RAISE EXCEPTION 'Pracownik o ID % nie istnieje.', p_pracownik_id;
+    END IF;
 
+    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN
+        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id;
+    END IF;
+
+    -- dodanie dnia pracy tylko jeśli nie istnieje taki wpis
+    INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data, opis_managera)
+    VALUES (p_pracownik_id, p_zlecenie_id, p_data, p_opis_managera)
+    ON CONFLICT (pracownik_id, zlecenie_id, data) DO NOTHING; -- nie chcemy dodawać jeśli już jest taki dzień, zlecenie i pracownik
+END;
+$$ LANGUAGE plpgsql;
 
 
 

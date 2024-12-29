@@ -34,4 +34,16 @@ router.get(
   workdayController.getSpecificWorkDay
 );
 
+// ================================
+//        POST ROUTES
+// ================================
+
+// creates new order
+router.post(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  workdayController.createNewWorkdays
+);
+
 export default router;

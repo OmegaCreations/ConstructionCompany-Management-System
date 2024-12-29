@@ -1,6 +1,6 @@
 import * as workdayModel from "../models/workdayModel";
 import * as userModel from "../models/userModel";
-import { DzienPracy, Pracownik } from "../utils/types";
+import { CreateWorkdayInput, DzienPracy, Pracownik } from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -47,4 +47,13 @@ export const getSpecificWorkDay = async (
     month,
     day
   )) as DzienPracy;
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new workdays
+export const createWorkdays = async (data: CreateWorkdayInput[]) => {
+  return await workdayModel.create(data);
 };
