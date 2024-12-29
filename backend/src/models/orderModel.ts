@@ -1,6 +1,11 @@
 import { QueryResult } from "pg";
 import { client } from "../config/db";
-import { Zlecenie, ZlecenieKoszty, ZlecenieZasob } from "../utils/types";
+import {
+  CreateOrderInput,
+  Zlecenie,
+  ZlecenieKoszty,
+  ZlecenieZasob,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -60,4 +65,32 @@ export const getCosts = async (zlecenie_id: number) => {
     ...workers_result.rows[0],
     koszty_zasobow: resources_result.rows[0].get_dodatkowe_koszty,
   } as ZlecenieKoszty;
+};
+
+// ================================
+//         POST REQUESTS
+// ================================
+
+// creates new order in database
+export const create = async (orderData: CreateOrderInput) => {
+  const {
+    klient_id,
+    opis,
+    data_zlozenia,
+    data_rozpoczenia,
+    lokalizacja,
+    data_zakonczenia,
+  } = orderData;
+  const query = `SELECT dodaj_zlecenie($1, $2, $3, $4, $5, $6);`;
+
+  return (
+    await client.query(query, [
+      klient_id,
+      opis,
+      data_zlozenia,
+      data_rozpoczenia,
+      lokalizacja,
+      data_zakonczenia,
+    ])
+  ).rows[0];
 };

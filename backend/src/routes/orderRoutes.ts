@@ -42,4 +42,16 @@ router.get(
   orderController.getOrderResources
 );
 
+// ================================
+//        POST ROUTES
+// ================================
+
+// creates new order
+router.post(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  orderController.createNewOrder
+);
+
 export default router;

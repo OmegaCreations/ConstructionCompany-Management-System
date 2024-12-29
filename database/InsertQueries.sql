@@ -165,6 +165,7 @@ VALUES
 
 -- PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
 
+-- dodawanie zasobu do magazynu
 CREATE OR REPLACE FUNCTION dodaj_zasob_do_magazynu(p_ilosc INT, p_magazyn_id INT, p_zasob_id INT)
 RETURNS VOID AS $$
 BEGIN
@@ -188,6 +189,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- dodawanie zlecenia
+CREATE OR REPLACE FUNCTION dodaj_zlecenie(
+    p_klient_id INT,
+    p_opis TEXT,
+    p_data_zlozenia DATE,
+    p_data_rozpoczecia DATE,
+    p_lokalizacja VARCHAR,
+    p_data_zakonczenia DATE DEFAULT NULL
+)
+RETURNS VOID AS $$
+DECLARE
+    v_zlecenie_id INT;
+BEGIN
+    -- Sprawdzenie czy klient istnieje
+    IF NOT EXISTS (SELECT 1 FROM klient k WHERE k.klient_id = p_klient_id) THEN
+        RAISE EXCEPTION 'Klient o ID % nie istnieje.', p_klient_id;
+    END IF;
+
+    -- Wstawienie zlecenia i zwrócenie ID
+    INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja, data_zakonczenia)
+    VALUES (p_klient_id, p_opis, p_data_zlozenia, p_data_rozpoczecia, p_lokalizacja, p_data_zakonczenia);
+END;
+$$ LANGUAGE plpgsql;
 
 
 -- inne ważne inserty:

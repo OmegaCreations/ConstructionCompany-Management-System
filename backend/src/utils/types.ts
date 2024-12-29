@@ -175,3 +175,12 @@ export interface CreateWarehouseResourceInput {
   magazyn_id: number;
   zasob_id: number;
 }
+
+export interface CreateOrderInput {
+  klient_id: number;
+  opis: string;
+  data_zlozenia: string;
+  data_rozpoczenia: string;
+  lokalizacja: string;
+  data_zakonczenia: string | null;
+}

@@ -104,3 +104,51 @@ export const getOrderCosts: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new order
+export const createNewOrder: any = async (req: Request, res: Response) => {
+  const {
+    klient_id,
+    opis,
+    data_zlozenia,
+    data_rozpoczenia,
+    lokalizacja,
+    data_zakonczenia,
+  } = req.body;
+
+  // check if required data was passed
+  if (
+    !klient_id ||
+    !opis ||
+    !data_zlozenia ||
+    !data_rozpoczenia ||
+    !lokalizacja
+  ) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  // adding new resource
+  try {
+    await orderService.createNewOrder({
+      klient_id,
+      opis,
+      data_zlozenia,
+      data_rozpoczenia,
+      lokalizacja,
+      data_zakonczenia,
+    });
+
+    res.status(201).json({
+      info: "Nowe zlecenie zostało dodane!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during creating order.",
+    });
+  }
+};

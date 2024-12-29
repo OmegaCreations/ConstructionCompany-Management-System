@@ -124,11 +124,11 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Zapytania DB
 
-- `INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, data_zakonczenia, lokalizacja) VALUES (...);`
+- `SELECT dodaj_zlecenie(klient_id, opis, data_zlozenia, data_rozpoczenia, lokalizacja, data_zakonczenia/null);`
 
 #### Endpointy
 
-- "http://localhost:5000/api/order/create" - tworzy nowe zlecenie
+- "http://localhost:5000/api/order/" - tworzy nowe zlecenie
 
 ### Dni pracy
 

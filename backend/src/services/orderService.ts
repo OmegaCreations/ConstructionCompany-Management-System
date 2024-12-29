@@ -1,6 +1,11 @@
 import * as orderModel from "../models/orderModel";
 import * as clientModel from "../models/clientModel";
-import { Klient, Zlecenie, ZlecenieZasob } from "../utils/types";
+import {
+  CreateOrderInput,
+  Klient,
+  Zlecenie,
+  ZlecenieZasob,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -49,4 +54,13 @@ export const getOrderCosts = async (zlecenie_id: number) => {
   }
 
   return await orderModel.getCosts(zlecenie_id);
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new order
+export const createNewOrder = async (data: CreateOrderInput) => {
+  return await orderModel.create(data);
 };
