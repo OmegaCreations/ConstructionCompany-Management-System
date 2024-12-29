@@ -157,3 +157,15 @@ export interface CreatePositionInput {
   nazwa: string;
   opis: string;
 }
+
+export interface CreateResourceInput {
+  nazwa: string;
+  jednostka: string;
+  typ: string;
+  opis: string;
+}
+
+export interface CreateWarehouseInput {
+  nazwa: string;
+  lokalizacja: string;
+}

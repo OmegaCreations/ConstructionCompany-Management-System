@@ -47,3 +47,34 @@ export const getWarehouseResources: any = async (req: any, res: Response) => {
     });
   }
 };
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new warehouse
+export const createWarehouse: any = async (req: Request, res: Response) => {
+  const { nazwa, lokalizacja } = req.body;
+
+  // check if required data was passed
+  if (!nazwa || !lokalizacja) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  // creating new warehouse
+  try {
+    await warehouseService.createNewWarehouse({
+      nazwa,
+      lokalizacja,
+    });
+
+    res.status(201).json({
+      info: "Nowy magazyn został utworzony!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during warehouse creation.",
+    });
+  }
+};

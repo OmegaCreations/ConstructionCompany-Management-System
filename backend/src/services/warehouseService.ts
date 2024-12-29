@@ -1,5 +1,10 @@
 import * as warehouseModel from "../models/warehouseModel";
-import { Magazyn, MagazynZasob, MagazynZasobExtended } from "../utils/types";
+import {
+  CreateWarehouseInput,
+  Magazyn,
+  MagazynZasob,
+  MagazynZasobExtended,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -26,4 +31,31 @@ export const getWarehouseResources = async (
   } else {
     throw new Error(`Invalid role: ${role}`);
   }
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+
+// creates new warehouse
+export const createNewWarehouse = async (
+  positionData: CreateWarehouseInput
+) => {
+  const { nazwa, lokalizacja } = positionData;
+
+  // check if warehouse already exists
+  const existingWarehouse: Magazyn | null = await warehouseModel.findByName(
+    nazwa
+  );
+  if (existingWarehouse) {
+    throw new Error("Warehouse with given name already exists.");
+  }
+
+  // creating new warehouse
+  await warehouseModel.create({
+    nazwa,
+    lokalizacja,
+  });
+
+  return;
 };

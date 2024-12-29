@@ -58,7 +58,7 @@ CREATE TABLE zlecenie (
     klient_id INT NOT NULL REFERENCES klient(klient_id),
     opis TEXT NOT NULL,
     data_zlozenia DATE NOT NULL,
-    data_rozpoczecia DATE,
+    data_rozpoczecia DATE NOT NULL,
     data_zakonczenia DATE,
     lokalizacja VARCHAR(150) NOT NULL
 );
@@ -101,4 +101,21 @@ CREATE TABLE zasob_zlecenie (
     zlecenie_id INT NOT NULL REFERENCES zlecenie(zlecenie_id),
     ilosc_potrzebna INT NOT NULL,
     PRIMARY KEY (magazyn_zasob_id, zlecenie_id)
+);
+
+-- Zakupy na dany miesiąc dla brakujących materiałów
+CREATE TABLE zakupy (
+    zakupy_id SERIAL PRIMARY KEY,
+    miesiac DATE UNIQUE
+);
+
+CREATE TABLE zakupy_zasob (
+    zasob_id INT NOT NULL,
+    zakupy_id INT NOT NULL,
+    zlecenie_id INT NOT NULL,
+    ilosc INT,
+    PRIMARY KEY (zasob_id, zakupy_id, zlecenie_id),
+    FOREIGN KEY (zasob_id) REFERENCES zasob(zasob_id),
+    FOREIGN KEY (zakupy_id) REFERENCES zakupy(zakupy_id),
+    FOREIGN KEY (zlecenie_id) REFERENCES zlecenie(zlecenie_id)
 );

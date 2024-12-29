@@ -1,6 +1,10 @@
 import { Router } from "express";
-import { authenticateUserJWT } from "../middlewares/authMiddleware";
+import {
+  authenticateUserJWT,
+  checkAuthorizedRole,
+} from "../middlewares/authMiddleware";
 import * as resourceController from "../controllers/resourceController";
+import { CompanyRoles } from "../utils/appTypes";
 
 const router = Router();
 
@@ -10,5 +14,16 @@ const router = Router();
 
 // Returns all resources
 router.get("/", authenticateUserJWT, resourceController.getAllResources);
+
+// ================================
+//        POST ROUTES
+// ================================
+
+router.post(
+  "/create",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  resourceController.createResource
+);
 
 export default router;

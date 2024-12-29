@@ -22,4 +22,15 @@ router.get(
   warehouseController.getWarehouseResources
 );
 
+// ================================
+//        POST ROUTES
+// ================================
+
+router.post(
+  "/create",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.createWarehouse
+);
+
 export default router;
