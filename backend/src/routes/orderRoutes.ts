@@ -54,4 +54,12 @@ router.post(
   orderController.createNewOrder
 );
 
+// adds resources to warehouse
+router.post(
+  "/resource",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  orderController.addResourcesToOrder
+);
+
 export default router;

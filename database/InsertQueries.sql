@@ -163,7 +163,10 @@ VALUES
 (2, 2, 50),   -- 50 m kabla użyte do naprawy maszyn przemysłowych
 (3, 2, 2);    -- 2 monitory dostarczone do projektu wnętrz
 
--- PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
+
+-- ==================================================================================
+--              PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
+-- ==================================================================================
 
 -- dodawanie zasobu do magazynu
 CREATE OR REPLACE FUNCTION dodaj_zasob_do_magazynu(p_ilosc INT, p_magazyn_id INT, p_zasob_id INT)
@@ -188,6 +191,7 @@ BEGIN
     END IF;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- dodawanie zlecenia
 CREATE OR REPLACE FUNCTION dodaj_zlecenie(
@@ -233,18 +237,13 @@ BEGIN
         RAISE EXCEPTION 'Zasób o ID % nie istnieje.', p_zasob_id;
     END IF;
 
-    -- dodanie wymaganego zasobu do zlecenia
+    -- wstawienie lub aktualizacja zasobu w zleceniu
     INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
-    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna);
+    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna)
+    ON CONFLICT (zasob_id, zlecenie_id)
+    DO UPDATE SET ilosc_potrzebna = zasob_zlecenie.ilosc_potrzebna + EXCLUDED.ilosc_potrzebna;
 END;
 $$ LANGUAGE plpgsql;
-
-
-
-
-
-
-
 
 
 

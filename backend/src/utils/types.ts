@@ -184,3 +184,9 @@ export interface CreateOrderInput {
   lokalizacja: string;
   data_zakonczenia: string | null;
 }
+
+export interface CreateOrderResourceInput {
+  zlecenie_id: number;
+  zasob_id: number;
+  ilosc_potrzebna: number;
+}

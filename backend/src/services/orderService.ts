@@ -2,6 +2,7 @@ import * as orderModel from "../models/orderModel";
 import * as clientModel from "../models/clientModel";
 import {
   CreateOrderInput,
+  CreateOrderResourceInput,
   Klient,
   Zlecenie,
   ZlecenieZasob,
@@ -63,4 +64,9 @@ export const getOrderCosts = async (zlecenie_id: number) => {
 // creates new order
 export const createNewOrder = async (data: CreateOrderInput) => {
   return await orderModel.create(data);
+};
+
+// adds resources to ordeer
+export const addResourcesToOrder = async (data: CreateOrderResourceInput[]) => {
+  return await orderModel.addResource(data);
 };

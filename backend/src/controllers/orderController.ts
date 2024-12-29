@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import * as orderService from "../services/orderService";
-import { Zlecenie, ZlecenieKoszty, ZlecenieZasob } from "../utils/types";
+import {
+  CreateOrderResourceInput,
+  Zlecenie,
+  ZlecenieKoszty,
+  ZlecenieZasob,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -149,6 +154,33 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during creating order.",
+    });
+  }
+};
+
+// adds resources to order
+export const addResourcesToOrder: any = async (req: Request, res: Response) => {
+  const data: CreateOrderResourceInput[] = req.body;
+
+  // check if required data was passed
+  for (let resource of data) {
+    let { zlecenie_id, zasob_id, ilosc_potrzebna } = resource;
+    if (!zlecenie_id || !ilosc_potrzebna || !zasob_id) {
+      return res.status(400).json({ error: "Please provide all the data." });
+    }
+  }
+
+  // adding new resource
+  try {
+    await orderService.addResourcesToOrder(data);
+
+    res.status(201).json({
+      info: "Nowe zasoby zostały dodane do zlecenia!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during adding resources.",
     });
   }
 };

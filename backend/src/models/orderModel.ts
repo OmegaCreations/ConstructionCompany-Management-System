@@ -2,6 +2,7 @@ import { QueryResult } from "pg";
 import { client } from "../config/db";
 import {
   CreateOrderInput,
+  CreateOrderResourceInput,
   Zlecenie,
   ZlecenieKoszty,
   ZlecenieZasob,
@@ -93,4 +94,15 @@ export const create = async (orderData: CreateOrderInput) => {
       data_zakonczenia,
     ])
   ).rows[0];
+};
+
+// add new resources to the order or add new ammount
+export const addResource = async (data: CreateOrderResourceInput[]) => {
+  for (let resource of data) {
+    const { zlecenie_id, zasob_id, ilosc_potrzebna } = resource;
+    const query = `select dodaj_zasob_do_zlecenia($1, $2, $3)`;
+    await client.query(query, [zlecenie_id, zasob_id, ilosc_potrzebna]);
+  }
+
+  return;
 };
