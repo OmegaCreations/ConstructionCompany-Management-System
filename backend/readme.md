@@ -145,10 +145,12 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 #### Zapytania DB
 
 - `INSERT INTO magazyn (nazwa, lokalizacja) VALUES (...);`
+- `select dodaj_zasob_do_magazynu(ilosc, magazyn_id, zasob_id);` - dodanie zasobu do magazynu
 
 #### Endpointy
 
-- "http://localhost:5000/api/warehouse/create" - tworzy nowy magazyn
+- "http://localhost:5000/api/warehouse/" - tworzy nowy magazyn
+- "http://localhost:5000/api/warehouse/resource" - dodaje zasób do magazynu
 
 ### Stanowiska
 

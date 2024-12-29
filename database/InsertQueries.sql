@@ -165,6 +165,29 @@ VALUES
 
 -- PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
 
+CREATE OR REPLACE FUNCTION dodaj_zasob_do_magazynu(p_ilosc INT, p_magazyn_id INT, p_zasob_id INT)
+RETURNS VOID AS $$
+BEGIN
+    -- sprawdzamy czy już jest w magazynie ten zasób
+    IF EXISTS (
+        SELECT 1
+        FROM magazyn_zasob mz
+        WHERE mz.magazyn_id = p_magazyn_id
+          AND mz.zasob_id = p_zasob_id
+    ) THEN
+        -- jeśli tak to aktualizujemy ilość
+        UPDATE magazyn_zasob mz
+        SET ilosc = ilosc + p_ilosc
+        WHERE mz.magazyn_id = p_magazyn_id
+          AND mz.zasob_id = p_zasob_id;
+    ELSE
+        -- jeśli nie to dodajemy nowy rekord
+        INSERT INTO magazyn_zasob (ilosc, magazyn_id, zasob_id)
+        VALUES (p_ilosc, p_magazyn_id, p_zasob_id);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 
 
 -- inne ważne inserty:

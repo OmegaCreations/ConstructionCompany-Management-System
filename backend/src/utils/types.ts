@@ -169,3 +169,9 @@ export interface CreateWarehouseInput {
   nazwa: string;
   lokalizacja: string;
 }
+
+export interface CreateWarehouseResourceInput {
+  ilosc: number;
+  magazyn_id: number;
+  zasob_id: number;
+}

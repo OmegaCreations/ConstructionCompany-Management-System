@@ -26,11 +26,20 @@ router.get(
 //        POST ROUTES
 // ================================
 
+// creates new warehouse
 router.post(
-  "/create",
+  "/",
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
   warehouseController.createWarehouse
+);
+
+// adds resource to warehouse
+router.post(
+  "/resource",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.addResourceToWarehouse
 );
 
 export default router;

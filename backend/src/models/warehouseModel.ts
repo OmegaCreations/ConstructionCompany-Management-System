@@ -2,6 +2,7 @@ import { QueryResult } from "pg";
 import { client } from "../config/db";
 import {
   CreateWarehouseInput,
+  CreateWarehouseResourceInput,
   Magazyn,
   MagazynZasob,
   MagazynZasobExtended,
@@ -62,4 +63,12 @@ export const create = async (warehouseData: CreateWarehouseInput) => {
     lokalizacja,
   ]);
   return result.rows[0]; // return back newly created warehouse
+};
+
+// add new resource to the warehouse or add new ammount
+export const addResource = async (data: CreateWarehouseResourceInput) => {
+  const { ilosc, magazyn_id, zasob_id } = data;
+  const query = `select dodaj_zasob_do_magazynu($1, $2, $3)`;
+
+  return (await client.query(query, [ilosc, magazyn_id, zasob_id])).rows[0];
 };

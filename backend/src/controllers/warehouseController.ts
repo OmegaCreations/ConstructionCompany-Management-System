@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import * as warehouseService from "../services/warehouseService";
-import { Magazyn, MagazynZasob, MagazynZasobExtended } from "../utils/types";
+import {
+  CreateWarehouseResourceInput,
+  Magazyn,
+  MagazynZasob,
+  MagazynZasobExtended,
+} from "../utils/types";
 import { getRoleByPositionId } from "../utils/appTypes";
 
 // ================================
@@ -75,6 +80,37 @@ export const createWarehouse: any = async (req: Request, res: Response) => {
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during warehouse creation.",
+    });
+  }
+};
+
+// adds resource to warehouse
+export const addResourceToWarehouse: any = async (
+  req: Request,
+  res: Response
+) => {
+  const { ilosc, magazyn_id, zasob_id } = req.body;
+
+  // check if required data was passed
+  if (!ilosc || !magazyn_id || !zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  // adding new resource
+  try {
+    await warehouseService.addResourceToWarehouse({
+      ilosc,
+      magazyn_id,
+      zasob_id,
+    });
+
+    res.status(201).json({
+      info: "Nowy zasób został dodany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during adding resource.",
     });
   }
 };

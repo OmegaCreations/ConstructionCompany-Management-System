@@ -1,6 +1,7 @@
 import * as warehouseModel from "../models/warehouseModel";
 import {
   CreateWarehouseInput,
+  CreateWarehouseResourceInput,
   Magazyn,
   MagazynZasob,
   MagazynZasobExtended,
@@ -52,10 +53,15 @@ export const createNewWarehouse = async (
   }
 
   // creating new warehouse
-  await warehouseModel.create({
+  return await warehouseModel.create({
     nazwa,
     lokalizacja,
   });
+};
 
-  return;
+// adds resource to warehouse
+export const addResourceToWarehouse = async (
+  data: CreateWarehouseResourceInput
+) => {
+  return await warehouseModel.addResource(data);
 };

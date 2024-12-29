@@ -94,48 +94,48 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION update_magazyn_on_change_magazyn_zasob()
 RETURNS TRIGGER AS $$ 
 DECLARE 
-    zlecenie_ilosc INT; 
-    zlecenie_id INT; 
+    p_zlecenie_ilosc INT; 
+    p_zlecenie_id INT; 
 BEGIN 
     -- Obsługuje INSERT oraz UPDATE w magazyn_zasob 
     IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN 
-        FOR zlecenie_id IN 
+        FOR p_zlecenie_id IN 
             SELECT zz.zlecenie_id
             FROM zasob_zlecenie zz
             WHERE zz.magazyn_zasob_id = NEW.magazyn_zasob_id
         LOOP 
-            SELECT zz2.ilosc_potrzebna INTO zlecenie_ilosc 
+            SELECT zz2.ilosc_potrzebna INTO p_zlecenie_ilosc 
             FROM zasob_zlecenie zz2 
             WHERE zz2.magazyn_zasob_id = NEW.magazyn_zasob_id
-            AND zz2.zlecenie_id = zlecenie_id 
+            AND zz2.zlecenie_id = p_zlecenie_id 
             LIMIT 1; 
 
-            IF zlecenie_ilosc IS NOT NULL AND NEW.ilosc >= zlecenie_ilosc THEN 
+            IF p_zlecenie_ilosc IS NOT NULL AND NEW.ilosc >= p_zlecenie_ilosc THEN 
                 DELETE FROM zakupy_zasob zzz 
                 WHERE zzz.zasob_id = NEW.zasob_id 
-                AND zzz.zlecenie_id = zlecenie_id; 
+                AND zzz.zlecenie_id = p_zlecenie_id; 
             END IF; 
         END LOOP; 
     
     -- Obsługuje DELETE w magazyn_zasob 
     ELSIF TG_OP = 'DELETE' THEN 
-        FOR zlecenie_id IN 
+        FOR p_zlecenie_id IN 
             SELECT zz.zlecenie_id 
             FROM zasob_zlecenie zz 
             WHERE zz.zasob_id = OLD.zasob_id 
         LOOP 
-            SELECT zz2.ilosc_potrzebna INTO zlecenie_ilosc 
+            SELECT zz2.ilosc_potrzebna INTO p_zlecenie_ilosc 
             FROM zasob_zlecenie zz2 
             WHERE zz2.zasob_id = OLD.zasob_id 
-            AND zz2.zlecenie_id = zlecenie_id 
+            AND zz2.zlecenie_id = p_zlecenie_id 
             LIMIT 1; 
 
-            IF zlecenie_ilosc IS NOT NULL AND OLD.ilosc < zlecenie_ilosc THEN 
-                INSERT INTO zakupy_zasob (zasob_id, zakupy_id, zlecenie_id, ilosc) 
-                SELECT OLD.zasob_id, zakupy_id, zlecenie_id, (zlecenie_ilosc - OLD.ilosc) 
+            IF p_zlecenie_ilosc IS NOT NULL AND OLD.ilosc < p_zlecenie_ilosc THEN 
+                INSERT INTO zakupy_zasob (zasob_id, zakupy_id, p_zlecenie_id, ilosc) 
+                SELECT OLD.zasob_id, zakupy_id, p_zlecenie_id, (p_zlecenie_ilosc - OLD.ilosc) 
                 FROM zakupy 
                 WHERE miesiac = date_trunc('month', CURRENT_DATE) 
-                ON CONFLICT (zasob_id, zakupy_id, zlecenie_id) 
+                ON CONFLICT (zasob_id, zakupy_id, p_zlecenie_id) 
                 DO UPDATE SET ilosc = zakupy_zasob.ilosc + EXCLUDED.ilosc; 
             END IF; 
         END LOOP; 
