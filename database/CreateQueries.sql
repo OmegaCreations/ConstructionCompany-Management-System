@@ -97,10 +97,10 @@ CREATE TABLE magazyn_zasob (
 );
 
 CREATE TABLE zasob_zlecenie (
-    magazyn_zasob_id INT NOT NULL REFERENCES magazyn_zasob(magazyn_zasob_id),
+    zasob_id INT NOT NULL REFERENCES zasob(zasob_id),
     zlecenie_id INT NOT NULL REFERENCES zlecenie(zlecenie_id),
     ilosc_potrzebna INT NOT NULL,
-    PRIMARY KEY (magazyn_zasob_id, zlecenie_id)
+    PRIMARY KEY (zasob_id, zlecenie_id)
 );
 
 -- Zakupy na dany miesiąc dla brakujących materiałów

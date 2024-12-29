@@ -33,20 +33,22 @@ BEGIN
 
         -- Dodajemy zasoby do zakupu
         INSERT INTO zakupy_zasob (zasob_id, zakupy_id, zlecenie_id, ilosc)
-        SELECT mz.zasob_id, zakup_id, zz.zlecenie_id, (zz.ilosc_potrzebna - COALESCE(mz.ilosc, 0))
+        SELECT mz.zasob_id, zakup_id, zz.zlecenie_id, SUM(zz.ilosc_potrzebna - COALESCE(mz.ilosc, 0))
         FROM zasob_zlecenie zz
-        LEFT JOIN magazyn_zasob mz ON zz.magazyn_zasob_id = mz.magazyn_zasob_id
+        LEFT JOIN magazyn_zasob mz ON zz.zasob_id = mz.zasob_id
         WHERE zz.zlecenie_id = NEW.zlecenie_id
         AND (zz.ilosc_potrzebna - COALESCE(mz.ilosc, 0)) > 0
+        GROUP BY mz.zasob_id, zakup_id, zz.zlecenie_id
         ON CONFLICT (zasob_id, zakupy_id, zlecenie_id)
         DO UPDATE SET ilosc = zakupy_zasob.ilosc + EXCLUDED.ilosc;
+
 
         -- Usuwamy zasoby z zakupu, jeśli już mamy wystarczającą ilość materiałów w magazynie
         DELETE FROM zakupy_zasob
         WHERE zasob_id IN (
             SELECT mz.zasob_id
             FROM zasob_zlecenie zz
-            JOIN magazyn_zasob mz ON zz.magazyn_zasob_id = mz.magazyn_zasob_id
+            JOIN magazyn_zasob mz ON zz.zasob_id = mz.zasob_id
             WHERE zz.zlecenie_id = NEW.zlecenie_id
             AND mz.ilosc >= zz.ilosc_potrzebna
         )
@@ -75,7 +77,7 @@ BEGIN
         WHERE zasob_id IN (
             SELECT mz.zasob_id
             FROM zasob_zlecenie zz
-            JOIN magazyn_zasob mz ON zz.magazyn_zasob_id = mz.magazyn_zasob_id
+            JOIN magazyn_zasob mz ON zz.zasob_id = mz.zasob_id
             WHERE zz.zlecenie_id = OLD.zlecenie_id
             AND mz.ilosc >= zz.ilosc_potrzebna
         )
@@ -102,11 +104,11 @@ BEGIN
         FOR p_zlecenie_id IN 
             SELECT zz.zlecenie_id
             FROM zasob_zlecenie zz
-            WHERE zz.magazyn_zasob_id = NEW.magazyn_zasob_id
+            WHERE zz.zasob_id = NEW.zasob_id
         LOOP 
             SELECT zz2.ilosc_potrzebna INTO p_zlecenie_ilosc 
             FROM zasob_zlecenie zz2 
-            WHERE zz2.magazyn_zasob_id = NEW.magazyn_zasob_id
+            WHERE zz2.zasob_id = NEW.zasob_id
             AND zz2.zlecenie_id = p_zlecenie_id 
             LIMIT 1; 
 

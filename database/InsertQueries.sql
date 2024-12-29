@@ -155,7 +155,7 @@ VALUES
 -- =========================================
 -- Tabela: zasob_zlecenie
 -- =========================================
-INSERT INTO zasob_zlecenie (magazyn_zasob_id, zlecenie_id, ilosc_potrzebna)
+INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
 VALUES
 (1, 1, 200),   -- 20 kg stali użyte do instalacji sprzętu IT
 (5, 1, 300),
@@ -212,6 +212,44 @@ BEGIN
     VALUES (p_klient_id, p_opis, p_data_zlozenia, p_data_rozpoczecia, p_lokalizacja, p_data_zakonczenia);
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+-- funkcja dodająca wymagane zasoby do zlecenia
+CREATE OR REPLACE FUNCTION dodaj_zasob_do_zlecenia(
+    p_zlecenie_id INT,
+    p_zasob_id INT,
+    p_ilosc_potrzebna INT
+)
+RETURNS VOID AS $$
+BEGIN
+    -- sprawdzenie czy zlecenie istnieje
+    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN
+        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id;
+    END IF;
+
+    -- sprawdzenie czy zasób istnieje
+    IF NOT EXISTS (SELECT 1 FROM zasob WHERE zasob_id = p_zasob_id) THEN
+        RAISE EXCEPTION 'Zasób o ID % nie istnieje.', p_zasob_id;
+    END IF;
+
+    -- dodanie wymaganego zasobu do zlecenia
+    INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
+    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna);
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- inne ważne inserty:
