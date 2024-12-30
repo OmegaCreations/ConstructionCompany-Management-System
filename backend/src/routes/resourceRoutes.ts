@@ -20,7 +20,7 @@ router.get("/", authenticateUserJWT, resourceController.getAllResources);
 // ================================
 
 router.post(
-  "/create",
+  "/",
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
   resourceController.createResource

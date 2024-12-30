@@ -44,9 +44,25 @@ const WarehouseDetails: React.FC = () => {
         <DataTable
           endpoint={endpoint.WAREHOUSE_GET_RESOURCES(Number(id))}
           editEndpoint={"TODO"}
-          addEndpoint={"TODO"}
+          addEndpoint={endpoint.WAREHOUSE_ADD_RESOURCE()}
           subPageURL={""}
-          initialObjectState={(({ zasob_id, ...o }) => o)(initialResourceState)}
+          editOptionalObjects={[
+            {
+              field_name: "nazwa",
+              endpoint: endpoint.RESOURCE_GET_ALL(),
+              data_id_name: "zasob_id",
+              data_name: "nazwa",
+            },
+          ]}
+          initialObjectState={(({
+            zasob_id,
+            jednostka,
+            opis,
+            koszt_jednostkowy,
+            typ,
+            ...o
+          }) => o)(initialResourceState)}
+          additionalBody={{ magazyn_id: id }}
         />
       </div>
     </div>

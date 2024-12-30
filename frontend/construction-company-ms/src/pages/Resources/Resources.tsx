@@ -1,5 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
+import { initialResourceState } from "../../utils/types";
 import style from "./Resources.module.css";
 
 const Resources: React.FC = () => {
@@ -14,7 +15,10 @@ const Resources: React.FC = () => {
       <DataTable
         endpoint={endpoint.RESOURCE_GET_ALL()}
         editEndpoint={"TODO"}
-        addEndpoint={"TODO"}
+        subPageURL={""}
+        addEndpoint={endpoint.RESOURCE_CREATE()}
+        editOptionalObjects={[]}
+        initialObjectState={(({ zasob_id, ...o }) => o)(initialResourceState)}
       />
     </div>
   );

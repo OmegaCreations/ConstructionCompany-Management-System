@@ -14,7 +14,8 @@ const WarehouseData: React.FC = () => {
       <DataTable
         endpoint={endpoint.WAREHOUSE_GET_ALL()}
         editEndpoint={"TODO"}
-        addEndpoint={"TODO"}
+        addEndpoint={endpoint.WAREHOUSE_CREATE()}
+        editOptionalObjects={[]}
         subPageURL={"/warehouse/data/details"}
         initialObjectState={(({ magazyn_id, ...o }) => o)(
           initialWarehouseState

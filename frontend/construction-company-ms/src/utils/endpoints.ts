@@ -10,12 +10,13 @@ export const endpoint = {
     `http://localhost:5000/api/user/${pracownik_id}/paycheck`,
 
   USER_UPDATE: () => ``,
-  USER_CREATE: () => `http://localhost:5000/api/user/create`,
+  USER_CREATE: () => `http://localhost:5000/api/user`,
 
   // client endpoints
   CLIENT_GET_ALL: () => `http://localhost:5000/api/client`,
   CLIENT_GET: (klient_id: number) =>
     `http://localhost:5000/api/client/${klient_id}`,
+  CLIENT_CREATE: () => `http://localhost:5000/api/client`,
 
   // order endpoints
   ORDER_GET_ALL: () => `http://localhost:5000/api/order`,
@@ -45,10 +46,18 @@ export const endpoint = {
   WAREHOUSE_GET_ALL: () => `http://localhost:5000/api/warehouse`,
   WAREHOUSE_GET_RESOURCES: (magazyn_id: number) =>
     `http://localhost:5000/api/warehouse/${magazyn_id}/resources`,
+  WAREHOUSE_CREATE: () => `http://localhost:5000/api/warehouse`,
+  WAREHOUSE_ADD_RESOURCE: () => `http://localhost:5000/api/warehouse/resource`,
 
   // position endpoints
   POSITION_GET_ALL: () => `http://localhost:5000/api/position`,
+  POSITION_CREATE: () => `http://localhost:5000/api/position`,
 
   // resources endpoints
   RESOURCE_GET_ALL: () => `http://localhost:5000/api/resource`,
+  RESOURCE_CREATE: () => `http://localhost:5000/api/resource`,
+
+  // shopping list
+  SHOPPING_LIST_GET: (year: number, month: number, day: number) =>
+    `http://localhost:5000/api/shoppinglist/${year}/${month}/${day}`,
 };

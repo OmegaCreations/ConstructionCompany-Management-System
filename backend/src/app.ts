@@ -12,6 +12,7 @@ import workdayRoutes from "./routes/workdayRoutes";
 import warehouseRoutes from "./routes/warehouseRoutes";
 import positionRoutes from "./routes/positionRoutes";
 import resourceRoutes from "./routes/resourceRoutes";
+import shoppingListRoutes from "./routes/shoppingListRoutes";
 
 // middleware
 import loggerMiddleware from "./middlewares/loggerMiddleware";
@@ -35,6 +36,7 @@ app.use("/api/workday", workdayRoutes); // work days management routes
 app.use("/api/warehouse", warehouseRoutes); // warehouses management routes
 app.use("/api/position", positionRoutes); // position management routes
 app.use("/api/resource", resourceRoutes); // resource management routes
+app.use("/api/shoppinglist", shoppingListRoutes); // shopping list routes
 
 // Endpoint to show how project structure works :)
 app.use("/api", helloRoutes);

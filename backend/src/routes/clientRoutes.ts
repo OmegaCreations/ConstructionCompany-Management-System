@@ -32,7 +32,7 @@ router.get(
 // ================================
 
 router.post(
-  "/create",
+  "/",
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
   clientController.createClient

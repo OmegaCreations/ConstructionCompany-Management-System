@@ -26,17 +26,21 @@ const Calendar: React.FC = () => {
   const [monthApiUrl, setMonthApiUrl] = useState("");
 
   // fetching data
-  const { data, error, loading } = useFetchData(apiUrl);
+  const { data, loading } = useFetchData(apiUrl);
   const workdayData: WorkDay = data as unknown as WorkDay;
-  const [employeeComment, setEmployeeComment] = useState(
-    workdayData.opis_pracownika
-  );
-  const [managerComment, setManagerComment] = useState(
-    workdayData.opis_managera
-  );
+  const [employeeComment, setEmployeeComment] = useState("");
+  const [managerComment, setManagerComment] = useState("");
+
   const { data: monthWorkdayData } = useFetchData(monthApiUrl);
   const { data: userFetchedData } = useFetchData(endpoint.USER_GET_ALL());
   const userData: UserData[] = userFetchedData as unknown as UserData[];
+
+  useEffect(() => {
+    if (data) {
+      setEmployeeComment(workdayData.opis_pracownika || "");
+      setManagerComment(workdayData.opis_managera || "");
+    }
+  }, [data]);
 
   useEffect(() => {
     const newUrl = endpoint.WORKDAY_GET_BY_DATE(
@@ -150,7 +154,10 @@ const Calendar: React.FC = () => {
     };
   }, [Dates]);
 
-  const handleSave = () => {};
+  function handleSave(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className={style.calendarContainer}>
       <section className={style.calendarSection}>
@@ -287,6 +294,7 @@ const Calendar: React.FC = () => {
                   <label>Komentarz od menedżera</label>
                   <textarea
                     value={managerComment}
+                    onChange={(e) => setManagerComment(e.target.value)}
                     readOnly={role === "worker"}
                   ></textarea>
                 </div>

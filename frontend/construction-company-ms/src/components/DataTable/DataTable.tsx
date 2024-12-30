@@ -3,8 +3,9 @@ import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../Loading/Loading";
 import style from "./DataTable.module.css";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
+import { logout } from "../../store/slices/authSlice";
 
 interface EditOptionalObject {
   field_name: string;
@@ -20,6 +21,7 @@ interface DataTableProps {
   subPageURL: string | null;
   editOptionalObjects?: EditOptionalObject[];
   initialObjectState: object;
+  additionalBody: object;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -29,9 +31,10 @@ const DataTable: React.FC<DataTableProps> = ({
   subPageURL = null,
   editOptionalObjects = [],
   initialObjectState,
+  additionalBody = {},
 }) => {
   // getting data
-  const { data, error, loading } = useFetchData(endpoint);
+  const { data, error, loading, reloadDataComponent } = useFetchData(endpoint);
 
   // editing data
   const [editingItem, setEditingItem] = useState<Record<
@@ -52,6 +55,7 @@ const DataTable: React.FC<DataTableProps> = ({
   // other
   const { token } = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // fetching info about <select> options
   const fetchDropdownData = async () => {
@@ -63,6 +67,11 @@ const DataTable: React.FC<DataTableProps> = ({
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401) {
+        dispatch(logout());
+      }
+
       const result = await response.json();
       return { [obj.field_name]: result };
     });
@@ -83,7 +92,7 @@ const DataTable: React.FC<DataTableProps> = ({
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newData),
+      body: JSON.stringify({ ...newData, ...additionalBody }),
     })
       .then((res) => {
         return res.json();
@@ -92,6 +101,8 @@ const DataTable: React.FC<DataTableProps> = ({
         console.log(responseData);
         setPostResponseData(responseData);
         setPostLoading(false);
+
+        reloadDataComponent();
       })
       .catch((err) => setPostResponseData(err));
   };
@@ -154,7 +165,6 @@ const DataTable: React.FC<DataTableProps> = ({
 
   if (loading) return <Loading />;
   if (error) return error;
-  if (data.length === 0) return <h1>Brak</h1>;
 
   const renderSelect = (key: string) => {
     const options = dropdownData[key] || [];
@@ -190,47 +200,53 @@ const DataTable: React.FC<DataTableProps> = ({
           Dodaj
         </button>
       )}
-      <table>
-        <thead>
-          <tr>
-            {Object.keys(data[0] as Record<string, unknown>).map((dataKey) => (
-              <th key={dataKey}>{dataKey.split("_").join(" ")}</th>
-            ))}
-            {editEndpoint && <th>Akcje</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((obj, index) => (
-            <tr key={index}>
-              {Object.values(obj).map((objData, i) => (
-                <td key={i}>{objData as string}</td>
-              ))}
-              {editEndpoint && (
-                <td className={style.actionBtns}>
-                  <button
-                    onClick={() => handleEdit(obj as Record<string, unknown>)}
-                  >
-                    Edytuj
-                  </button>
-                  {subPageURL && (
-                    <button
-                      onClick={() => {
-                        const idKey = Object.keys(obj).find((key) =>
-                          key.toLowerCase().includes("id")
-                        );
-                        const idValue = idKey ? obj[idKey] : "";
-                        navigate(`${subPageURL}/${idValue}`);
-                      }}
-                    >
-                      Więcej
-                    </button>
-                  )}
-                </td>
+      {data.length === 0 ? (
+        <h1>Brak</h1>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              {Object.keys(data[0] as Record<string, unknown>).map(
+                (dataKey) => (
+                  <th key={dataKey}>{dataKey.split("_").join(" ")}</th>
+                )
               )}
+              {editEndpoint && <th>Akcje</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((obj, index) => (
+              <tr key={index}>
+                {Object.values(obj).map((objData, i) => (
+                  <td key={i}>{objData as string}</td>
+                ))}
+                {editEndpoint && (
+                  <td className={style.actionBtns}>
+                    <button
+                      onClick={() => handleEdit(obj as Record<string, unknown>)}
+                    >
+                      Edytuj
+                    </button>
+                    {subPageURL && (
+                      <button
+                        onClick={() => {
+                          const idKey = Object.keys(obj).find((key) =>
+                            key.toLowerCase().includes("id")
+                          );
+                          const idValue = idKey ? obj[idKey] : "";
+                          navigate(`${subPageURL}/${idValue}`);
+                        }}
+                      >
+                        Więcej
+                      </button>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       {editingItem && (
         <div className={style.popup}>
@@ -277,7 +293,9 @@ const DataTable: React.FC<DataTableProps> = ({
               </div>
             ))}
           </div>
-          <button onClick={handleAdd}>Dodaj</button>
+          <button onClick={handleAdd} disabled={postLoading}>
+            {postLoading ? <Loading /> : "Dodaj"}
+          </button>
           <button onClick={() => setAddingItem(false)}>Anuluj</button>
         </div>
       )}

@@ -3,9 +3,8 @@ import {
   authenticateUserJWT,
   checkAuthorizedRole,
 } from "../middlewares/authMiddleware";
-import * as positionController from "../controllers/positionController";
-import { CreatePositionInput } from "../utils/types";
 import { CompanyRoles } from "../utils/appTypes";
+import * as shoppingListController from "../controllers/shoppingListController";
 
 const router = Router();
 
@@ -13,18 +12,12 @@ const router = Router();
 //           GET ROUTES
 // ================================
 
-// Returns all positions
-router.get("/", authenticateUserJWT, positionController.getAllPositions);
-
-// ================================
-//        POST ROUTES
-// ================================
-
-router.post(
-  "/",
+// Returns shopping list
+router.get(
+  "/:year/:month/:day",
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
-  positionController.createPosition
+  shoppingListController.getShoppingList
 );
 
 export default router;

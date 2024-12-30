@@ -16,7 +16,7 @@ export const getAllResources = async () => {
 
 // creates new resource
 export const createNewResource = async (resourceData: CreateResourceInput) => {
-  const { nazwa, jednostka, typ, opis } = resourceData;
+  const { nazwa, jednostka, typ, opis, koszt_jednostkowy } = resourceData;
 
   if (typ !== "material" && typ !== "sprzet") {
     throw new Error("Niezgodny typ zasobu (material, sprzet)");
@@ -28,6 +28,7 @@ export const createNewResource = async (resourceData: CreateResourceInput) => {
     jednostka,
     typ,
     opis,
+    koszt_jednostkowy,
   });
 
   return;

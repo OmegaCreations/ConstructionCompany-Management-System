@@ -27,16 +27,17 @@ export const findById = async (zasob_id: number) => {
 
 // creates new resource in database
 export const create = async (resourceData: CreateResourceInput) => {
-  const { nazwa, jednostka, typ, opis } = resourceData;
+  const { nazwa, jednostka, typ, opis, koszt_jednostkowy } = resourceData;
   const query = `INSERT INTO zasob 
-        (nazwa, jednostka, typ, opis) 
-    VALUES ($1, $2, $3, $4) RETURNING *`;
+        (nazwa, jednostka, typ, opis, koszt_jednostkowy) 
+    VALUES ($1, $2, $3, $4, $5) RETURNING *`;
 
   const result: QueryResult<Zasob> = await client.query(query, [
     nazwa,
     jednostka,
     typ,
     opis,
+    koszt_jednostkowy,
   ]);
   return result.rows[0]; // return back newly created resource
 };

@@ -213,7 +213,7 @@ BEGIN
 
     IF koszt IS NULL OR koszt < 0 THEN
         koszt := 0;
-    END;
+    END IF;
 
     RETURN koszt;
 END;
@@ -431,7 +431,6 @@ $$ LANGUAGE plpgsql;
 
 
 -- Stanowiska
-
 CREATE OR REPLACE FUNCTION get_stanowiska()
 RETURNS TABLE (
     stanowisko_id INT,
@@ -450,14 +449,14 @@ $$ LANGUAGE plpgsql;
 
 
 -- Zasób
-
 CREATE OR REPLACE FUNCTION get_zasoby()
 RETURNS TABLE (
     zasob_id INT,
     nazwa VARCHAR,
     jednostka VARCHAR,
     typ TEXT,
-    opis TEXT
+    opis TEXT,
+    koszt_jednostkowy DECIMAL
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -466,12 +465,48 @@ BEGIN
         z.nazwa,
         z.jednostka,
         z.typ,
-        z.opis
+        z.opis,
+        z.koszt_jednostkowy
     FROM zasob z;
 END;
 $$ LANGUAGE plpgsql;
 
 
+-- ZAKUPY DO ZROBIENIA NA DANY MIESIĄC
+CREATE OR REPLACE FUNCTION get_zakupy(p_month DATE)
+RETURNS TABLE (
+    nazwa_zasobu VARCHAR(50),
+    koszt_jednostkowy DECIMAL,
+    ilosc INT,
+    suma_kosztow DECIMAL,
+    nazwa_firmy VARCHAR(50),
+    data_rozpoczecia DATE,
+    opis_zlecenia TEXT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        z.nazwa AS nazwa_zasobu,
+        z.koszt_jednostkowy,
+        zz.ilosc,
+        z.koszt_jednostkowy * zz.ilosc AS suma_kosztow,
+        k.firma AS nazwa_firmy,
+        zl.data_rozpoczecia,
+        zl.opis AS opis_zlecenia
+    FROM 
+        zakupy za
+    JOIN 
+        zakupy_zasob zz ON za.zakupy_id = zz.zakupy_id
+    JOIN 
+        zasob z ON zz.zasob_id = z.zasob_id
+    JOIN 
+        zlecenie zl ON zz.zlecenie_id = zl.zlecenie_id
+    JOIN 
+        klient k ON zl.klient_id = k.klient_id
+    WHERE 
+        DATE_TRUNC('month', za.miesiac) = DATE_TRUNC('month', p_month);
+END;
+$$ LANGUAGE plpgsql;
 
 
 

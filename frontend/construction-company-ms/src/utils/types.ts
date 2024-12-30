@@ -34,6 +34,16 @@ export interface ClientData {
   adres: string;
 }
 
+export const initialClientState = {
+  klient_id: -1,
+  imie: "",
+  nazwisko: "",
+  firma: "",
+  telefon: "",
+  email: "",
+  adres: "",
+};
+
 // order data
 export interface OrderData {
   zlecenie_id: number;
@@ -72,6 +82,19 @@ export interface WorkDay {
   klient_firma: string;
 }
 
+// position data
+export interface Position {
+  stanowisko_id: number;
+  nazwa: string;
+  opis: string;
+}
+
+export const initialPositionState: Position = {
+  stanowisko_id: -1,
+  nazwa: "",
+  opis: "",
+};
+
 // warehouse data
 export interface Warehouse {
   magazyn_id: number;
@@ -92,6 +115,8 @@ export interface Resource {
   jednostka: string;
   typ: "material" | "sprzet";
   opis: string;
+  koszt_jednostkowy: number;
+  ilosc: number;
 }
 
 export const initialResourceState: Resource = {
@@ -100,4 +125,27 @@ export const initialResourceState: Resource = {
   jednostka: "",
   typ: "material",
   opis: "",
+  koszt_jednostkowy: 0,
+  ilosc: 0,
+};
+
+// shopping list data
+export interface ShoppingList {
+  nazwa_zasobu: string;
+  koszt_jednostkowy: number;
+  ilosc: number;
+  suma_kosztow: number;
+  nazwa_firmy: string;
+  data_rozpoczecia: string;
+  opis_zlecenia: string;
+}
+
+export const initialShoppingListState: ShoppingList = {
+  nazwa_zasobu: "",
+  koszt_jednostkowy: 0,
+  ilosc: 0,
+  suma_kosztow: 0,
+  nazwa_firmy: "",
+  data_rozpoczecia: "",
+  opis_zlecenia: "",
 };

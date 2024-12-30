@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { initialUserState, UserData } from "../utils/types";
 import { setUserData } from "../store/slices/userSlice";
+import { logout } from "../store/slices/authSlice";
 
 // implemented url data fetching hook to prevent copying code
 const useFetchUser = (url: string) => {
@@ -26,6 +27,10 @@ const useFetchUser = (url: string) => {
           },
         })
           .then((res) => {
+            if (res.status === 401) {
+              // unauthorized -> logout
+              dispatch(logout());
+            }
             return res.json();
           })
           .then((data) => {

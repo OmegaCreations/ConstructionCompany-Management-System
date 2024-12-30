@@ -1,6 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
-import { initialUserState } from "../../utils/types";
+import { initialPositionState, initialUserState } from "../../utils/types";
 import style from "./Workers.module.css";
 
 const Workers: React.FC = () => {
@@ -26,6 +26,19 @@ const Workers: React.FC = () => {
         ]}
         initialObjectState={(({ pracownik_id, rola, stanowisko_id, ...o }) =>
           o)(initialUserState)}
+      />
+      <h3>
+        Poniżej znajduje się lista dostępnych stanowisk. Możesz je edytować lub
+        dodawać nowe.
+      </h3>
+      <DataTable
+        endpoint={endpoint.POSITION_GET_ALL()}
+        editEndpoint={"TODO"}
+        addEndpoint={endpoint.POSITION_CREATE()}
+        editOptionalObjects={[]}
+        initialObjectState={(({ stanowisko_id, ...o }) => o)(
+          initialPositionState
+        )}
       />
     </div>
   );

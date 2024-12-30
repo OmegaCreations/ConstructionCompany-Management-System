@@ -1,5 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
+import { initialClientState } from "../../utils/types";
 import style from "./Clients.module.css";
 
 const Clients: React.FC = () => {
@@ -13,8 +14,10 @@ const Clients: React.FC = () => {
       <DataTable
         endpoint={endpoint.CLIENT_GET_ALL()}
         editEndpoint={"TODO"}
-        addEndpoint={"TODO"}
+        addEndpoint={endpoint.CLIENT_CREATE()}
         subPageURL={"/clients/details"}
+        initialObjectState={(({ klient_id, ...o }) => o)(initialClientState)}
+        editOptionalObjects={[]}
       />
     </div>
   );

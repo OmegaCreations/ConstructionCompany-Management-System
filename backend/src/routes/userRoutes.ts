@@ -35,7 +35,7 @@ router.get(
 // the idea is: only manager can create new workers who will change their password later.
 // Whole system administrator can create first manager of the company.
 router.post(
-  "/create",
+  "/",
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
   userController.createUser

@@ -121,6 +121,17 @@ export interface Zasob {
   jednostka: string;
   typ: string;
   opis: string;
+  koszt_jednostkowy: number;
+}
+
+export interface Zakupy {
+  nazwa_zasobu: string;
+  koszt_jednostkowy: number;
+  ilosc: number;
+  suma_kosztow: number;
+  nazwa_firmy: string;
+  data_rozpoczecia: string;
+  opis_zlecenia: string;
 }
 
 // ===================================
@@ -162,6 +173,7 @@ export interface CreateResourceInput {
   nazwa: string;
   jednostka: string;
   typ: string;
+  koszt_jednostkowy: number;
   opis: string;
 }
 

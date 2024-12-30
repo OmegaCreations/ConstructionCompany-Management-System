@@ -27,10 +27,10 @@ export const getAllResources: any = async (req: Request, res: Response) => {
 
 // creates new resource
 export const createResource: any = async (req: Request, res: Response) => {
-  const { nazwa, jednostka, typ, opis } = req.body;
+  const { nazwa, jednostka, typ, opis, koszt_jednostkowy } = req.body;
 
   // check if required data was passed
-  if (!nazwa || !opis || !jednostka || !opis) {
+  if (!nazwa || !opis || !jednostka || !opis || !koszt_jednostkowy) {
     return res.status(400).json({ error: "Please provide all the data." });
   }
 
@@ -41,6 +41,7 @@ export const createResource: any = async (req: Request, res: Response) => {
       jednostka,
       typ,
       opis,
+      koszt_jednostkowy,
     });
 
     res.status(201).json({

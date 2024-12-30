@@ -98,6 +98,10 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 - ✅🧪☑️ - "http://localhost:5000/api/resource" - zwraca informacje o wszystkich zasobach
 
+### Zakupy
+
+- "http://localhost:5000/api/shoppinglist/:year/:month/:day" - zwraca informacje o brakujących zaasobach na dany miesiąc
+
 ## ZAPYTANIA POST
 
 ### Użytkownik
@@ -108,7 +112,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- ✅🧪☑️ - "http://localhost:5000/api/user/create" - tworzy nowego pracownika
+- ✅🧪☑️ - "http://localhost:5000/api/user/" - tworzy nowego pracownika
 
 ### Klient
 
@@ -118,7 +122,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- "http://localhost:5000/api/client/create" - tworzy nowego klienta
+- "http://localhost:5000/api/client/" - tworzy nowego klienta
 
 ### Zlecenie
 
@@ -161,7 +165,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- "http://localhost:5000/api/position/create" - tworzy nową pozycję
+- "http://localhost:5000/api/position/" - tworzy nową pozycję
 
 ### Zasób (materiał/sprzęt)
 
@@ -171,7 +175,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Endpointy
 
-- "http://localhost:5000/api/resource/create" - tworzy nowy zasób
+- "http://localhost:5000/api/resource/" - tworzy nowy zasób
 
 ## ZAPYTANIA PUT
 
