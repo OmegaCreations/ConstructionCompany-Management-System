@@ -48,7 +48,7 @@ const WarehouseDetails: React.FC = () => {
           subPageURL={""}
           editOptionalObjects={[
             {
-              field_name: "nazwa",
+              field_name: ["nazwa"],
               endpoint: endpoint.RESOURCE_GET_ALL(),
               data_id_name: "zasob_id",
               data_name: "nazwa",

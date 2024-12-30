@@ -17,6 +17,7 @@ const WarehouseData: React.FC = () => {
         addEndpoint={endpoint.WAREHOUSE_CREATE()}
         editOptionalObjects={[]}
         subPageURL={"/warehouse/data/details"}
+        additionalBody={{}}
         initialObjectState={(({ magazyn_id, ...o }) => o)(
           initialWarehouseState
         )}

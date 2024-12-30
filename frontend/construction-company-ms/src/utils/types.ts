@@ -50,12 +50,26 @@ export interface OrderData {
   klient_imie: string;
   klient_nazwisko: string;
   klient_firma: string;
+  klient_id: number;
   opis: string;
   data_zlozenia: string;
   data_rozpoczenia: string;
   data_zakonczenia: string;
   lokalizacja: string;
 }
+
+export const initialOrderState: OrderData = {
+  zlecenie_id: -1,
+  klient_imie: "",
+  klient_nazwisko: "",
+  klient_firma: "",
+  klient_id: -1,
+  opis: "",
+  data_zlozenia: "",
+  data_rozpoczenia: "",
+  data_zakonczenia: "",
+  lokalizacja: "",
+};
 
 export interface OrderCosts {
   liczba_pracownikow: number;

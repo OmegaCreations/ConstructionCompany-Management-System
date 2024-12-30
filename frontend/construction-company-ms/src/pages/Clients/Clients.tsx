@@ -16,6 +16,7 @@ const Clients: React.FC = () => {
         editEndpoint={"TODO"}
         addEndpoint={endpoint.CLIENT_CREATE()}
         subPageURL={"/clients/details"}
+        additionalBody={{}}
         initialObjectState={(({ klient_id, ...o }) => o)(initialClientState)}
         editOptionalObjects={[]}
       />

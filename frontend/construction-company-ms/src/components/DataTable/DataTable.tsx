@@ -8,7 +8,7 @@ import { RootState } from "../../store/store";
 import { logout } from "../../store/slices/authSlice";
 
 interface EditOptionalObject {
-  field_name: string;
+  field_name: string[];
   endpoint: string;
   data_id_name: string;
   data_name: string;
@@ -73,7 +73,8 @@ const DataTable: React.FC<DataTableProps> = ({
       }
 
       const result = await response.json();
-      return { [obj.field_name]: result };
+      console.log("res: ", result);
+      return { [obj.field_name[0]]: result };
     });
     const results = await Promise.all(promises);
     const dataMap = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
@@ -126,6 +127,7 @@ const DataTable: React.FC<DataTableProps> = ({
     }));
   };
 
+  // handles saving updated object
   const handleSave = async () => {
     if (!editEndpoint) return;
     try {
@@ -168,8 +170,8 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const renderSelect = (key: string) => {
     const options = dropdownData[key] || [];
-    const optionalObj = editOptionalObjects.find(
-      (obj) => obj.field_name === key
+    const optionalObj = editOptionalObjects.find((obj) =>
+      obj.field_name.includes(key)
     );
 
     return (
@@ -186,7 +188,11 @@ const DataTable: React.FC<DataTableProps> = ({
             key={item[optionalObj?.data_id_name]}
             value={item[optionalObj?.data_id_name]}
           >
-            {item[optionalObj?.data_name]}
+            {item[optionalObj?.data_name]}{" "}
+            {optionalObj?.field_name.map((field, idx) => {
+              if (idx === 0) return;
+              return `${item[field]} `;
+            })}
           </option>
         ))}
       </select>
@@ -217,8 +223,12 @@ const DataTable: React.FC<DataTableProps> = ({
           <tbody>
             {data.map((obj, index) => (
               <tr key={index}>
-                {Object.values(obj).map((objData, i) => (
-                  <td key={i}>{objData as string}</td>
+                {Object.entries(obj).map(([key, objData], i) => (
+                  <td key={i}>
+                    {/data|date/i.test(key) && typeof objData === "string"
+                      ? new Date(objData).toLocaleDateString("pl-PL")
+                      : (objData as string)}
+                  </td>
                 ))}
                 {editEndpoint && (
                   <td className={style.actionBtns}>
@@ -261,7 +271,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     renderSelect(key)
                   ) : (
                     <input
-                      type="text"
+                      type={/data|date/i.test(key) ? "date" : "text"}
                       value={editedData[key] as string}
                       onChange={(e) => handleChangeEdit(key, e.target.value)}
                     />
@@ -285,7 +295,7 @@ const DataTable: React.FC<DataTableProps> = ({
                   renderSelect(key)
                 ) : (
                   <input
-                    type="text"
+                    type={/data|date/i.test(key) ? "date" : "text"}
                     value={newData[key] as string}
                     onChange={(e) => handleChangeCreate(key, e.target.value)}
                   />

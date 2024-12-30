@@ -18,6 +18,7 @@ const ManagerDashboard: React.FC = () => {
           editEndpoint={""}
           addEndpoint={""}
           editOptionalObjects={[]}
+          additionalBody={{}}
           initialObjectState={initialShoppingListState}
         />
       </div>

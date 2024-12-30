@@ -1,5 +1,6 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
+import { initialOrderState } from "../../utils/types";
 import style from "./Orders.module.css";
 
 const Orders: React.FC = () => {
@@ -14,8 +15,24 @@ const Orders: React.FC = () => {
       <DataTable
         endpoint={endpoint.ORDER_GET_ALL()}
         editEndpoint={"TODO"}
-        addEndpoint={"TODO"}
+        addEndpoint={endpoint.ORDER_CREATE()}
         subPageURL={"/orders/details"}
+        editOptionalObjects={[
+          {
+            field_name: ["klient_firma", "imie", "nazwisko"],
+            endpoint: endpoint.CLIENT_GET_ALL(),
+            data_id_name: "klient_id",
+            data_name: "firma",
+          },
+        ]}
+        additionalBody={{}}
+        initialObjectState={(({
+          zlecenie_id,
+          klient_id,
+          klient_imie,
+          klient_nazwisko,
+          ...o
+        }) => o)(initialOrderState)}
       />
     </div>
   );

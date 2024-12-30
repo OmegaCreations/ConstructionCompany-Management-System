@@ -4,14 +4,14 @@ set client_encoding to 'UTF8';
 
 create schema construction_company;
 set search_path to construction_company;
-
+SET datestyle = 'ISO, DMY'; -- daty chcemy formatowane auropejski bo tak wysyłamy z frontendu
 
 -- new user
 CREATE USER construction_company_admin WITH PASSWORD '<secret-password-to-tembo>';
 
 -- create new role for this schema
 CREATE ROLE construction_company_admin_role;
-ALTER ROLE construction_company_admin SET search_path TO construction_company -- construction company as a base schema
+ALTER ROLE construction_company_admin SET search_path TO construction_company; -- construction company as a base schema
 
 -- permissions
 GRANT USAGE, CREATE ON SCHEMA construction_company TO construction_company_admin_role;

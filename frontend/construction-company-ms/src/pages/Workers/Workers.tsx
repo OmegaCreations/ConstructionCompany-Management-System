@@ -18,12 +18,13 @@ const Workers: React.FC = () => {
         subPageURL={""}
         editOptionalObjects={[
           {
-            field_name: "stanowisko_nazwa",
+            field_name: ["stanowisko_nazwa"],
             endpoint: endpoint.POSITION_GET_ALL(),
             data_id_name: "stanowisko_id",
             data_name: "nazwa",
           },
         ]}
+        additionalBody={{}}
         initialObjectState={(({ pracownik_id, rola, stanowisko_id, ...o }) =>
           o)(initialUserState)}
       />
@@ -35,7 +36,9 @@ const Workers: React.FC = () => {
         endpoint={endpoint.POSITION_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={endpoint.POSITION_CREATE()}
+        subPageURL={""}
         editOptionalObjects={[]}
+        additionalBody={{}}
         initialObjectState={(({ stanowisko_id, ...o }) => o)(
           initialPositionState
         )}

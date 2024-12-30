@@ -28,6 +28,7 @@ export const endpoint = {
     `http://localhost:5000/api/order/${zlecenie_id}/costs`,
   ORDER_GET_RESOURCES: (zlecenie_id: number) =>
     `http://localhost:5000/api/order/${zlecenie_id}/resources`,
+  ORDER_CREATE: () => `http://localhost:5000/api/order/`,
 
   // workdays endpoints
   WORKDAY_GET_ALL: (year: number, month: number) =>
