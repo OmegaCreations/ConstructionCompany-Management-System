@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import cors from "cors";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 // routes
 import helloRoutes from "./routes/helloRoutes";
@@ -24,6 +25,7 @@ const app: Application = express();
 app.use(cors());
 app.use(helmet()); // HTTP security for express apps
 app.use(express.json()); // parsing JSON
+app.use(cookieParser());
 app.use(loggerMiddleware); // will log all requests with data and endpoints
 
 // All routes ================================================================

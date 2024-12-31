@@ -21,7 +21,7 @@
 
 ### Module Descriptions:
 
-- **TypeScript:** Useful for type-checking logic, especially in larger applications.
+- **TypeScript:** Useful for type-checking logic, especially in larger applications. (there are also a lot of type imports needed for typescript for modules below).
 - **Node.js + Express:** Backend framework.
 - **pg:** A module for connecting to a PostgreSQL database.
 - **Helmet:** Provides basic security measures for Express apps (e.g., against cross-site scripting).
@@ -29,6 +29,7 @@
 - **Nodemon:** Automatically reloads the server after changes, eliminating the need to restart it manually.
 - **jsonwebtoken** - JWT
 - **bcrypt** - password encryption
+- **cookie-parser** - parsing cookies as a middleware.
 
 ### File Structure Description:
 
