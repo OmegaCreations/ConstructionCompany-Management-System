@@ -15,6 +15,14 @@ const router = Router();
 // get all orders' data
 router.get("/", authenticateUserJWT, orderController.getAllOrders);
 
+// get profits
+router.get(
+  "/profits",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  orderController.getOrdersProfits
+);
+
 // get specific order's data
 router.get("/:id", authenticateUserJWT, orderController.getOrder);
 

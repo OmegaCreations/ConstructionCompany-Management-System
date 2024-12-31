@@ -49,6 +49,16 @@ export const getSpecificWorkDay = async (
   )) as DzienPracy;
 };
 
+// returns full worked hours for specific month and user
+export const getWorkedHours = async (pracownik_id: number) => {
+  const existingUser: Pracownik | null = await userModel.findById(pracownik_id);
+  if (!existingUser) {
+    throw new Error("User with given credentials does not exist.");
+  }
+
+  return await workdayModel.getHoursWorked(pracownik_id);
+};
+
 // ================================
 //        POST REQUESTS
 // ================================

@@ -62,6 +62,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 - ✅🧪☑️ - "http://localhost:5000/api/workday/:id/:year/:month" - zwraca informacje o wszystkich dniach pracy dla danego miesiąca i roku dla konkretnego pracownika
 - ✅🧪☑️ - "http://localhost:5000/api/workday/:year/:month" - zwraca informacje o wszystkich dniach pracy dla danego miesiąca i roku dla wszystkich pracowników
 - ✅🧪☑️ - "http://localhost:5000/api/workday/:id/:year/:month/:day" - zwraca informacje o konkretnym dniu pracy dla konkretnego pracownika
+- ✅🧪 - "http://localhost:5000/api/workday/workedhours" - zwraca informacje o sumie przepracowanych godzin w danym miesiącu
 
 ### Magazyn
 

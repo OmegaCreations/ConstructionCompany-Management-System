@@ -200,6 +200,7 @@ CREATE OR REPLACE FUNCTION dodaj_zlecenie(
     p_data_zlozenia DATE,
     p_data_rozpoczecia DATE,
     p_lokalizacja VARCHAR,
+    p_wycena DECIMAL DEFAULT 0,
     p_data_zakonczenia DATE DEFAULT NULL
 )
 RETURNS VOID AS $$
@@ -212,8 +213,8 @@ BEGIN
     END IF;
 
     -- Wstawienie zlecenia i zwrócenie ID
-    INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja, data_zakonczenia)
-    VALUES (p_klient_id, p_opis, p_data_zlozenia, p_data_rozpoczecia, p_lokalizacja, p_data_zakonczenia);
+    INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja, wycena, data_zakonczenia)
+    VALUES (p_klient_id, p_opis, p_data_zlozenia, p_data_rozpoczecia, p_lokalizacja, p_wycena, p_data_zakonczenia);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -225,23 +226,23 @@ CREATE OR REPLACE FUNCTION dodaj_zasob_do_zlecenia(
     p_zasob_id INT,
     p_ilosc_potrzebna INT
 )
-RETURNS VOID AS $$
+RETURNS VOID AS $$ 
 BEGIN
-    -- sprawdzenie czy zlecenie istnieje
-    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN
-        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id;
-    END IF;
+    -- sprawdzenie czy zlecenie istnieje 
+    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN 
+        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id; 
+    END IF; 
 
-    -- sprawdzenie czy zasób istnieje
-    IF NOT EXISTS (SELECT 1 FROM zasob WHERE zasob_id = p_zasob_id) THEN
-        RAISE EXCEPTION 'Zasób o ID % nie istnieje.', p_zasob_id;
-    END IF;
+    -- sprawdzenie czy zasób istnieje 
+    IF NOT EXISTS (SELECT 1 FROM zasob WHERE zasob_id = p_zasob_id) THEN 
+        RAISE EXCEPTION 'Zasób o ID % nie istnieje.', p_zasob_id; 
+    END IF; 
 
-    -- wstawienie lub aktualizacja zasobu w zleceniu
-    INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
-    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna)
-    ON CONFLICT (zasob_id, zlecenie_id)
-    DO UPDATE SET ilosc_potrzebna = zasob_zlecenie.ilosc_potrzebna + EXCLUDED.ilosc_potrzebna;
+    -- wstawienie lub aktualizacja zasobu w zleceniu 
+    INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna) 
+    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna) 
+    ON CONFLICT (zasob_id, zlecenie_id) 
+    DO UPDATE SET ilosc_potrzebna = EXCLUDED.ilosc_potrzebna;
 END;
 $$ LANGUAGE plpgsql;
 

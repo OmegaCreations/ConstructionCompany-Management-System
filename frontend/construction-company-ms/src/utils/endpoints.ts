@@ -29,6 +29,10 @@ export const endpoint = {
   ORDER_GET_RESOURCES: (zlecenie_id: number) =>
     `http://localhost:5000/api/order/${zlecenie_id}/resources`,
   ORDER_CREATE: () => `http://localhost:5000/api/order/`,
+  ORDER_ADD_RESOURCE: () => `http://localhost:5000/api/order/resource/`,
+
+  // profits
+  PROFITS: () => `http://localhost:5000/api/order/profits`,
 
   // workdays endpoints
   WORKDAY_GET_ALL: (year: number, month: number) =>
@@ -42,6 +46,9 @@ export const endpoint = {
     day: number
   ) =>
     `http://localhost:5000/api/workday/${pracownik_id}/${year}/${month}/${day}`,
+  WORKDAY_ADD: () => `http://localhost:5000/api/workday/`,
+  WORKDAT_GET_TOTAL_HOURS: () =>
+    `http://localhost:5000/api/workday/workedhours`,
 
   // warehouse endpoints
   WAREHOUSE_GET_ALL: () => `http://localhost:5000/api/warehouse`,

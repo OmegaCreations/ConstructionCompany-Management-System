@@ -7,6 +7,7 @@ import { AuthPracownik } from "../utils/types";
 
 dotenv.config();
 const JWT_SECRET = String(process.env.JWT_SECRET); // secret key for JWT
+const JWT_REFRESH_SECRET = String(process.env.JWT_REFRESH_SECRET); // for refresh token
 
 // login user and send back generated token
 export const loginUser = async (email: string, haslo: string) => {
@@ -28,6 +29,14 @@ export const loginUser = async (email: string, haslo: string) => {
     JWT_SECRET,
     {
       expiresIn: "1h", // jwt expire time
+    }
+  );
+
+  const refreshToken = jwt.sign(
+    { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
+    JWT_REFRESH_SECRET,
+    {
+      expiresIn: "7d",
     }
   );
 

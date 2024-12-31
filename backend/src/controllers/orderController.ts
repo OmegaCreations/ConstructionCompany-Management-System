@@ -110,6 +110,21 @@ export const getOrderCosts: any = async (req: Request, res: Response) => {
   }
 };
 
+// gets order profits
+export const getOrdersProfits: any = async (req: Request, res: Response) => {
+  try {
+    const profits = await orderService.getOrdersProfits();
+    return res.status(200).json(profits);
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error
+          ? err.message
+          : "Error during fetching orders' future profits.",
+    });
+  }
+};
+
 // ================================
 //        POST REQUESTS
 // ================================
@@ -122,6 +137,7 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
     data_zlozenia,
     data_rozpoczenia,
     lokalizacja,
+    wycena,
     data_zakonczenia,
   } = req.body;
 
@@ -131,6 +147,7 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
     !opis ||
     !data_zlozenia ||
     !data_rozpoczenia ||
+    !wycena ||
     !lokalizacja
   ) {
     return res.status(400).json({ error: "Please provide all the data." });
@@ -144,6 +161,7 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
       data_zlozenia,
       data_rozpoczenia,
       lokalizacja,
+      wycena,
       data_zakonczenia,
     });
 
@@ -160,19 +178,20 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
 
 // adds resources to order
 export const addResourcesToOrder: any = async (req: Request, res: Response) => {
-  const data: CreateOrderResourceInput[] = req.body;
+  const { zlecenie_id, zasob_id, ilosc_potrzebna } = req.body;
 
   // check if required data was passed
-  for (let resource of data) {
-    let { zlecenie_id, zasob_id, ilosc_potrzebna } = resource;
-    if (!zlecenie_id || !ilosc_potrzebna || !zasob_id) {
-      return res.status(400).json({ error: "Please provide all the data." });
-    }
+  if (!zlecenie_id || !ilosc_potrzebna || !zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
   }
 
   // adding new resource
   try {
-    await orderService.addResourcesToOrder(data);
+    await orderService.addResourcesToOrder({
+      zlecenie_id,
+      zasob_id,
+      ilosc_potrzebna,
+    });
 
     res.status(201).json({
       info: "Nowe zasoby zostały dodane do zlecenia!",

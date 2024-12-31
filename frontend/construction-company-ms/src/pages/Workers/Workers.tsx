@@ -15,7 +15,7 @@ const Workers: React.FC = () => {
         endpoint={endpoint.USER_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={endpoint.USER_CREATE()}
-        subPageURL={""}
+        subPageURL={"/dashboard"}
         editOptionalObjects={[
           {
             field_name: ["stanowisko_nazwa"],

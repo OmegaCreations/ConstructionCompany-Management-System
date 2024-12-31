@@ -54,6 +54,7 @@ export interface OrderData {
   opis: string;
   data_zlozenia: string;
   data_rozpoczenia: string;
+  wycena: number;
   data_zakonczenia: string;
   lokalizacja: string;
 }
@@ -67,6 +68,7 @@ export const initialOrderState: OrderData = {
   opis: "",
   data_zlozenia: "",
   data_rozpoczenia: "",
+  wycena: 0,
   data_zakonczenia: "",
   lokalizacja: "",
 };
@@ -141,6 +143,27 @@ export const initialResourceState: Resource = {
   opis: "",
   koszt_jednostkowy: 0,
   ilosc: 0,
+};
+
+// order's resources
+export interface OrderResource {
+  zasob_id: number;
+  nazwa: string;
+  jednostka: string;
+  typ: "material" | "sprzet";
+  opis: string;
+  koszt_jednostkowy: number;
+  ilosc_potrzebna: number;
+}
+
+export const initialOrderResourceState: OrderResource = {
+  zasob_id: -1,
+  nazwa: "",
+  jednostka: "",
+  typ: "material",
+  opis: "",
+  koszt_jednostkowy: 0,
+  ilosc_potrzebna: 0,
 };
 
 // shopping list data

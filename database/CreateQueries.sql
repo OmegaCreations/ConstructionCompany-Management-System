@@ -56,6 +56,7 @@ CREATE TABLE klient (
 CREATE TABLE zlecenie (
     zlecenie_id SERIAL PRIMARY KEY,
     klient_id INT NOT NULL REFERENCES klient(klient_id),
+    wycena DECIMAL,
     opis TEXT NOT NULL,
     data_zlozenia DATE NOT NULL,
     data_rozpoczecia DATE NOT NULL,

@@ -92,6 +92,32 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- =========================================
+-- Funkcja: zwraca przyszłe zyski
+-- =========================================
+CREATE OR REPLACE FUNCTION get_zyski() 
+RETURNS TABLE (zyski DECIMAL, wydatki DECIMAL) AS $$
+BEGIN
+    -- Obliczanie zysków (suma wycen zleceń w trakcie realizacji)
+    SELECT COALESCE(SUM(z.wycena), 0)
+    INTO zyski
+    FROM zlecenie z
+    WHERE z.data_zakonczenia IS NULL;
+
+    -- Obliczanie wydatków (zakupy zasobów dla roku tego lub kolejnych)
+    SELECT COALESCE(SUM(zz.ilosc * zas.koszt_jednostkowy), 0)
+    INTO wydatki
+    FROM zakupy_zasob zz
+    JOIN zasob zas USING (zasob_id)
+    JOIN zakupy zak USING (zakupy_id)
+    WHERE date_trunc('year', CURRENT_DATE) >= date_trunc('year', CURRENT_DATE);
+
+
+    RETURN QUERY SELECT zyski, wydatki;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 -- =========================================
 -- Funkcja: Pobiera dane klienta oraz jego zleceń
@@ -141,7 +167,8 @@ RETURNS TABLE (
     data_zlozenia DATE,
     data_rozpoczecia DATE,
     data_zakonczenia DATE,
-    lokalizacja VARCHAR
+    lokalizacja VARCHAR,
+    wycena DECIMAL
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -154,7 +181,8 @@ BEGIN
         z.data_zlozenia,
         z.data_rozpoczecia,
         z.data_zakonczenia,
-        z.lokalizacja
+        z.lokalizacja,
+        z.wycena
     FROM zlecenie z
     JOIN klient k ON z.klient_id = k.klient_id
     WHERE zlecenie_id_param IS NULL OR z.zlecenie_id = zlecenie_id_param;
@@ -188,7 +216,7 @@ BEGIN
         COALESCE(SUM(mz.ilosc), 0) AS ilosc_w_magazynie
     FROM zasob_zlecenie zz
     JOIN zlecenie z ON zz.zlecenie_id = z.zlecenie_id
-    JOIN zasob r ON zz.magazyn_zasob_id IS NOT NULL AND r.zasob_id = (SELECT mz2.zasob_id FROM magazyn_zasob mz2 WHERE mz2.magazyn_zasob_id = zz.magazyn_zasob_id)
+    JOIN zasob r ON zz.zasob_id = r.zasob_id
     LEFT JOIN magazyn_zasob mz ON r.zasob_id = mz.zasob_id
     WHERE zz.zlecenie_id = zlecenie_id_param
     GROUP BY z.zlecenie_id, r.zasob_id, r.nazwa, r.jednostka, r.typ, r.koszt_jednostkowy, zz.ilosc_potrzebna;
@@ -204,20 +232,32 @@ DECLARE
     koszt DECIMAL := 0;
 BEGIN
     SELECT 
-        SUM((zz.ilosc_potrzebna - mz.ilosc) * zas.koszt_jednostkowy)
+        SUM(
+            CASE 
+                WHEN zz.ilosc_potrzebna > COALESCE(mz.ilosc_sum, 0)
+                THEN (zz.ilosc_potrzebna - COALESCE(mz.ilosc_sum, 0)) * zas.koszt_jednostkowy
+                ELSE 0
+            END
+        )
     INTO koszt
     FROM zasob_zlecenie zz
-    JOIN magazyn_zasob mz using(magazyn_zasob_id)
-    JOIN zasob zas using(zasob_id)
-    WHERE zz.zlecenie_id = zlecenie_id_param AND zas.typ = 'material';
+    JOIN zasob zas USING (zasob_id)
+    LEFT JOIN (
+        SELECT zasob_id, SUM(ilosc) AS ilosc_sum
+        FROM magazyn_zasob
+        GROUP BY zasob_id
+    ) mz USING (zasob_id)
+    WHERE zz.zlecenie_id = zlecenie_id_param 
+    AND zas.typ = 'material';
 
-    IF koszt IS NULL OR koszt < 0 THEN
+    IF koszt IS NULL THEN
         koszt := 0;
     END IF;
 
     RETURN koszt;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- =========================================
 -- Funkcja: Oblicza koszty i godziny pracowników dla zlecenia
@@ -343,6 +383,29 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- =========================================
+-- Funkcja: Zwraca sumę przepracowanych godzin tego miesiąca
+-- =========================================
+CREATE OR REPLACE FUNCTION get_summed_work_hours(p_pracownik_id INT)
+RETURNS INTERVAL AS $$
+DECLARE
+    total_hours INTERVAL := '0 hours';
+BEGIN
+    SELECT COALESCE(SUM(
+        godzina_zakonczenia - godzina_rozpoczecia
+    ), '0 hours')
+    INTO total_hours
+    FROM dzien_pracy
+    WHERE pracownik_id = p_pracownik_id
+    AND EXTRACT(MONTH FROM data) = EXTRACT(MONTH FROM CURRENT_DATE)
+    AND EXTRACT(YEAR FROM data) = EXTRACT(YEAR FROM CURRENT_DATE)
+    AND godzina_zakonczenia IS NOT NULL;
+
+    RETURN total_hours;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- =========================================
 --                Magazyn
 -- =========================================
 
@@ -373,7 +436,6 @@ select * from get_magazyny();
 -- =========================================
 CREATE OR REPLACE FUNCTION get_zasoby_magazynu(magazyn_id_param INT)
 RETURNS TABLE (
-    magazyn_zasob_id INT,
     zasob_id INT,
     nazwa_zasobu VARCHAR,
     jednostka VARCHAR,
@@ -385,8 +447,7 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT 
-        mz.magazyn_zasob_id,
-        z.zasob_id,
+        mz.zasob_id,
         z.nazwa AS nazwa_zasobu,
         z.jednostka,
         z.typ,

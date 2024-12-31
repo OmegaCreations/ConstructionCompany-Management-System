@@ -5,7 +5,7 @@ import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
-import { UserData, WorkDay } from "../../utils/types";
+import { OrderData, UserData, WorkDay } from "../../utils/types";
 
 const Calendar: React.FC = () => {
   const [startHour, setStartHour] = useState("");
@@ -19,11 +19,30 @@ const Calendar: React.FC = () => {
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
 
-  const { user_id, role } = useSelector((state: RootState) => state.auth);
+  const { user_id, role, token } = useSelector(
+    (state: RootState) => state.auth
+  );
   const [chosenUserID, setChosenUserID] = useState(user_id);
 
   const [apiUrl, setApiUrl] = useState("");
   const [monthApiUrl, setMonthApiUrl] = useState("");
+
+  // new workdays data
+  const [postResponseData, setPostResponseData] = useState<object>({}); // for POST fetching
+  const [addingWorkdays, setAddingWorkdays] = useState(false);
+  const [workdays, setWorkdays] = useState([]);
+  const [newWorkday, setNewWorkday] = useState({
+    zlecenie_id: 1,
+    data: "",
+    opis_managera: "",
+    pracownik_id: chosenUserID,
+  });
+
+  const { data: ordersFetchedData } = useFetchData(
+    role === "manager" ? endpoint.ORDER_GET_ALL() : ""
+  );
+  const ordersData: OrderData[] = ordersFetchedData as unknown as OrderData[];
+  console.log(ordersData);
 
   // fetching data
   const { data, loading } = useFetchData(apiUrl);
@@ -158,6 +177,64 @@ const Calendar: React.FC = () => {
     throw new Error("Function not implemented.");
   }
 
+  // adding new workdays functions
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (value) {
+      setNewWorkday((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleAddWorkday = () => {
+    if (newWorkday.zlecenie_id && newWorkday.data) {
+      setWorkdays([...workdays, newWorkday]);
+      setNewWorkday({
+        zlecenie_id: 1,
+        data: "",
+        opis_managera: "",
+        pracownik_id: chosenUserID,
+      });
+    } else {
+      alert("Wprowadź zlecenie i datę.");
+    }
+  };
+
+  const handleSubmitWorkdays = () => {
+    fetch(endpoint.WORKDAY_ADD(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(workdays),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((responseData) => {
+        setAddingWorkdays(false);
+        setWorkdays([]);
+        setPostResponseData(responseData);
+      })
+      .catch((err) => setPostResponseData(err));
+  };
+
+  const popup = () => {
+    return (
+      <div className={style.popup}>
+        {Object.entries(postResponseData).map(([key, value]) => (
+          <div key={key}>
+            <strong>{key}:</strong> {value.toString()}
+          </div>
+        ))}
+        <button onClick={() => setPostResponseData({})}>Zamknij</button>
+      </div>
+    );
+  };
+
   return (
     <div className={style.calendarContainer}>
       <section className={style.calendarSection}>
@@ -175,18 +252,26 @@ const Calendar: React.FC = () => {
             </svg>
           </button>
           {role === "manager" && (
-            <select
-              onChange={(e) => {
-                setChosenUserID(Number(e.target.value));
-              }}
-              defaultValue={chosenUserID}
-            >
-              {userData.map((user: UserData) => (
-                <option value={user.pracownik_id}>
-                  {user.imie} {user.nazwisko}
-                </option>
-              ))}
-            </select>
+            <>
+              <select
+                onChange={(e) => {
+                  setChosenUserID(Number(e.target.value));
+                }}
+                defaultValue={chosenUserID}
+              >
+                {userData.map((user: UserData) => (
+                  <option value={user.pracownik_id}>
+                    {user.imie} {user.nazwisko}
+                  </option>
+                ))}
+              </select>
+              <button
+                className={style.addBtn}
+                onClick={() => setAddingWorkdays(true)}
+              >
+                Dodaj dzień pracy
+              </button>
+            </>
           )}
           <div className={style.monthYearDisplay}>{monthYear}</div>
           <button onClick={setNextDate}>
@@ -304,6 +389,57 @@ const Calendar: React.FC = () => {
           </>
         )}
       </aside>
+
+      {addingWorkdays && role === "manager" && (
+        <div className={style.popup}>
+          <h3>
+            Dodaj nowe dni pracy dla {userData[chosenUserID - 1].imie}{" "}
+            {userData[chosenUserID - 1].nazwisko}
+          </h3>
+
+          {workdays.map((day, index) => (
+            <div key={index}>
+              <p>Zlecenie: {day.zlecenie_id}</p>
+              <p>Data: {day.data}</p>
+              <p>Opis: {day.opis_managera || "Brak"}</p>
+            </div>
+          ))}
+
+          <div className={style.formContainer}>
+            <select
+              onChange={handleInputChange}
+              value={newWorkday.zlecenie_id}
+              name="zlecenie_id"
+            >
+              {ordersData.map((order) => (
+                <option key={order.zlecenie_id} value={order.zlecenie_id}>
+                  {order.klient_firma} {order.klient_imie}{" "}
+                  {order.klient_nazwisko} - {order.opis.slice(0, 40)}...
+                </option>
+              ))}
+            </select>
+            <input
+              type="date"
+              name="data"
+              value={newWorkday.data}
+              onChange={handleInputChange}
+            />
+            <input
+              type="text"
+              name="opis_managera"
+              placeholder="Opis (opcjonalnie)"
+              value={newWorkday.opis_managera}
+              onChange={handleInputChange}
+            />
+            <button onClick={handleAddWorkday}>Dodaj dzień</button>
+          </div>
+
+          <button onClick={handleSubmitWorkdays}>Zapisz</button>
+          <button onClick={() => setAddingWorkdays(false)}>Anuluj</button>
+        </div>
+      )}
+
+      {Object.keys(postResponseData).length !== 0 && popup()}
     </div>
   );
 };

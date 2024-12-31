@@ -12,6 +12,12 @@ const router = Router();
 //           GET ROUTES
 // ================================
 
+router.get(
+  "/workedhours",
+  authenticateUserJWT,
+  workdayController.getWorkedHours
+);
+
 // returns all workdays for all users in specific month
 router.get(
   "/:year/:month",

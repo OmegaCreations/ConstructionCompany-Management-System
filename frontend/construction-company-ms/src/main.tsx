@@ -20,6 +20,7 @@ import ClientDetails from "./pages/Clients/Details/ClientDetails";
 import OrderDetails from "./pages/Orders/Details/OrderDetails";
 import Calendar from "./pages/Calendar/Calendar";
 import WarehouseDetails from "./pages/WarehouseData/Details/WarehouseDetails";
+import WorkerDashboard from "./pages/WorkerDashboard/WorkerDashboard";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -40,6 +41,10 @@ createRoot(document.getElementById("root")!).render(
             {/* Protected route checks if user has allowed role and returns auth component or passed child component */}
             <Route element={<ProtectedRoute admin_route={false} />}>
               <Route path="/dashboard" element={<Dashboard />} />
+            </Route>
+
+            <Route element={<ProtectedRoute admin_route={false} />}>
+              <Route path="/dashboard/:id" element={<WorkerDashboard />} />
             </Route>
 
             <Route element={<ProtectedRoute admin_route={false} />}>

@@ -57,6 +57,11 @@ export const getOrderCosts = async (zlecenie_id: number) => {
   return await orderModel.getCosts(zlecenie_id);
 };
 
+// get all future profits for orders
+export const getOrdersProfits = async () => {
+  return await orderModel.getProfits();
+};
+
 // ================================
 //        POST REQUESTS
 // ================================
@@ -67,6 +72,6 @@ export const createNewOrder = async (data: CreateOrderInput) => {
 };
 
 // adds resources to ordeer
-export const addResourcesToOrder = async (data: CreateOrderResourceInput[]) => {
+export const addResourcesToOrder = async (data: CreateOrderResourceInput) => {
   return await orderModel.addResource(data);
 };

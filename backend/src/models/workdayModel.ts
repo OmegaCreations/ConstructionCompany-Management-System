@@ -53,6 +53,21 @@ export const getByFullDate = async (
   return result.rows[0];
 };
 
+// returns worked hours for this month
+export const getHoursWorked = async (pracownik_id: number) => {
+  const query = `
+    SELECT EXTRACT(HOUR FROM get_summed_work_hours) + EXTRACT(DAY FROM get_summed_work_hours) * 24 + EXTRACT(MINUTE FROM get_summed_work_hours) / 60 AS hours
+    FROM get_summed_work_hours($1);
+  `;
+  const result = (await client.query(query, [pracownik_id])).rows[0];
+  const hoursWorked = result.hours;
+  return { total_hours: hoursWorked };
+};
+
+// ================================
+//        POST REQUESTS
+// ================================
+
 // creates new workday in database
 export const create = async (data: CreateWorkdayInput[]) => {
   for (let workday of data) {

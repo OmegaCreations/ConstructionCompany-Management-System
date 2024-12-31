@@ -108,6 +108,30 @@ export const getSpecificWorkDay: any = async (req: any, res: Response) => {
   }
 };
 
+// returns one workday data for specific user in specific date
+export const getWorkedHours: any = async (req: any, res: Response) => {
+  const pracownik_id: number = req.user.pracownik_id;
+
+  if (!pracownik_id) {
+    return res.status(400).json({ error: "Invalid credentials." });
+  }
+
+  try {
+    const total_hours = await workdayService.getWorkedHours(pracownik_id);
+    if (!total_hours) {
+      return res.status(200).json({ total_hours: 0 });
+    }
+    return res.status(200).json(total_hours);
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error
+          ? err.message
+          : "Error during fetching worked hours.",
+    });
+  }
+};
+
 // ================================
 //        POST REQUESTS
 // ================================

@@ -194,6 +194,7 @@ export interface CreateOrderInput {
   data_zlozenia: string;
   data_rozpoczenia: string;
   lokalizacja: string;
+  wycena: number;
   data_zakonczenia: string | null;
 }
 

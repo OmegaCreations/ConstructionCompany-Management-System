@@ -21,6 +21,7 @@ const ProtectedRoute: React.FC<ProtectedProps> = ({ admin_route }) => {
   if (admin_route && role === "worker") {
     return <Navigate to="/dashboard" />;
   }
+
   return <Outlet />;
 };
 

@@ -68,6 +68,12 @@ export const getCosts = async (zlecenie_id: number) => {
   } as ZlecenieKoszty;
 };
 
+// Get future profits
+export const getProfits = async () => {
+  const query = "select * from get_zyski()";
+  return (await client.query(query, [])).rows[0];
+};
+
 // ================================
 //         POST REQUESTS
 // ================================
@@ -80,9 +86,10 @@ export const create = async (orderData: CreateOrderInput) => {
     data_zlozenia,
     data_rozpoczenia,
     lokalizacja,
+    wycena,
     data_zakonczenia,
   } = orderData;
-  const query = `SELECT dodaj_zlecenie($1, $2, $3, $4, $5, $6);`;
+  const query = `SELECT dodaj_zlecenie($1, $2, $3, $4, $5, $6, $7);`;
 
   return (
     await client.query(query, [
@@ -91,18 +98,17 @@ export const create = async (orderData: CreateOrderInput) => {
       data_zlozenia,
       data_rozpoczenia,
       lokalizacja,
+      wycena,
       data_zakonczenia,
     ])
   ).rows[0];
 };
 
 // add new resources to the order or add new ammount
-export const addResource = async (data: CreateOrderResourceInput[]) => {
-  for (let resource of data) {
-    const { zlecenie_id, zasob_id, ilosc_potrzebna } = resource;
-    const query = `select dodaj_zasob_do_zlecenia($1, $2, $3)`;
-    await client.query(query, [zlecenie_id, zasob_id, ilosc_potrzebna]);
-  }
+export const addResource = async (data: CreateOrderResourceInput) => {
+  const { zlecenie_id, zasob_id, ilosc_potrzebna } = data;
+  const query = `select dodaj_zasob_do_zlecenia($1, $2, $3)`;
+  await client.query(query, [zlecenie_id, zasob_id, ilosc_potrzebna]);
 
   return;
 };
