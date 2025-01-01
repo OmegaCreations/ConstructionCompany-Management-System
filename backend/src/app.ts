@@ -22,7 +22,11 @@ import loggerMiddleware from "./middlewares/loggerMiddleware";
 const app: Application = express();
 
 // Middleware ===============================================================
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173", // localhost frontend adress
+  credentials: true, // allow sending cookies
+};
+app.use(cors(corsOptions));
 app.use(helmet()); // HTTP security for express apps
 app.use(express.json()); // parsing JSON
 app.use(cookieParser());

@@ -112,6 +112,8 @@ export const getSpecificWorkDay: any = async (req: any, res: Response) => {
 export const getWorkedHours: any = async (req: any, res: Response) => {
   const pracownik_id: number = req.user.pracownik_id;
 
+  console.log(req.user);
+
   if (!pracownik_id) {
     return res.status(400).json({ error: "Invalid credentials." });
   }

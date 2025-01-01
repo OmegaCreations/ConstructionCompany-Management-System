@@ -6,6 +6,7 @@ export const endpoint = {
   USER_GET: (pracownik_id: number) =>
     `http://localhost:5000/api/user/${pracownik_id}`,
   USER_LOGIN: () => `http://localhost:5000/api/auth/login`,
+  USER_REFRESH_TOKEN: () => `http://localhost:5000/api/auth/refresh`,
   USER_PAYCHECK: (pracownik_id: number) =>
     `http://localhost:5000/api/user/${pracownik_id}/paycheck`,
 

@@ -28,7 +28,7 @@ export const loginUser = async (email: string, haslo: string) => {
     { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_SECRET,
     {
-      expiresIn: "5m", // jwt expire time
+      expiresIn: "1h", // jwt expire time
     }
   );
 
@@ -40,17 +40,19 @@ export const loginUser = async (email: string, haslo: string) => {
     }
   );
 
+  console.log("token:", token, "\nrefresh token:", refreshToken);
+
   const role = getRoleByPositionId(user.stanowisko_id);
   return { token, refreshToken, role, pracownik_id: user.pracownik_id };
 };
 
 export const refreshToken = (refreshToken: string) => {
   const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as any;
-
+  console.log(user.pracownik_id);
   const token = jwt.sign(
-    { id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
+    { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_SECRET,
-    { expiresIn: "5m" }
+    { expiresIn: "1h" }
   );
 
   const role = getRoleByPositionId(user.stanowisko_id);

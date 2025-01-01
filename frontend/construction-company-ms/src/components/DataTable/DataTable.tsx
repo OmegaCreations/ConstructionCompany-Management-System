@@ -5,7 +5,8 @@ import style from "./DataTable.module.css";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
-import { logout } from "../../store/slices/authSlice";
+import { logout, setAccessToken } from "../../store/slices/authSlice";
+import { refreshAccessToken } from "../../utils/refreshToken";
 
 interface EditOptionalObject {
   field_name: string[];
@@ -57,10 +58,22 @@ const DataTable: React.FC<DataTableProps> = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const refreshToken = async () => {
+    const newToken = await refreshAccessToken();
+    if (newToken.token === "") {
+      dispatch(logout());
+      return false;
+    } else {
+      localStorage.setItem("accessToken", newToken.token);
+      dispatch(setAccessToken(newToken.token));
+      return true;
+    }
+  };
+
   // fetching info about <select> options
   const fetchDropdownData = async () => {
     const promises = editOptionalObjects.map(async (obj) => {
-      const response = await fetch(obj.endpoint, {
+      let response = await fetch(obj.endpoint, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -69,15 +82,40 @@ const DataTable: React.FC<DataTableProps> = ({
       });
 
       if (response.status === 401) {
-        dispatch(logout());
+        const success = await refreshToken();
+
+        if (success) {
+          response = await fetch(obj.endpoint, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`, // ensure new token is used
+            },
+          });
+        } else {
+          return null; // exit if token refresh fails
+        }
+      }
+
+      if (!response.ok) {
+        console.error("Failed to fetch data for:", obj.field_name[0]);
+        return null; // skip if response isn't successful
       }
 
       const result = await response.json();
       console.log("res: ", result);
       return { [obj.field_name[0]]: result };
     });
+
     const results = await Promise.all(promises);
-    const dataMap = results.reduce((acc, curr) => ({ ...acc, ...curr }), {});
+
+    const filteredResults = results.filter((result) => result !== null);
+
+    const dataMap = filteredResults.reduce(
+      (acc, curr) => ({ ...acc, ...curr }),
+      {}
+    );
+
     setDropdownData(dataMap);
   };
 
@@ -86,26 +124,43 @@ const DataTable: React.FC<DataTableProps> = ({
   }, [editOptionalObjects]);
 
   // POSTing new data
-  const handleAdd = () => {
-    fetch(addEndpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ ...newData, ...additionalBody }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((responseData) => {
+  const handleAdd = async (retry = true) => {
+    try {
+      setPostLoading(true);
+      const res = await fetch(addEndpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...newData, ...additionalBody }),
+      });
+
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleAdd(false); // retry once, no infinite loop
+        } else {
+          dispatch(logout());
+          return null;
+        }
+      }
+
+      if (res.ok) {
+        const responseData = await res.json();
         console.log(responseData);
         setPostResponseData(responseData);
-        setPostLoading(false);
-
-        reloadDataComponent();
-      })
-      .catch((err) => setPostResponseData(err));
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to add data");
+      }
+    } catch (err) {
+      console.error("Error: ", err);
+      setPostResponseData(err);
+    } finally {
+      setPostLoading(false);
+      reloadDataComponent();
+    }
   };
 
   const handleEdit = (item: Record<string, unknown>) => {

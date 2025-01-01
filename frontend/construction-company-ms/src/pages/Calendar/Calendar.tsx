@@ -2,10 +2,12 @@ import { useState, useEffect } from "react";
 import style from "./Calendar.module.css";
 import { endpoint } from "../../utils/endpoints";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
 import { OrderData, UserData, WorkDay } from "../../utils/types";
+import { refreshAccessToken } from "../../utils/refreshToken";
+import { logout, setAccessToken } from "../../store/slices/authSlice";
 
 const Calendar: React.FC = () => {
   const [startHour, setStartHour] = useState("");
@@ -18,6 +20,8 @@ const Calendar: React.FC = () => {
 
   const currentMonth = currentDate.getMonth() + 1;
   const currentYear = currentDate.getFullYear();
+
+  const dispatch = useDispatch();
 
   const { user_id, role, token } = useSelector(
     (state: RootState) => state.auth
@@ -42,7 +46,6 @@ const Calendar: React.FC = () => {
     role === "manager" ? endpoint.ORDER_GET_ALL() : ""
   );
   const ordersData: OrderData[] = ordersFetchedData as unknown as OrderData[];
-  console.log(ordersData);
 
   // fetching data
   const { data, loading } = useFetchData(apiUrl);
@@ -202,6 +205,18 @@ const Calendar: React.FC = () => {
     }
   };
 
+  const refreshToken = async () => {
+    const newToken = await refreshAccessToken();
+    if (newToken.token === "") {
+      dispatch(logout());
+      return false;
+    } else {
+      localStorage.setItem("accessToken", newToken.token);
+      dispatch(setAccessToken(newToken.token));
+      return true;
+    }
+  };
+
   const handleSubmitWorkdays = () => {
     fetch(endpoint.WORKDAY_ADD(), {
       method: "POST",
@@ -211,7 +226,10 @@ const Calendar: React.FC = () => {
       },
       body: JSON.stringify(workdays),
     })
-      .then((res) => {
+      .then(async (res) => {
+        if (res.status === 401) {
+          await refreshToken();
+        }
         return res.json();
       })
       .then((responseData) => {
@@ -237,68 +255,72 @@ const Calendar: React.FC = () => {
 
   return (
     <div className={style.calendarContainer}>
-      <section className={style.calendarSection}>
-        <div className={style.calendarHeader}>
-          <button onClick={setPrevDate}>
-            <svg
-              style={{ marginLeft: "10px" }}
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="#e8eaed"
-            >
-              <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
-          </button>
-          {role === "manager" && (
-            <>
-              <select
-                onChange={(e) => {
-                  setChosenUserID(Number(e.target.value));
-                }}
-                defaultValue={chosenUserID}
+      {loading ? (
+        <Loading />
+      ) : (
+        <section className={style.calendarSection}>
+          <div className={style.calendarHeader}>
+            <button onClick={setPrevDate}>
+              <svg
+                style={{ marginLeft: "10px" }}
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#e8eaed"
               >
-                {userData.map((user: UserData) => (
-                  <option value={user.pracownik_id}>
-                    {user.imie} {user.nazwisko}
-                  </option>
-                ))}
-              </select>
-              <button
-                className={style.addBtn}
-                onClick={() => setAddingWorkdays(true)}
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+              </svg>
+            </button>
+            {role === "manager" && (
+              <>
+                <select
+                  onChange={(e) => {
+                    setChosenUserID(Number(e.target.value));
+                  }}
+                  defaultValue={chosenUserID}
+                >
+                  {userData.map((user: UserData) => (
+                    <option value={user.pracownik_id}>
+                      {user.imie} {user.nazwisko}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className={style.addBtn}
+                  onClick={() => setAddingWorkdays(true)}
+                >
+                  Dodaj dzień pracy
+                </button>
+              </>
+            )}
+            <div className={style.monthYearDisplay}>{monthYear}</div>
+            <button onClick={setNextDate}>
+              <svg
+                style={{ transform: "rotate(180deg)", marginRight: "10px" }}
+                xmlns="http://www.w3.org/2000/svg"
+                height="24px"
+                viewBox="0 -960 960 960"
+                width="24px"
+                fill="#e8eaed"
               >
-                Dodaj dzień pracy
-              </button>
-            </>
-          )}
-          <div className={style.monthYearDisplay}>{monthYear}</div>
-          <button onClick={setNextDate}>
-            <svg
-              style={{ transform: "rotate(180deg)", marginRight: "10px" }}
-              xmlns="http://www.w3.org/2000/svg"
-              height="24px"
-              viewBox="0 -960 960 960"
-              width="24px"
-              fill="#e8eaed"
-            >
-              <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
-            </svg>
-          </button>
-        </div>
-        <div className={style.days}>
-          {["Pn", "Wt", "Śr", "Czw", "Pt", "Sb", "Nd"].map((day) => (
-            <div key={day} className={style.day}>
-              {day}
-            </div>
-          ))}
-        </div>
-        <div
-          className={style.dates}
-          dangerouslySetInnerHTML={{ __html: Dates }}
-        ></div>
-      </section>
+                <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+              </svg>
+            </button>
+          </div>
+          <div className={style.days}>
+            {["Pn", "Wt", "Śr", "Czw", "Pt", "Sb", "Nd"].map((day) => (
+              <div key={day} className={style.day}>
+                {day}
+              </div>
+            ))}
+          </div>
+          <div
+            className={style.dates}
+            dangerouslySetInnerHTML={{ __html: Dates }}
+          ></div>
+        </section>
+      )}
       <aside className={style.workInfo}>
         <h1>
           {activeDate.toLocaleDateString("default", {

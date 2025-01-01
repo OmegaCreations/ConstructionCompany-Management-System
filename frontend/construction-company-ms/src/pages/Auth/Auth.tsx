@@ -31,6 +31,7 @@ const Auth: React.FC = () => {
       // fetch login endpoint
       const response = await fetch(endpoint.USER_LOGIN(), {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },

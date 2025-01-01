@@ -41,9 +41,15 @@ const authSlice = createSlice({
       state.token = null;
       state.user_id = -1;
     },
+
+    // sets new access token
+    setAccessToken: (state, action: PayloadAction<{ token: string }>) => {
+      state.token = action.payload.token;
+      localStorage.setItem("jwt", state.token);
+    },
   },
 });
 
 // export actions and reducers
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;
