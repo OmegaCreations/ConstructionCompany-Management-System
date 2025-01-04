@@ -14,6 +14,7 @@ import warehouseRoutes from "./routes/warehouseRoutes";
 import positionRoutes from "./routes/positionRoutes";
 import resourceRoutes from "./routes/resourceRoutes";
 import shoppingListRoutes from "./routes/shoppingListRoutes";
+import globalRoutes from "./routes/globalRoutes";
 
 // middleware
 import loggerMiddleware from "./middlewares/loggerMiddleware";
@@ -46,5 +47,8 @@ app.use("/api/shoppinglist", shoppingListRoutes); // shopping list routes
 
 // Endpoint to show how project structure works :)
 app.use("/api", helloRoutes);
+
+// db reset endpoint
+app.use("/api/db", globalRoutes);
 
 export default app;

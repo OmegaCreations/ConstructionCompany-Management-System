@@ -573,4 +573,4 @@ $$ LANGUAGE plpgsql;
 
 
 -- znajdz pracownika z danym adresem email
-SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1
+-- SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1

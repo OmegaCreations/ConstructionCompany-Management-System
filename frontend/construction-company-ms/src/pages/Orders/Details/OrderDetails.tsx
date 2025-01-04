@@ -95,6 +95,7 @@ const OrderDetails: React.FC = () => {
           editEndpoint={"TODO"}
           addEndpoint={endpoint.ORDER_ADD_RESOURCE()}
           subPageURL={""}
+          deleteEndpoint={endpoint.ORDER_DELETE_RESOURCE()}
           additionalBody={{ zlecenie_id: id }}
           editOptionalObjects={[
             {

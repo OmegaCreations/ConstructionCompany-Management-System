@@ -79,8 +79,14 @@ export const addResource = async (data: CreateWarehouseResourceInput) => {
 
 export const deleteWithId = async (magazyn_id: number) => {
   const query = `DELETE FROM magazyn WHERE magazyn_id = $1 returning *`;
-  const result: QueryResult<Magazyn> = await client.query(query, [magazyn_id]);
-  return result.rows[0];
+  try {
+    const result: QueryResult<Magazyn> = await client.query(query, [
+      magazyn_id,
+    ]);
+    return result.rows[0];
+  } catch (err: any) {
+    throw new Error(err.message);
+  }
 };
 
 export const deleteResource = async (magazyn_zasob_id: number) => {

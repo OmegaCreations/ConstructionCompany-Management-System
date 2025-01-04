@@ -19,6 +19,7 @@ interface DataTableProps {
   endpoint: string;
   editEndpoint: string;
   addEndpoint: string;
+  deleteEndpoint: string;
   subPageURL: string | null;
   editOptionalObjects?: EditOptionalObject[];
   initialObjectState: object;
@@ -29,6 +30,7 @@ const DataTable: React.FC<DataTableProps> = ({
   endpoint,
   editEndpoint,
   addEndpoint,
+  deleteEndpoint,
   subPageURL = null,
   editOptionalObjects = [],
   initialObjectState,
@@ -159,6 +161,47 @@ const DataTable: React.FC<DataTableProps> = ({
       setPostResponseData(err);
     } finally {
       setPostLoading(false);
+      reloadDataComponent();
+    }
+  };
+
+  // handle DELETE request
+  const handleDelete = async (retry = true, item: Record<string, unknown>) => {
+    const confirmDelete = confirm("Czy na pewno usunąć?");
+    if (!confirmDelete) return;
+
+    try {
+      const res = await fetch(deleteEndpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ...item, ...additionalBody }),
+      });
+
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleDelete(false, item); // retry once
+        } else {
+          dispatch(logout());
+          return null;
+        }
+      }
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(
+          errorData?.message || `Failed to delete. Status: ${res.status}`
+        );
+      }
+
+      const responseData = await res.json();
+      setPostResponseData(responseData);
+    } catch (err) {
+      setPostResponseData(err);
+    } finally {
       reloadDataComponent();
     }
   };
@@ -303,6 +346,15 @@ const DataTable: React.FC<DataTableProps> = ({
                         }}
                       >
                         Więcej
+                      </button>
+                    )}
+                    {deleteEndpoint && (
+                      <button
+                        onClick={() =>
+                          handleDelete(true, obj as Record<string, unknown>)
+                        }
+                      >
+                        Usuń
                       </button>
                     )}
                   </td>

@@ -1,26 +1,15 @@
 SET search_path TO construction_company;
+
 set client_encoding to 'UTF8';
 
--- czyszczenie wszystkich tablic w schemacie construction_company.
-DO $$
-DECLARE
-    tabela TEXT;
-BEGIN
-    FOR tabela IN
-        SELECT tablename
-        FROM pg_tables
-        WHERE schemaname = 'construction_company'
-    LOOP
-        EXECUTE format('TRUNCATE TABLE %I.%I RESTART IDENTITY CASCADE;', 'construction_company', tabela);
-    END LOOP;
-END $$;
+-- delete from all tables
 
-
--- PONIZEJ SA PRZYKLADOWE DANE KTORE BEDA UZYWANE PRZY RESECIE BAZY
+select from truncate_schema();
 
 -- =========================================
 -- Tabela: stanowisko
 -- =========================================
+
 INSERT INTO stanowisko (nazwa, opis)
 VALUES
 ('Manager', 'Nadzór nad zespołem i planowanie strategiczne'),
@@ -34,10 +23,10 @@ VALUES
 ('Murator', 'Murowanie ścian i budynków'),
 ('Dekarz', 'Prace związane z pokryciem dachowym');
 
-
 -- =========================================
 -- Tabela: pracownik  - !!! hasło to: root  
 -- =========================================
+
 INSERT INTO pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
 SELECT 'Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 50.00,
@@ -53,19 +42,19 @@ SELECT 'Krzysztof', 'Nowak', '666777888', 'krzysztof.nowak@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 45.00,
        stanowisko_id FROM stanowisko WHERE nazwa = 'Dekarz';
 
-
 -- =========================================
 -- Tabela: klient
 -- =========================================
+
 INSERT INTO klient (imie, nazwisko, firma, telefon, email, adres)
 VALUES
 ('Adam', 'Nowicki', 'BuildMasters', '500600700', 'adam.nowicki@buildmasters.com', 'Kraków, ul. Budowlana 15'),
 ('Ewelina', 'Kowalczyk', 'SkyHigh Constructions', '600700800', 'ewelina.kowalczyk@skyhigh.pl', 'Warszawa, ul. Wieżowa 3');
 
-
 -- =========================================
 -- Tabela: zlecenie
 -- =========================================
+
 INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja)
 SELECT klient_id, 'Budowa magazynu o powierzchni 1000m2 wraz z pełną infrastrukturą. Wymagana instalacja elektryczna, hydrauliczna i prace wykończeniowe.', '2024-12-01', '2024-12-05', 'Kraków, ul. Przemysłowa 8'
 FROM klient WHERE imie = 'Adam' AND nazwisko = 'Nowicki';
@@ -77,6 +66,7 @@ FROM klient WHERE imie = 'Ewelina' AND nazwisko = 'Kowalczyk';
 -- =========================================
 -- Tabela: dzien_pracy
 -- =========================================
+
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
 SELECT p.pracownik_id, z.zlecenie_id, '2024-12-04'
 FROM pracownik p, zlecenie z
@@ -108,11 +98,10 @@ SELECT p.pracownik_id, z.zlecenie_id, '2024-12-06'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Krzysztof' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
-
-
 -- =========================================
 -- Tabela: zasob
 -- =========================================
+
 INSERT INTO zasob (nazwa, jednostka, typ, koszt_jednostkowy, opis)
 VALUES 
 ('Stal', 'kg', 'material', 5.0, 'Wysokiej jakości stal konstrukcyjna'),
@@ -129,6 +118,7 @@ VALUES
 -- =========================================
 -- Tabela: magazyn
 -- =========================================
+
 INSERT INTO magazyn (nazwa, lokalizacja)
 VALUES 
 ('Magazyn Kraków', 'Kraków, ul. Wysłouchów 13a'),
@@ -137,6 +127,7 @@ VALUES
 -- =========================================
 -- Tabela: magazyn_zasob
 -- =========================================
+
 INSERT INTO magazyn_zasob (ilosc, magazyn_id, zasob_id)
 VALUES
 (5, 1, 1),  -- 5 kg stali w magazynie 1
@@ -151,10 +142,10 @@ VALUES
 (15, 2, 10), -- 15 routerów w magazynie 2
 (5, 2, 1);  -- 5 kg stali w magazynie 2
 
-
 -- =========================================
 -- Tabela: zasob_zlecenie
 -- =========================================
+
 INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
 VALUES
 (1, 1, 200),   -- 20 kg stali użyte do instalacji sprzętu IT
@@ -162,121 +153,3 @@ VALUES
 (8, 1, 30),
 (2, 2, 50),   -- 50 m kabla użyte do naprawy maszyn przemysłowych
 (3, 2, 2);    -- 2 monitory dostarczone do projektu wnętrz
-
-
--- ==================================================================================
---              PONIZEJ SA FUNKCJE KTORE BEDA DODAWAC ODPOWIEDNIE OBIEKTY
--- ==================================================================================
-
--- dodawanie zasobu do magazynu
-CREATE OR REPLACE FUNCTION dodaj_zasob_do_magazynu(p_ilosc INT, p_magazyn_id INT, p_zasob_id INT)
-RETURNS VOID AS $$
-BEGIN
-    -- sprawdzamy czy już jest w magazynie ten zasób
-    IF EXISTS (
-        SELECT 1
-        FROM magazyn_zasob mz
-        WHERE mz.magazyn_id = p_magazyn_id
-          AND mz.zasob_id = p_zasob_id
-    ) THEN
-        -- jeśli tak to aktualizujemy ilość
-        UPDATE magazyn_zasob mz
-        SET ilosc = ilosc + p_ilosc
-        WHERE mz.magazyn_id = p_magazyn_id
-          AND mz.zasob_id = p_zasob_id;
-    ELSE
-        -- jeśli nie to dodajemy nowy rekord
-        INSERT INTO magazyn_zasob (ilosc, magazyn_id, zasob_id)
-        VALUES (p_ilosc, p_magazyn_id, p_zasob_id);
-    END IF;
-END;
-$$ LANGUAGE plpgsql;
-
-
--- dodawanie zlecenia
-CREATE OR REPLACE FUNCTION dodaj_zlecenie(
-    p_klient_id INT,
-    p_opis TEXT,
-    p_data_zlozenia DATE,
-    p_data_rozpoczecia DATE,
-    p_lokalizacja VARCHAR,
-    p_wycena DECIMAL DEFAULT 0,
-    p_data_zakonczenia DATE DEFAULT NULL
-)
-RETURNS VOID AS $$
-DECLARE
-    v_zlecenie_id INT;
-BEGIN
-    -- Sprawdzenie czy klient istnieje
-    IF NOT EXISTS (SELECT 1 FROM klient k WHERE k.klient_id = p_klient_id) THEN
-        RAISE EXCEPTION 'Klient o ID % nie istnieje.', p_klient_id;
-    END IF;
-
-    -- Wstawienie zlecenia i zwrócenie ID
-    INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja, wycena, data_zakonczenia)
-    VALUES (p_klient_id, p_opis, p_data_zlozenia, p_data_rozpoczecia, p_lokalizacja, p_wycena, p_data_zakonczenia);
-END;
-$$ LANGUAGE plpgsql;
-
-
-
--- funkcja dodająca wymagane zasoby do zlecenia
-CREATE OR REPLACE FUNCTION dodaj_zasob_do_zlecenia(
-    p_zlecenie_id INT,
-    p_zasob_id INT,
-    p_ilosc_potrzebna INT
-)
-RETURNS VOID AS $$ 
-BEGIN
-    -- sprawdzenie czy zlecenie istnieje 
-    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN 
-        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id; 
-    END IF; 
-
-    -- sprawdzenie czy zasób istnieje 
-    IF NOT EXISTS (SELECT 1 FROM zasob WHERE zasob_id = p_zasob_id) THEN 
-        RAISE EXCEPTION 'Zasób o ID % nie istnieje.', p_zasob_id; 
-    END IF; 
-
-    -- wstawienie lub aktualizacja zasobu w zleceniu 
-    INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna) 
-    VALUES (p_zasob_id, p_zlecenie_id, p_ilosc_potrzebna) 
-    ON CONFLICT (zasob_id, zlecenie_id) 
-    DO UPDATE SET ilosc_potrzebna = EXCLUDED.ilosc_potrzebna;
-END;
-$$ LANGUAGE plpgsql;
-
-
--- funkcja dodająca dzień pracy dla pracownika
-CREATE OR REPLACE FUNCTION dodaj_dzien_pracy(
-    p_pracownik_id INT,
-    p_zlecenie_id INT,
-    p_data DATE,
-    p_opis_managera TEXT DEFAULT NULL
-)
-RETURNS VOID AS $$
-BEGIN
-    -- sprawdzenie czy zlecenie i pracownik istnieją
-    IF NOT EXISTS (SELECT 1 FROM pracownik WHERE pracownik_id = p_pracownik_id) THEN
-        RAISE EXCEPTION 'Pracownik o ID % nie istnieje.', p_pracownik_id;
-    END IF;
-
-    IF NOT EXISTS (SELECT 1 FROM zlecenie WHERE zlecenie_id = p_zlecenie_id) THEN
-        RAISE EXCEPTION 'Zlecenie o ID % nie istnieje.', p_zlecenie_id;
-    END IF;
-
-    -- dodanie dnia pracy tylko jeśli nie istnieje taki wpis
-    INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data, opis_managera)
-    VALUES (p_pracownik_id, p_zlecenie_id, p_data, p_opis_managera)
-    ON CONFLICT (pracownik_id, zlecenie_id, data) DO NOTHING; -- nie chcemy dodawać jeśli już jest taki dzień, zlecenie i pracownik
-END;
-$$ LANGUAGE plpgsql;
-
-
-
-
--- inne ważne inserty:
-INSERT INTO pracownik 
-        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *; -- dodawanie nowego pracownika
-

@@ -3,7 +3,7 @@ import { useFetchData } from "../../../hooks/useFetchData";
 import { endpoint } from "../../../utils/endpoints";
 import style from "./ClientDetails.module.css";
 import Loading from "../../../components/Loading/Loading";
-import { ClientData } from "../../../utils/types";
+import { ClientData, initialOrderState } from "../../../utils/types";
 import DataTable from "../../../components/DataTable/DataTable";
 
 const ClientDetails: React.FC = () => {
@@ -42,8 +42,11 @@ const ClientDetails: React.FC = () => {
         <h1>Zlecenia</h1>
         <DataTable
           endpoint={endpoint.ORDER_CLIENT_GET(Number(id))}
+          deleteEndpoint={endpoint.ORDER_DELTE()}
           editEndpoint={"TODO"}
           addEndpoint={"TODO"}
+          additionalBody={{ klient_id: id }}
+          initialObjectState={initialOrderState}
           subPageURL={"/orders/details"}
         />
       </div>

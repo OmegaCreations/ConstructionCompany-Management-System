@@ -105,14 +105,19 @@
 }
 
 .dataContainer table button {
-  border-color: var(--brown1);
+  border: none;
   border-radius: 5px;
-  background-color: var(--brown2);
+  background-color: var(--green1);
   padding: 10px 15px;
   color: var(--grey);
   font-size: 0.8em;
 
   transition: 0.3s ease;
+}
+
+.dataContainer table button:hover {
+  cursor: pointer;
+  background-color: var(--green2);
 }
 
 .dataContainer table button:nth-child(2) {
@@ -124,7 +129,11 @@
   background-color: var(--primary);
 }
 
-.dataContainer table button:hover {
-  cursor: pointer;
-  background-color: var(--brown3);
+.dataContainer table button:nth-child(3) {
+  background-color: var(--red1);
+  color: var(--grey);
+  border: none;
+}
+.dataContainer table button:nth-child(3):hover {
+  background-color: var(--red2);
 }

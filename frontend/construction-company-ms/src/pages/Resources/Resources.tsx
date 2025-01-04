@@ -15,9 +15,11 @@ const Resources: React.FC = () => {
       <DataTable
         endpoint={endpoint.RESOURCE_GET_ALL()}
         editEndpoint={"TODO"}
+        deleteEndpoint={endpoint.RESOURCE_DELETE()}
         subPageURL={""}
         addEndpoint={endpoint.RESOURCE_CREATE()}
         editOptionalObjects={[]}
+        additionalBody={{}}
         initialObjectState={(({ zasob_id, ...o }) => o)(initialResourceState)}
       />
     </div>

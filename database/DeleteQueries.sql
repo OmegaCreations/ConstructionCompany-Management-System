@@ -1,3 +1,18 @@
+-- funkcja czyszcząca bazę danych
+CREATE OR REPLACE FUNCTION truncate_schema() RETURNS void AS $$
+DECLARE
+    tabela TEXT;
+BEGIN
+    FOR tabela IN
+        SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'construction_company' AND table_type = 'BASE TABLE'
+    LOOP
+        EXECUTE format('TRUNCATE TABLE %I.%I RESTART IDENTITY CASCADE;', 'construction_company', tabela);
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER; -- rozwiązanie problemu że użytkownik nie ma uprawnień do pg_tables
+
 -- Funkcja do usuwania stanowiska
 CREATE OR REPLACE FUNCTION usun_stanowisko(stanowisko_id INT) RETURNS VOID AS $$
 BEGIN
@@ -12,71 +27,83 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Funkcja do usuwania pracownika
-CREATE OR REPLACE FUNCTION usun_pracownika(pracownik_id INT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION usun_pracownika()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- Sprawdzamy, czy pracownik ma przypisane nieukończone dni pracy
-    IF EXISTS (SELECT 1 FROM dzien_pracy WHERE pracownik_id = pracownik_id AND godzina_zakonczenia IS NULL) THEN
-        RAISE EXCEPTION 'Nie można usunąć pracownika, ponieważ ma przypisane nieukończone dni pracy.';
-    END IF;
-
-    -- Usuwamy pracownika
-    DELETE FROM pracownik WHERE pracownik_id = pracownik_id;
+    -- Usuń dni pracy powiązane z pracownikiem
+    DELETE FROM dzien_pracy WHERE pracownik_id = OLD.pracownik_id;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Funkcja do usuwania klienta
-CREATE OR REPLACE FUNCTION usun_klienta(klient_id INT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION usun_klienta()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- Sprawdzamy, czy klient ma nieukończone zlecenia
-    IF EXISTS (SELECT 1 FROM zlecenie WHERE klient_id = klient_id AND data_zakonczenia IS NULL) THEN
-        RAISE EXCEPTION 'Nie można usunąć klienta, ponieważ ma nieukończone zlecenia.';
-    END IF;
+    -- Usuń wszystkie zlecenia powiązane z klientem
+    DELETE FROM dzien_pracy WHERE zlecenie_id IN (
+        SELECT zlecenie_id FROM zlecenie WHERE klient_id = OLD.klient_id
+    );
+    DELETE FROM zasob_zlecenie WHERE zlecenie_id IN (
+        SELECT zlecenie_id FROM zlecenie WHERE klient_id = OLD.klient_id
+    );
+    DELETE FROM zlecenie WHERE klient_id = OLD.klient_id;
 
-    -- Usuwamy klienta
-    DELETE FROM klient WHERE klient_id = klient_id;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Funkcja do usuwania zlecenia
-CREATE OR REPLACE FUNCTION usun_zlecenie(zlecenie_id INT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION usun_zlecenie()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- Sprawdzamy, czy zlecenie ma przypisane zasoby
-    IF EXISTS (SELECT 1 FROM zasob_zlecenie WHERE zlecenie_id = zlecenie_id) THEN
-        RAISE EXCEPTION 'Nie można usunąć zlecenia, ponieważ są przypisane zasoby.';
+    IF OLD.data_zakonczenia IS NULL THEN
+        RAISE EXCEPTION 'Nie można usunąć zlecenia, ponieważ nie jest ono jeszcze ukończone.';
     END IF;
 
-    -- Usuwamy zlecenie
-    DELETE FROM zlecenie WHERE zlecenie_id = zlecenie_id;
+    DELETE FROM zakupy_zasob WHERE zlecenie_id = OLD.zlecenie_id;
+    DELETE FROM dzien_pracy WHERE zlecenie_id = OLD.zlecenie_id;
+    DELETE FROM zasob_zlecenie WHERE zlecenie_id = OLD.zlecenie_id;
+
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
+   
 
 -- Funkcja do usuwania zasobu
-CREATE OR REPLACE FUNCTION usun_zasob(zasob_id INT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION blokuj_usuniecie_zasobu()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- Sprawdzamy, czy zasób jest używany w magazynie
-    IF EXISTS (SELECT 1 FROM magazyn_zasob WHERE zasob_id = zasob_id) THEN
-        RAISE EXCEPTION 'Nie można usunąć zasobu, ponieważ jest używany w magazynie.';
-    END IF;
-    
-    -- Sprawdzamy, czy zasób jest przypisany do zlecenia
-    IF EXISTS (SELECT 1 FROM zasob_zlecenie WHERE zasob_id = zasob_id) THEN
-        RAISE EXCEPTION 'Nie można usunąć zasobu, ponieważ jest przypisany do zlecenia.';
+    -- Sprawdź, czy zasób jest używany w zleceniu
+    IF EXISTS (
+        SELECT 1 FROM zasob_zlecenie WHERE zasob_id = OLD.zasob_id
+    ) THEN
+        RAISE EXCEPTION 'Nie można usunąć zasobu, ponieważ jest on używany w zleceniu.';
     END IF;
 
-    -- Usuwamy zasób
-    DELETE FROM zasob WHERE zasob_id = zasob_id;
+    -- Sprawdź, czy zasób jest w magazynie
+    IF EXISTS (
+        SELECT 1 FROM magazyn_zasob WHERE zasob_id = OLD.zasob_id
+    ) THEN
+        RAISE EXCEPTION 'Nie można usunąć zasobu, ponieważ znajduje się w magazynie.';
+    END IF;
+
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
+
 -- Funkcja do usuwania magazynu
-CREATE OR REPLACE FUNCTION usun_magazyn(magazyn_id INT) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION blokuj_usuniecie_magazynu()
+RETURNS TRIGGER AS $$
 BEGIN
-    -- Sprawdzamy, czy magazyn nie jest pusty
-    IF EXISTS (SELECT 1 FROM magazyn_zasob WHERE magazyn_id = magazyn_id) THEN
+    -- Sprawdź, czy magazyn nie jest pusty
+    IF EXISTS (
+        SELECT 1 FROM magazyn_zasob WHERE magazyn_id = OLD.magazyn_id
+    ) THEN
         RAISE EXCEPTION 'Nie można usunąć magazynu, ponieważ nie jest pusty.';
     END IF;
 
-    -- Usuwamy magazyn
-    DELETE FROM magazyn WHERE magazyn_id = magazyn_id;
+    RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;

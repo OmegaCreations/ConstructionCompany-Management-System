@@ -171,31 +171,32 @@ EXECUTE FUNCTION update_magazyn_on_change_magazyn_zasob();
 -- ==============================================
 
 -- Trigger przed usunięciem pracownika
-CREATE TRIGGER przed_usunieciem_pracownika
+CREATE OR REPLACE TRIGGER przed_usunieciem_pracownika
     BEFORE DELETE ON pracownik
     FOR EACH ROW
-    EXECUTE FUNCTION usun_pracownika(pracownik_id);
+    EXECUTE FUNCTION usun_pracownika();
 
 -- Trigger przed usunięciem klienta
 CREATE TRIGGER przed_usunieciem_klienta
     BEFORE DELETE ON klient
     FOR EACH ROW
-    EXECUTE FUNCTION usun_klienta(klient_id);
+    EXECUTE FUNCTION usun_klienta();
 
 -- Trigger przed usunięciem zlecenia
 CREATE TRIGGER przed_usunieciem_zlecenia
     BEFORE DELETE ON zlecenie
     FOR EACH ROW
-    EXECUTE FUNCTION usun_zlecenie(zlecenie_id);
+    EXECUTE FUNCTION usun_zlecenie();
 
 -- Trigger przed usunięciem zasobu
 CREATE TRIGGER przed_usunieciem_zasobu
     BEFORE DELETE ON zasob
     FOR EACH ROW
-    EXECUTE FUNCTION usun_zasob(zasob_id);
+    EXECUTE FUNCTION blokuj_usuniecie_zasobu();
 
 -- Trigger przed usunięciem magazynu
 CREATE TRIGGER przed_usunieciem_magazynu
     BEFORE DELETE ON magazyn
     FOR EACH ROW
-    EXECUTE FUNCTION usun_magazyn(magazyn_id);
+    EXECUTE FUNCTION blokuj_usuniecie_magazynu();
+

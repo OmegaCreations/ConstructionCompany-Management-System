@@ -15,6 +15,7 @@ const Workers: React.FC = () => {
         endpoint={endpoint.USER_GET_ALL()}
         editEndpoint={"TODO"}
         addEndpoint={endpoint.USER_CREATE()}
+        deleteEndpoint={endpoint.USER_DELETE()}
         subPageURL={"/dashboard"}
         editOptionalObjects={[
           {
@@ -35,6 +36,7 @@ const Workers: React.FC = () => {
       <DataTable
         endpoint={endpoint.POSITION_GET_ALL()}
         editEndpoint={"TODO"}
+        deleteEndpoint={endpoint.POSITION_DELETE()}
         addEndpoint={endpoint.POSITION_CREATE()}
         subPageURL={""}
         editOptionalObjects={[]}

@@ -71,15 +71,19 @@ export const addResourceToWarehouse = async (
 // ================================
 
 export const deleteWarehouse = async (magazyn_id: number) => {
-  const deletedWarehouse: Magazyn = await warehouseModel.deleteWithId(
-    magazyn_id
-  );
+  try {
+    const deletedWarehouse: Magazyn = await warehouseModel.deleteWithId(
+      magazyn_id
+    );
 
-  if (!deletedWarehouse) {
-    throw new Error("Warehouse was not deleted.");
+    if (!deletedWarehouse) {
+      throw new Error("Warehouse was not deleted.");
+    }
+
+    return;
+  } catch (err: any) {
+    throw new Error(err);
   }
-
-  return;
 };
 
 export const deleteResource = async (magazyn_zasob_id: number) => {

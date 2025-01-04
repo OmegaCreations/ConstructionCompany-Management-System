@@ -14,6 +14,7 @@ const Clients: React.FC = () => {
       <DataTable
         endpoint={endpoint.CLIENT_GET_ALL()}
         editEndpoint={"TODO"}
+        deleteEndpoint={endpoint.CLIENT_DELETE()}
         addEndpoint={endpoint.CLIENT_CREATE()}
         subPageURL={"/clients/details"}
         additionalBody={{}}

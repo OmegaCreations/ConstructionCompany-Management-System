@@ -15,7 +15,7 @@ ALTER ROLE construction_company_admin SET search_path TO construction_company; -
 
 -- permissions
 GRANT USAGE, CREATE ON SCHEMA construction_company TO construction_company_admin_role;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA construction_company TO construction_company_admin_role;
+GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA construction_company TO construction_company_admin_role;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA construction_company TO construction_company_admin_role;
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA construction_company TO construction_company_admin_role;
 
