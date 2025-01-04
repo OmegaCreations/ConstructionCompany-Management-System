@@ -105,3 +105,15 @@ export const updatePassword = async (
   const query = `UPDATE pracownik SET haslo = $1 WHERE pracownik_id = $2`;
   await client.query(query, [newPassword, userId]);
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (pracownik_id: number) => {
+  const query = `DELETE FROM pracownik WHERE pracownik_id = $1 returning *`;
+  const result: QueryResult<Pracownik> = await client.query(query, [
+    pracownik_id,
+  ]);
+  return result.rows[0];
+};

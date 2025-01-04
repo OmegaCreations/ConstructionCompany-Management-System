@@ -153,5 +153,30 @@ export const updateUser: any = async (req: Request, res: Response) => {
 };
 
 // ================================
-//        DELETE REQUESTS
+//         DELETE REQUESTS
 // ================================
+
+export const deleteUser: any = async (req: any, res: Response) => {
+  const { pracownik_id } = req.body;
+  const user_pracownik_id: number = req.user.pracownik_id;
+
+  if (!pracownik_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  } else if (user_pracownik_id === pracownik_id) {
+    return res.status(400).json({ error: "You can't delete yourself." });
+  }
+
+  try {
+    await userService.deleteUser(Number(pracownik_id));
+
+    res.status(201).json({
+      info: "Pracownik został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err instanceof Error ? err.message : "Error during User deleting.",
+    });
+  }
+
+  return;
+};

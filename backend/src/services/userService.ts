@@ -85,3 +85,17 @@ export const updateUser = async (userData: updateUserInput) => {
   const updatedUser = await userModel.update(userData);
   return updatedUser;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteUser = async (pracownik_id: number) => {
+  const deletedUser: Pracownik = await userModel.deleteWithId(pracownik_id);
+
+  if (!deletedUser) {
+    throw new Error("User was not deleted.");
+  }
+
+  return;
+};

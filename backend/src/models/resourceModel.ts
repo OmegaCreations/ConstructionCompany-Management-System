@@ -41,3 +41,13 @@ export const create = async (resourceData: CreateResourceInput) => {
   ]);
   return result.rows[0]; // return back newly created resource
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (zasob_id: number) => {
+  const query = `DELETE FROM zasob WHERE zasob_id = $1 returning *`;
+  const result: QueryResult<Zasob> = await client.query(query, [zasob_id]);
+  return result.rows[0];
+};

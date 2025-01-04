@@ -38,3 +38,15 @@ export const create = async (positionData: CreatePositionInput) => {
   ]);
   return result.rows[0]; // return back newly created position
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (stanowisko_id: number) => {
+  const query = `DELETE FROM stanowisko WHERE stanowisko_id = $1 returning *`;
+  const result: QueryResult<Stanowisko> = await client.query(query, [
+    stanowisko_id,
+  ]);
+  return result.rows[0];
+};

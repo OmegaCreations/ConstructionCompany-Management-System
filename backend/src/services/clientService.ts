@@ -43,3 +43,17 @@ export const createNewClient = async (clientData: CreateClientInput) => {
 
   return;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteClient = async (klient_id: number) => {
+  const deletedClient: Klient = await clientModel.deleteWithId(klient_id);
+
+  if (!deletedClient) {
+    throw new Error("Client was not deleted.");
+  }
+
+  return;
+};

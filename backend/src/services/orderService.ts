@@ -75,3 +75,30 @@ export const createNewOrder = async (data: CreateOrderInput) => {
 export const addResourcesToOrder = async (data: CreateOrderResourceInput) => {
   return await orderModel.addResource(data);
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteOrder = async (zlecenie_id: number) => {
+  const deletedOrder: Zlecenie = await orderModel.deleteWithId(zlecenie_id);
+
+  if (!deleteOrder) {
+    throw new Error("Order was not deleted.");
+  }
+
+  return;
+};
+
+export const deleteResource = async (zasob_id: number, zlecenie_id: number) => {
+  const deletedResource: ZlecenieZasob = await orderModel.deleteResource(
+    zasob_id,
+    zlecenie_id
+  );
+
+  if (!deletedResource) {
+    throw new Error("Resource was not deleted.");
+  }
+
+  return;
+};

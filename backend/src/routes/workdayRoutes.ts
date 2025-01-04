@@ -52,4 +52,15 @@ router.post(
   workdayController.createNewWorkdays
 );
 
+// ================================
+//         DELETE ROUTES
+// ================================
+
+router.delete(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  workdayController.deleteWorkday
+);
+
 export default router;

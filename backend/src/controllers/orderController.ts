@@ -45,9 +45,9 @@ export const getOrder: any = async (req: Request, res: Response) => {
   }
 };
 
-// gets client's orders
+// gets Client's orders
 export const getClientOrders: any = async (req: Request, res: Response) => {
-  const klient_id = Number(req.params.id); // requested client id in url
+  const klient_id = Number(req.params.id); // requested Order id in url
 
   if (!klient_id) {
     return res.status(400).json({ error: "Invalid credentials." });
@@ -202,4 +202,57 @@ export const addResourcesToOrder: any = async (req: Request, res: Response) => {
         err instanceof Error ? err.message : "Error during adding resources.",
     });
   }
+};
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteOrder: any = async (req: Request, res: Response) => {
+  const { zlecenie_id } = req.body;
+
+  if (!zlecenie_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await orderService.deleteOrder(Number(zlecenie_id));
+
+    res.status(201).json({
+      info: "Zlecenie zostało usunięte!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Order deleting.",
+    });
+  }
+
+  return;
+};
+
+export const deleteResourceFromOrder: any = async (
+  req: Request,
+  res: Response
+) => {
+  const { zasob_id, zlecenie_id } = req.body;
+
+  if (!zasob_id || !zlecenie_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await orderService.deleteResource(Number(zasob_id), Number(zlecenie_id));
+
+    res.status(201).json({
+      info: "Zasob zlecenia został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during resource deleting.",
+    });
+  }
+
+  return;
 };

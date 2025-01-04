@@ -112,3 +112,26 @@ export const addResource = async (data: CreateOrderResourceInput) => {
 
   return;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (zlecenie_id: number) => {
+  const query = `DELETE FROM zlecenie WHERE zlecenie_id = $1 returning *`;
+  const result: QueryResult<Zlecenie> = await client.query(query, [
+    zlecenie_id,
+  ]);
+  return result.rows[0];
+};
+
+export const deleteResource = async (zasob_id: number, zlecenie_id: number) => {
+  const query = `DELETE FROM zasob_zlecenie 
+                  WHERE zasob_id = $1 AND zlecenie_id = $2;
+                 returning *`;
+  const result: QueryResult<ZlecenieZasob> = await client.query(query, [
+    zasob_id,
+    zlecenie_id,
+  ]);
+  return result.rows[0];
+};

@@ -49,3 +49,13 @@ export const create = async (clientData: CreateClientInput) => {
   ]);
   return result.rows[0]; // return back newly created client
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (klient_id: number) => {
+  const query = `DELETE FROM klient WHERE klient_id = $1 returning *`;
+  const result: QueryResult<Klient> = await client.query(query, [klient_id]);
+  return result.rows[0];
+};

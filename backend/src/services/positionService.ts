@@ -34,3 +34,19 @@ export const createNewPosition = async (positionData: CreatePositionInput) => {
 
   return;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deletePosition = async (stanowisko_id: number) => {
+  const deletedPosition: Stanowisko = await positionModel.deleteWithId(
+    stanowisko_id
+  );
+
+  if (!deletedPosition) {
+    throw new Error("Position was not deleted.");
+  }
+
+  return;
+};

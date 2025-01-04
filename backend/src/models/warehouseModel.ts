@@ -72,3 +72,21 @@ export const addResource = async (data: CreateWarehouseResourceInput) => {
 
   return (await client.query(query, [ilosc, magazyn_id, zasob_id])).rows[0];
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (magazyn_id: number) => {
+  const query = `DELETE FROM magazyn WHERE magazyn_id = $1 returning *`;
+  const result: QueryResult<Magazyn> = await client.query(query, [magazyn_id]);
+  return result.rows[0];
+};
+
+export const deleteResource = async (magazyn_zasob_id: number) => {
+  const query = `DELETE FROM magazyn_zasob WHERE magazyn_zasob_id = $1 returning *`;
+  const result: QueryResult<MagazynZasob> = await client.query(query, [
+    magazyn_zasob_id,
+  ]);
+  return result.rows[0];
+};

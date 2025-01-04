@@ -42,4 +42,22 @@ router.post(
   warehouseController.addResourceToWarehouse
 );
 
+// ================================
+//         DELETE ROUTES
+// ================================
+
+router.delete(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.deleteWarehouse
+);
+
+router.delete(
+  "/resource",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.deleteResourceFromWarehouse
+);
+
 export default router;

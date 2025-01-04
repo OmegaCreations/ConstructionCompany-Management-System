@@ -33,3 +33,17 @@ export const createNewResource = async (resourceData: CreateResourceInput) => {
 
   return;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteResource = async (zasob_id: number) => {
+  const deletedResource: Zasob = await resourceModel.deleteWithId(zasob_id);
+
+  if (!deletedResource) {
+    throw new Error("Resource was not deleted.");
+  }
+
+  return;
+};

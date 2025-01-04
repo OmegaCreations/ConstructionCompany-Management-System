@@ -34,7 +34,7 @@ export const createResource: any = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Please provide all the data." });
   }
 
-  // creating new position
+  // creating new Resource
   try {
     await resourceService.createNewResource({
       nazwa,
@@ -53,4 +53,31 @@ export const createResource: any = async (req: Request, res: Response) => {
         err instanceof Error ? err.message : "Error during resource creation.",
     });
   }
+};
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteResource: any = async (req: Request, res: Response) => {
+  const { zasob_id } = req.body;
+
+  if (!zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await resourceService.deleteResource(Number(zasob_id));
+
+    res.status(201).json({
+      info: "Zasób został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Resource deleting.",
+    });
+  }
+
+  return;
 };

@@ -27,7 +27,7 @@ export const getAllWarehouses: any = async (req: Request, res: Response) => {
   }
 };
 
-// Returns all resources for specific warehouse with specific view depending on user role
+// Returns all Warehouses for specific warehouse with specific view depending on user role
 export const getWarehouseResources: any = async (req: any, res: Response) => {
   const pracownik_id: number = req.user.pracownik_id;
   const magazyn_id = Number(req.params.id);
@@ -48,7 +48,7 @@ export const getWarehouseResources: any = async (req: any, res: Response) => {
       error:
         err instanceof Error
           ? err.message
-          : "Error during fetching warehouse's resources.",
+          : "Error during fetching warehouse's Warehouses.",
     });
   }
 };
@@ -84,7 +84,7 @@ export const createWarehouse: any = async (req: Request, res: Response) => {
   }
 };
 
-// adds resource to warehouse
+// adds Warehouse to warehouse
 export const addResourceToWarehouse: any = async (
   req: Request,
   res: Response
@@ -96,7 +96,7 @@ export const addResourceToWarehouse: any = async (
     return res.status(400).json({ error: "Please provide all the data." });
   }
 
-  // adding new resource
+  // adding new Warehouse
   try {
     await warehouseService.addResourceToWarehouse({
       ilosc,
@@ -110,7 +110,60 @@ export const addResourceToWarehouse: any = async (
   } catch (err) {
     res.status(500).json({
       error:
-        err instanceof Error ? err.message : "Error during adding resource.",
+        err instanceof Error ? err.message : "Error during adding Warehouse.",
     });
   }
+};
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWarehouse: any = async (req: Request, res: Response) => {
+  const { magazyn_id } = req.body;
+
+  if (!magazyn_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await warehouseService.deleteWarehouse(Number(magazyn_id));
+
+    res.status(201).json({
+      info: "Magazyn został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Warehouse deleting.",
+    });
+  }
+
+  return;
+};
+
+export const deleteResourceFromWarehouse: any = async (
+  req: Request,
+  res: Response
+) => {
+  const { magazyn_zasob_id } = req.body;
+
+  if (!magazyn_zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await warehouseService.deleteResource(Number(magazyn_zasob_id));
+
+    res.status(201).json({
+      info: "Zasób został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Resource deleting.",
+    });
+  }
+
+  return;
 };

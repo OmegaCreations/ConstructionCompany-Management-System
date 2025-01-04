@@ -164,3 +164,34 @@ export const createNewWorkdays: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWorkday: any = async (req: Request, res: Response) => {
+  const { pracownik_id, zlecenie_id, data } = req.body;
+
+  if (!pracownik_id || !zlecenie_id || !data) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await workdayService.deleteWorkday(
+      Number(pracownik_id),
+      Number(zlecenie_id),
+      String(data)
+    );
+
+    res.status(201).json({
+      info: "Dzień pracy został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Workday deleting.",
+    });
+  }
+
+  return;
+};

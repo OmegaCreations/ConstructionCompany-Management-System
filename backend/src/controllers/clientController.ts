@@ -76,3 +76,30 @@ export const createClient: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteClient: any = async (req: Request, res: Response) => {
+  const { klient_id } = req.body;
+
+  if (!klient_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await clientService.deleteClient(Number(klient_id));
+
+    res.status(201).json({
+      info: "Klient został usunięty!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during client deleting.",
+    });
+  }
+
+  return;
+};

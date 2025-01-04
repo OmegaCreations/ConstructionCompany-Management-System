@@ -65,3 +65,31 @@ export const addResourceToWarehouse = async (
 ) => {
   return await warehouseModel.addResource(data);
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWarehouse = async (magazyn_id: number) => {
+  const deletedWarehouse: Magazyn = await warehouseModel.deleteWithId(
+    magazyn_id
+  );
+
+  if (!deletedWarehouse) {
+    throw new Error("Warehouse was not deleted.");
+  }
+
+  return;
+};
+
+export const deleteResource = async (magazyn_zasob_id: number) => {
+  const deletedResource: MagazynZasob = await warehouseModel.deleteResource(
+    magazyn_zasob_id
+  );
+
+  if (!deletedResource) {
+    throw new Error("Resource was not deleted.");
+  }
+
+  return;
+};

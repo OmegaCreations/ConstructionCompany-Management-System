@@ -67,3 +67,25 @@ export const getWorkedHours = async (pracownik_id: number) => {
 export const createWorkdays = async (data: CreateWorkdayInput[]) => {
   return await workdayModel.create(data);
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWorkday = async (
+  pracownik_id: number,
+  zlecenie_id: number,
+  data: string
+) => {
+  const deletedWorkday: DzienPracy = await workdayModel.deleteWithId(
+    pracownik_id,
+    zlecenie_id,
+    data
+  );
+
+  if (!deletedWorkday) {
+    throw new Error("Workday was not deleted.");
+  }
+
+  return;
+};

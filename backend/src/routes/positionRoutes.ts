@@ -27,4 +27,15 @@ router.post(
   positionController.createPosition
 );
 
+// ================================
+//         DELETE ROUTES
+// ================================
+
+router.delete(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  positionController.deletePosition
+);
+
 export default router;

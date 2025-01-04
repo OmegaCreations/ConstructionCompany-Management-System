@@ -51,3 +51,30 @@ export const createPosition: any = async (req: Request, res: Response) => {
     });
   }
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deletePosition: any = async (req: Request, res: Response) => {
+  const { stanowisko_id } = req.body;
+
+  if (!stanowisko_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await positionService.deletePosition(Number(stanowisko_id));
+
+    res.status(201).json({
+      info: "Stanowisko zostało usunięte!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Position deleting.",
+    });
+  }
+
+  return;
+};

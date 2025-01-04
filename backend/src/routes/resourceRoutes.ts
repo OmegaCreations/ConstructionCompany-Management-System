@@ -26,4 +26,15 @@ router.post(
   resourceController.createResource
 );
 
+// ================================
+//         DELETE ROUTES
+// ================================
+
+router.delete(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  resourceController.deleteResource
+);
+
 export default router;

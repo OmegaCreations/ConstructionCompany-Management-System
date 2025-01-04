@@ -78,3 +78,24 @@ export const create = async (data: CreateWorkdayInput[]) => {
 
   return;
 };
+
+// ================================
+//         DELETE REQUESTS
+// ================================
+
+export const deleteWithId = async (
+  pracownik_id: number,
+  zlecenie_id: number,
+  data: string
+) => {
+  const query = `DELETE FROM dzien_pracy 
+                  WHERE pracownik_id = $1 AND zlecenie_id = $2 AND data = $3;
+                 returning *`;
+  const result: QueryResult<DzienPracy> = await client.query(query, [
+    pracownik_id,
+    zlecenie_id,
+    data,
+  ]);
+
+  return result.rows[0];
+};

@@ -38,4 +38,15 @@ router.post(
   clientController.createClient
 );
 
+// ================================
+//         DELETE ROUTES
+// ================================
+
+router.delete(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  clientController.deleteClient
+);
+
 export default router;
