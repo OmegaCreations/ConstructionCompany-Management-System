@@ -149,7 +149,7 @@ BEGIN
         z.data_zakonczenia, 
         z.lokalizacja
     FROM klient k
-    LEFT JOIN zlecenie z ON k.klient_id = z.klient_id
+    JOIN zlecenie z ON k.klient_id = z.klient_id
     WHERE k.klient_id = klient_id_param;
 END;
 $$ LANGUAGE plpgsql;

@@ -55,6 +55,7 @@ export const getClientOrders: any = async (req: Request, res: Response) => {
 
   try {
     const orderData: Zlecenie[] = await orderService.getClientOrders(klient_id);
+    console.log(orderData)
     return res.status(200).json(orderData);
   } catch (err) {
     res.status(500).json({
