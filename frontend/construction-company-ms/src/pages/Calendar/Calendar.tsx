@@ -84,6 +84,7 @@ const Calendar: React.FC = () => {
   }, [currentDate, chosenUserID]);
 
   const updateCalendar = () => {
+    console.log("update calendar.")
     const firstDay = new Date(currentYear, currentMonth - 1, 1);
     const lastDay = new Date(currentYear, currentMonth, 0);
     const totalDays = lastDay.getDate();
@@ -139,6 +140,7 @@ const Calendar: React.FC = () => {
   };
 
   const handleDateClick = (event: React.MouseEvent) => {
+    console.log("date click!")
     const target = event.target as HTMLDivElement;
     const selectedDate = new Date(target.getAttribute("data-date")!);
 
@@ -160,20 +162,18 @@ const Calendar: React.FC = () => {
     );
   };
 
+  // update calendar data on date change
   useEffect(() => {
     updateCalendar();
   }, [currentDate, activeDate, monthWorkdayData]);
 
+  // add cick event handlers for each date
   useEffect(() => {
     const dateElements = document.querySelectorAll(`.${style.date}`);
     dateElements.forEach((el) => {
       el.addEventListener("click", handleDateClick);
     });
-    return () => {
-      dateElements.forEach((el) => {
-        el.removeEventListener("click", handleDateClick);
-      });
-    };
+
   }, [Dates]);
 
   function handleSave(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
@@ -191,6 +191,7 @@ const Calendar: React.FC = () => {
     }
   };
 
+  // adding new workday handler
   const handleAddWorkday = () => {
     if (newWorkday.zlecenie_id && newWorkday.data) {
       setWorkdays([...workdays, newWorkday]);
@@ -205,6 +206,7 @@ const Calendar: React.FC = () => {
     }
   };
 
+  // refresh access token if needed
   const refreshToken = async () => {
     const newToken = await refreshAccessToken();
     if (newToken.token === "") {
@@ -281,7 +283,7 @@ const Calendar: React.FC = () => {
                   defaultValue={chosenUserID}
                 >
                   {userData.map((user: UserData) => (
-                    <option value={user.pracownik_id}>
+                    <option key={user.pracownik_id} value={user.pracownik_id}>
                       {user.imie} {user.nazwisko}
                     </option>
                   ))}

@@ -19,6 +19,14 @@ router.get(
   checkAuthorizedRole(CompanyRoles.manager),
   clientController.getAllClients
 );
+
+// get client's data as a client
+// passing token as search param and email address as a body parameter
+router.get(
+  "/public",
+  clientController.getClientAsClient
+)
+
 // get specific user's data
 router.get(
   "/:id",
@@ -26,6 +34,8 @@ router.get(
   checkAuthorizedRole(CompanyRoles.manager),
   clientController.getClient
 );
+
+
 
 // ================================
 //        POST ROUTES

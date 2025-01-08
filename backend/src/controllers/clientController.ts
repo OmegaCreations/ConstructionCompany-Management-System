@@ -40,6 +40,28 @@ export const getClient: any = async (req: Request, res: Response) => {
   }
 };
 
+// returns client's data and their orders
+export const getClientAsClient: any = async (req:any, res: Response) => {
+  const clientToken = String(req.query.token);
+  const clientEmail: string = String(req.body.email);
+
+  if (!clientToken) {
+    return res.status(400).json({ error: "Invalid credentials." });
+  }
+
+  try {
+    const clientData = await clientService.getClientAsClient(clientToken, clientEmail);
+    return res.status(200).json(clientData);
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error
+          ? err.message
+          : "Error during fetching client data.",
+    });
+  }
+}
+
 // ================================
 //        POST REQUESTS
 // ================================
@@ -57,7 +79,7 @@ export const createClient: any = async (req: Request, res: Response) => {
   try {
     // I feel that there is no need to return new client data especially
     // because frontend shows returned data after post request.
-    await clientService.createNewClient({
+    const clientToken = await clientService.createNewClient({
       imie,
       nazwisko,
       firma,
@@ -67,7 +89,7 @@ export const createClient: any = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      info: "Klient został utworzony!",
+      info: "Klient został utworzony! O to adres dostępu dla klienta: http://localhost:5000/api/client/public?token=" + String(clientToken),
     });
   } catch (err) {
     res.status(500).json({
