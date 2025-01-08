@@ -89,7 +89,7 @@ export const createClient: any = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      info: "Klient został utworzony! O to adres dostępu dla klienta: http://localhost:5000/api/client/public?token=" + String(clientToken),
+      info: "Klient został utworzony! O to adres dostępu dla klienta: http://localhost:5173/client/public?token=" + String(clientToken),
     });
   } catch (err) {
     res.status(500).json({

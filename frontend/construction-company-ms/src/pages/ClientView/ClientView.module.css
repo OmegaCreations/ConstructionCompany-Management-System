@@ -1,0 +1,21 @@
+.clientSection {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.clientInput {
+    padding: 15px 25px;
+    font-size: 1.7em;
+}
+
+.clientSumbit {
+    padding: 15px 25px;
+    font-size: 1.7em;
+    font-weight: 900;
+
+    background-color: var(--green1);
+    color: var(--secondary);
+    border: none;
+    border-radius: 5px;
+}

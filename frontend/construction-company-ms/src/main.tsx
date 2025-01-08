@@ -21,6 +21,7 @@ import OrderDetails from "./pages/Orders/Details/OrderDetails";
 import Calendar from "./pages/Calendar/Calendar";
 import WarehouseDetails from "./pages/WarehouseData/Details/WarehouseDetails";
 import WorkerDashboard from "./pages/WorkerDashboard/WorkerDashboard";
+import ClientView from "./pages/ClientView/ClientView.tsx";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById("root")!).render(
         <main>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/client/public" element={<ClientView />} />
 
             {/* Protected route checks if user has allowed role and returns auth component or passed child component */}
             <Route element={<ProtectedRoute admin_route={false} />}>

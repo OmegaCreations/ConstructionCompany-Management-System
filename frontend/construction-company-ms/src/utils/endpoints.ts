@@ -20,6 +20,7 @@ export const endpoint = {
     `http://localhost:5000/api/client/${klient_id}`,
   CLIENT_CREATE: () => `http://localhost:5000/api/client`,
   CLIENT_DELETE: () => `http://localhost:5000/api/client`,
+  CLIENT_GET_AS_CLIENT: (token: string) => `http://localhost:5000/api/client/public?token=${token}`,
 
   // order endpoints
   ORDER_GET_ALL: () => `http://localhost:5000/api/order`,

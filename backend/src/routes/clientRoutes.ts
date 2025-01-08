@@ -22,7 +22,7 @@ router.get(
 
 // get client's data as a client
 // passing token as search param and email address as a body parameter
-router.get(
+router.post(
   "/public",
   clientController.getClientAsClient
 )
