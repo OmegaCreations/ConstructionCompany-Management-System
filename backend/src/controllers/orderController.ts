@@ -55,7 +55,7 @@ export const getClientOrders: any = async (req: Request, res: Response) => {
 
   try {
     const orderData: Zlecenie[] = await orderService.getClientOrders(klient_id);
-    console.log(orderData)
+    console.log(orderData);
     return res.status(200).json(orderData);
   } catch (err) {
     res.status(500).json({
@@ -252,6 +252,78 @@ export const deleteResourceFromOrder: any = async (
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during resource deleting.",
+    });
+  }
+
+  return;
+};
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updateOrder: any = async (req: Request, res: Response) => {
+  const {
+    zlecenie_id,
+    klient_id,
+    wycena,
+    opis,
+    data_zlozenia,
+    data_rozpoczenia,
+    data_zakonczenia,
+    lokalizacja,
+  } = req.body;
+
+  if (!klient_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await orderService.updateOrder({
+      zlecenie_id,
+      klient_id,
+      wycena,
+      opis,
+      data_zlozenia,
+      data_rozpoczenia,
+      data_zakonczenia,
+      lokalizacja,
+    });
+
+    res.status(201).json({
+      info: "Zlecenie zostało zaktualizowane!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Order updating.",
+    });
+  }
+
+  return;
+};
+
+export const updateOrderResource: any = async (req: Request, res: Response) => {
+  const { zasob_id, zlecenie_id, ilosc_potrzebna } = req.body;
+
+  if (!zasob_id || !zlecenie_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await orderService.updateOrderResource({
+      zasob_id,
+      zlecenie_id,
+      ilosc_potrzebna,
+    });
+
+    res.status(201).json({
+      info: "Zlecenie zostało zaktualizowane!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Order updating.",
     });
   }
 

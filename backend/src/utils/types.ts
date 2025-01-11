@@ -44,6 +44,17 @@ export interface Zlecenie {
   lokalizacja: string;
 }
 
+export interface ZlecenieUpdate {
+  zlecenie_id: number;
+  klient_id: string;
+  wycena: string;
+  opis: string;
+  data_zlozenia: string;
+  data_rozpoczenia: string;
+  data_zakonczenia: string;
+  lokalizacja: string;
+}
+
 // db returning items type for order interface
 export interface ZlecenieZasob {
   zlecenie_id: number;
@@ -54,6 +65,12 @@ export interface ZlecenieZasob {
   koszt_jednostkowy: number;
   ilosc_potrzebna: number;
   ilosc_w_magazynie: number;
+}
+
+export interface ZlecenieZasobUpdate {
+  zlecenie_id: number;
+  zasob_id: number;
+  ilosc_potrzebna: number;
 }
 
 // needed costs for the specific order
@@ -82,6 +99,16 @@ export interface DzienPracy {
   klient_firma: string;
 }
 
+export interface DzienPracyUpdate {
+  pracownik_id: number;
+  zlecenie_id: number;
+  data: string;
+  opis_pracownika: string;
+  opis_managera: string;
+  godzina_rozpoczecia: string;
+  godzina_zakonczenia: string;
+}
+
 // db returning warehouse type
 export interface Magazyn {
   magazyn_id: number;
@@ -99,6 +126,13 @@ export interface MagazynZasob {
   typ: string;
   ilosc: number;
   opis: string;
+}
+
+export interface MagazynZasobUpdate {
+  magazyn_zasob_id: number;
+  ilosc: number;
+  magazyn_id: number;
+  zasob_id: number;
 }
 
 // db returning resource type for specific warehouse

@@ -5,7 +5,9 @@ import {
   CreateOrderResourceInput,
   Zlecenie,
   ZlecenieKoszty,
+  ZlecenieUpdate,
   ZlecenieZasob,
+  ZlecenieZasobUpdate,
 } from "../utils/types";
 
 // ================================
@@ -132,6 +134,45 @@ export const deleteResource = async (zasob_id: number, zlecenie_id: number) => {
   const result: QueryResult<ZlecenieZasob> = await client.query(query, [
     zasob_id,
     zlecenie_id,
+  ]);
+  return result.rows[0];
+};
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const update = async (zlecenieData: ZlecenieUpdate) => {
+  const {
+    zlecenie_id,
+    klient_id,
+    wycena,
+    opis,
+    data_zlozenia,
+    data_rozpoczenia,
+    data_zakonczenia,
+    lokalizacja,
+  } = zlecenieData;
+  const query = `SELECT update_zlecenie($1, $2, $3, $4, $5, $6, $7, $8)`;
+  const result: QueryResult<ZlecenieUpdate> = await client.query(query, [
+    zlecenie_id,
+    klient_id,
+    wycena,
+    opis,
+    data_zlozenia,
+    data_rozpoczenia,
+    data_zakonczenia,
+    lokalizacja,
+  ]);
+  return result.rows[0];
+};
+
+export const updateResource = async (zasobData: ZlecenieZasobUpdate) => {
+  const { zasob_id, zlecenie_id, ilosc_potrzebna } = zasobData;
+  const query = `SELECT update_zasob_zlecenie($1, $2, $3)`;
+  const result: QueryResult<ZlecenieZasob> = await client.query(query, [
+    zasob_id,
+    zlecenie_id,
+    ilosc_potrzebna,
   ]);
   return result.rows[0];
 };

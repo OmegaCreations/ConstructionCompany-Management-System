@@ -1,6 +1,11 @@
 import * as workdayModel from "../models/workdayModel";
 import * as userModel from "../models/userModel";
-import { CreateWorkdayInput, DzienPracy, Pracownik } from "../utils/types";
+import {
+  CreateWorkdayInput,
+  DzienPracy,
+  DzienPracyUpdate,
+  Pracownik,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -88,4 +93,12 @@ export const deleteWorkday = async (
   }
 
   return;
+};
+
+// ================================
+//        PUT REQUESTS
+// ================================
+
+export const updateWorkday = async (workdayData: DzienPracyUpdate) => {
+  return await workdayModel.update(workdayData);
 };

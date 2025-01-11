@@ -47,3 +47,11 @@ export const deleteResource = async (zasob_id: number) => {
 
   return;
 };
+
+// ================================
+//         PUT REQUESTS
+// ================================
+
+export const updateZasob = async (resourceData: Zasob) => {
+  return await resourceModel.update(resourceData);
+};

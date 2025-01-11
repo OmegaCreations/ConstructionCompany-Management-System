@@ -4,7 +4,7 @@ import { CreateClientInput, Klient, Zlecenie } from "../utils/types";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 // ================================
 //        GET REQUESTS
@@ -32,12 +32,14 @@ interface clientVerify {
 
 // returns client's and their orders' data based on token in url
 export const getClientAsClient = async (clientToken: string, email: string) => {
-  const clientAccessData: clientVerify = jwt.verify(clientToken, String(process.env.JWT_CLIENT_SECRET)) as unknown as clientVerify;
-  console.log(clientAccessData)
+  const clientAccessData: clientVerify = jwt.verify(
+    clientToken,
+    String(process.env.JWT_CLIENT_SECRET)
+  ) as unknown as clientVerify;
+  console.log(clientAccessData);
   if (email !== clientAccessData.email) {
     throw new Error("Invalid email or token.");
   } else {
-
     // get client's profile data
     const existingClient: Klient | null = await clientModel.findByEmail(email);
     if (!existingClient) {
@@ -45,10 +47,12 @@ export const getClientAsClient = async (clientToken: string, email: string) => {
     }
 
     // get all orders for a client
-    const clientOrders: Zlecenie[] = await orderModel.getAllForClient(clientAccessData.klient_id);
-    return { client: existingClient, orders: clientOrders};
+    const clientOrders: Zlecenie[] = await orderModel.getAllForClient(
+      clientAccessData.klient_id
+    );
+    return { client: existingClient, orders: clientOrders };
   }
-}
+};
 
 // ================================
 //        POST REQUESTS
@@ -72,11 +76,13 @@ export const createNewClient = async (clientData: CreateClientInput) => {
   });
 
   // generate client "magic link" to status page
-  const clientToken = jwt.sign({klient_id: newClient.klient_id, email: newClient.email},
+  const clientToken = jwt.sign(
+    { klient_id: newClient.klient_id, email: newClient.email },
     String(process.env.JWT_CLIENT_SECRET),
     {
-    expiresIn: "1h", // jwt expire time
-  });
+      expiresIn: "1h", // jwt expire time
+    }
+  );
 
   return clientToken;
 };
@@ -93,4 +99,11 @@ export const deleteClient = async (klient_id: number) => {
   }
 
   return;
+};
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const updateClient = async (clientData: Klient) => {
+  return await clientModel.update(clientData);
 };

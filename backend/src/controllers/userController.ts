@@ -115,41 +115,47 @@ export const createUser: any = async (req: Request, res: Response) => {
 };
 
 // ================================
-//        PUT REQUESTS
+//           PUT REQUESTS
 // ================================
 
-// update user's data
 export const updateUser: any = async (req: Request, res: Response) => {
-  const { imie, nazwisko, telefon, email, stawka_godzinowa, stanowisko_id } =
-    req.body;
+  const {
+    pracownik_id,
+    imie,
+    nazwisko,
+    telefon,
+    email,
+    stawka_godzinowa,
+    stanowisko_id,
+    stanowisko_nazwa,
+  } = req.body;
 
-  if (
-    !imie ||
-    !nazwisko ||
-    !email ||
-    !telefon ||
-    !stawka_godzinowa ||
-    !stanowisko_id
-  ) {
+  if (!pracownik_id) {
     return res.status(400).json({ error: "Please provide all the data." });
   }
 
   try {
-    const updatedUser = await userService.updateUser({
+    await userService.updateUser({
+      pracownik_id,
       imie,
       nazwisko,
       telefon,
       email,
       stawka_godzinowa,
       stanowisko_id,
+      stanowisko_nazwa,
     });
 
-    res.status(201).json({ message: "User updated.", user: updatedUser });
+    res.status(201).json({
+      info: "Pracownik został zaktualizowany!",
+    });
   } catch (err) {
     res.status(500).json({
-      error: err instanceof Error ? err.message : "Error during user updating.",
+      error: err instanceof Error ? err.message : "Error during User updating.",
     });
   }
+
+  return;
 };
 
 // ================================

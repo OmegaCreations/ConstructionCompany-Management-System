@@ -60,4 +60,15 @@ router.delete(
   warehouseController.deleteResourceFromWarehouse
 );
 
+// ================================
+//        PUT ROUTES
+// ================================
+
+router.put(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.updateWarehouse
+);
+
 export default router;

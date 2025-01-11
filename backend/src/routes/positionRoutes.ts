@@ -38,4 +38,15 @@ router.delete(
   positionController.deletePosition
 );
 
+// ================================
+//        PUT ROUTES
+// ================================
+
+router.put(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  positionController.updatePosition
+);
+
 export default router;

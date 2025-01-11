@@ -59,3 +59,22 @@ export const deleteWithId = async (klient_id: number) => {
   const result: QueryResult<Klient> = await client.query(query, [klient_id]);
   return result.rows[0];
 };
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const update = async (klientData: Klient) => {
+  const { klient_id, imie, nazwisko, firma, telefon, email, adres } =
+    klientData;
+  const query = `SELECT update_klient($1, $2, $3, $4, $5, $6, $7)`;
+  const result: QueryResult<Klient> = await client.query(query, [
+    klient_id,
+    imie,
+    nazwisko,
+    firma,
+    telefon,
+    email,
+    adres,
+  ]);
+  return result.rows[0];
+};

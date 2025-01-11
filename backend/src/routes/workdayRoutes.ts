@@ -63,4 +63,15 @@ router.delete(
   workdayController.deleteWorkday
 );
 
+// ================================
+//        PUT ROUTES
+// ================================
+
+router.put(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  workdayController.updateWorkday
+);
+
 export default router;

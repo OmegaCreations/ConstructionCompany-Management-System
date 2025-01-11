@@ -1,6 +1,10 @@
 import { QueryResult } from "pg";
 import { client } from "../config/db";
-import { CreateWorkdayInput, DzienPracy } from "../utils/types";
+import {
+  CreateWorkdayInput,
+  DzienPracy,
+  DzienPracyUpdate,
+} from "../utils/types";
 
 // ================================
 //        GET REQUESTS
@@ -97,5 +101,32 @@ export const deleteWithId = async (
     data,
   ]);
 
+  return result.rows[0];
+};
+
+// ================================
+//         PUT REQUESTS
+// ================================
+
+export const update = async (workdayData: DzienPracyUpdate) => {
+  const {
+    pracownik_id,
+    zlecenie_id,
+    data,
+    opis_pracownika,
+    opis_managera,
+    godzina_rozpoczecia,
+    godzina_zakonczenia,
+  } = workdayData;
+  const query = `SELECT update_dzien_pracy($1, $2, $3, $4, $5, $6, $7)`;
+  const result: QueryResult<DzienPracyUpdate> = await client.query(query, [
+    pracownik_id,
+    zlecenie_id,
+    data,
+    opis_pracownika,
+    opis_managera,
+    godzina_rozpoczecia,
+    godzina_zakonczenia,
+  ]);
   return result.rows[0];
 };

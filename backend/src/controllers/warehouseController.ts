@@ -168,3 +168,65 @@ export const deleteResourceFromWarehouse: any = async (
 
   return;
 };
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updateWarehouse: any = async (req: Request, res: Response) => {
+  const { magazyn_id, nazwa, lokalizacja } = req.body;
+
+  if (!magazyn_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await warehouseService.updateWarehouse({
+      magazyn_id,
+      nazwa,
+      lokalizacja,
+    });
+
+    res.status(201).json({
+      info: "Magazyn został zaktualizowany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Warehouse updating.",
+    });
+  }
+
+  return;
+};
+
+export const updateWarehouseResource: any = async (
+  req: Request,
+  res: Response
+) => {
+  const { magazyn_zasob_id, ilosc, magazyn_id, zasob_id } = req.body;
+
+  if (!magazyn_id || !zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await warehouseService.updateWarehouseResourse({
+      magazyn_zasob_id,
+      ilosc,
+      magazyn_id,
+      zasob_id,
+    });
+
+    res.status(201).json({
+      info: "Zasób został zaktualizowany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Resource updating.",
+    });
+  }
+
+  return;
+};

@@ -80,10 +80,9 @@ export const createNewUser = async (userData: CreateUserInput) => {
 // ================================
 //        PUT REQUESTS
 // ================================
-// updates user's data
-export const updateUser = async (userData: updateUserInput) => {
-  const updatedUser = await userModel.update(userData);
-  return updatedUser;
+
+export const updateUser = async (userData: Pracownik) => {
+  return await userModel.update(userData);
 };
 
 // ================================

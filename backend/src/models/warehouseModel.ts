@@ -6,6 +6,7 @@ import {
   Magazyn,
   MagazynZasob,
   MagazynZasobExtended,
+  MagazynZasobUpdate,
 } from "../utils/types";
 
 // ================================
@@ -93,6 +94,33 @@ export const deleteResource = async (magazyn_zasob_id: number) => {
   const query = `DELETE FROM magazyn_zasob WHERE magazyn_zasob_id = $1 returning *`;
   const result: QueryResult<MagazynZasob> = await client.query(query, [
     magazyn_zasob_id,
+  ]);
+  return result.rows[0];
+};
+
+// ================================
+//         PUT REQUESTS
+// ================================
+
+export const update = async (warehouseData: Magazyn) => {
+  const { magazyn_id, nazwa, lokalizacja } = warehouseData;
+  const query = `SELECT update_magazyn($1, $2, $3)`;
+  const result: QueryResult<Magazyn> = await client.query(query, [
+    magazyn_id,
+    nazwa,
+    lokalizacja,
+  ]);
+  return result.rows[0];
+};
+
+export const updateResource = async (resourceData: MagazynZasobUpdate) => {
+  const { magazyn_zasob_id, ilosc, magazyn_id, zasob_id } = resourceData;
+  const query = `SELECT update_magazyn_zasob($1, $2, $3, $4)`;
+  const result: QueryResult<MagazynZasobUpdate> = await client.query(query, [
+    magazyn_zasob_id,
+    ilosc,
+    magazyn_id,
+    zasob_id,
   ]);
   return result.rows[0];
 };

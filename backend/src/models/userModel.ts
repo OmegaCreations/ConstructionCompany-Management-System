@@ -84,15 +84,26 @@ export const create = async (userData: CreateUserInput) => {
 // ================================
 //          PUT REQUESTS
 // ================================
-
-// updates user's data
-export const update = async (userData: updateUserInput) => {
-  const query = `INSERT INTO pracownik 
-        (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id) 
-    VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
-
+export const update = async (userData: Pracownik) => {
+  const {
+    pracownik_id,
+    imie,
+    nazwisko,
+    telefon,
+    email,
+    stawka_godzinowa,
+    stanowisko_id,
+    stanowisko_nazwa, // null
+  } = userData;
+  const query = `SELECT update_pracownik($1, $2, $3, $4, $5, $6, $7)`;
   const result: QueryResult<Pracownik> = await client.query(query, [
-    ...[userData],
+    pracownik_id,
+    imie,
+    nazwisko,
+    telefon,
+    email,
+    stawka_godzinowa,
+    stanowisko_id,
   ]);
   return result.rows[0];
 };

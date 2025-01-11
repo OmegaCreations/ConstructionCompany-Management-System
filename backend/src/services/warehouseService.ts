@@ -5,6 +5,7 @@ import {
   Magazyn,
   MagazynZasob,
   MagazynZasobExtended,
+  MagazynZasobUpdate,
 } from "../utils/types";
 
 // ================================
@@ -96,4 +97,18 @@ export const deleteResource = async (magazyn_zasob_id: number) => {
   }
 
   return;
+};
+
+// ================================
+//        PUT REQUESTS
+// ================================
+
+export const updateWarehouse = async (warehouseData: Magazyn) => {
+  return await warehouseModel.update(warehouseData);
+};
+
+export const updateWarehouseResourse = async (
+  resourceData: MagazynZasobUpdate
+) => {
+  return await warehouseModel.updateResource(resourceData);
 };

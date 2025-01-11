@@ -81,3 +81,37 @@ export const deleteResource: any = async (req: Request, res: Response) => {
 
   return;
 };
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updateResource: any = async (req: Request, res: Response) => {
+  const { zasob_id, nazwa, jednostka, typ, koszt_jednostkowy, opis } = req.body;
+
+  if (!zasob_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await resourceService.updateZasob({
+      zasob_id,
+      nazwa,
+      jednostka,
+      typ,
+      koszt_jednostkowy,
+      opis,
+    });
+
+    res.status(201).json({
+      info: "Zasób został zaktualizowany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Resource updating.",
+    });
+  }
+
+  return;
+};

@@ -50,3 +50,10 @@ export const deletePosition = async (stanowisko_id: number) => {
 
   return;
 };
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const updatePosition = async (positionData: Stanowisko) => {
+  return await positionModel.update(positionData);
+};

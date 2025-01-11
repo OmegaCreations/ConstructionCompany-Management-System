@@ -22,7 +22,6 @@ CREATE OR REPLACE FUNCTION update_pracownik(
     p_nazwisko VARCHAR,
     p_telefon VARCHAR,
     p_email VARCHAR,
-    p_haslo VARCHAR,
     p_stawka_godzinowa DECIMAL,
     p_stanowisko_id INT
 )
@@ -34,7 +33,6 @@ BEGIN
         nazwisko = COALESCE(p_nazwisko, nazwisko),
         telefon = COALESCE(p_telefon, telefon),
         email = COALESCE(p_email, email),
-        haslo = COALESCE(p_haslo, haslo),
         stawka_godzinowa = COALESCE(p_stawka_godzinowa, stawka_godzinowa),
         stanowisko_id = COALESCE(p_stanowisko_id, stanowisko_id)
     WHERE pracownik_id = p_pracownik_id;

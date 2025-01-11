@@ -4,8 +4,11 @@ import {
   CreateOrderInput,
   CreateOrderResourceInput,
   Klient,
+  Zasob,
   Zlecenie,
+  ZlecenieUpdate,
   ZlecenieZasob,
+  ZlecenieZasobUpdate,
 } from "../utils/types";
 
 // ================================
@@ -101,4 +104,17 @@ export const deleteResource = async (zasob_id: number, zlecenie_id: number) => {
   }
 
   return;
+};
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const updateOrder = async (orderData: ZlecenieUpdate) => {
+  return await orderModel.update(orderData);
+};
+
+export const updateOrderResource = async (
+  resourceData: ZlecenieZasobUpdate
+) => {
+  return await orderModel.updateResource(resourceData);
 };

@@ -50,3 +50,17 @@ export const deleteWithId = async (stanowisko_id: number) => {
   ]);
   return result.rows[0];
 };
+
+// ================================
+//         PUT REQUESTS
+// ================================
+export const update = async (stanowiskoData: Stanowisko) => {
+  const { stanowisko_id, nazwa, opis } = stanowiskoData;
+  const query = `SELECT update_stanowisko($1, $2, $3)`;
+  const result: QueryResult<Stanowisko> = await client.query(query, [
+    stanowisko_id,
+    nazwa,
+    opis,
+  ]);
+  return result.rows[0];
+};

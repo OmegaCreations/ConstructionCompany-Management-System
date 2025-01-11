@@ -88,4 +88,22 @@ router.delete(
   orderController.deleteResourceFromOrder
 );
 
+// ================================
+//        PUT ROUTES
+// ================================
+
+router.put(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  orderController.updateOrder
+);
+
+router.put(
+  "/resource",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  orderController.updateOrderResource
+);
+
 export default router;

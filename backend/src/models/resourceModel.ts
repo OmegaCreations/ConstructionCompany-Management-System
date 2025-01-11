@@ -51,3 +51,22 @@ export const deleteWithId = async (zasob_id: number) => {
   const result: QueryResult<Zasob> = await client.query(query, [zasob_id]);
   return result.rows[0];
 };
+
+// ================================
+//         PUT REQUESTS
+// ================================
+
+export const update = async (resourceData: Zasob) => {
+  const { zasob_id, nazwa, jednostka, typ, koszt_jednostkowy, opis } =
+    resourceData;
+  const query = `SELECT update_zasob($1, $2, $3, $4, $5, $6)`;
+  const result: QueryResult<Zasob> = await client.query(query, [
+    zasob_id,
+    nazwa,
+    jednostka,
+    typ,
+    koszt_jednostkowy,
+    opis,
+  ]);
+  return result.rows[0];
+};

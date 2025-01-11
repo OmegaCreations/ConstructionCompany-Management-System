@@ -195,3 +195,46 @@ export const deleteWorkday: any = async (req: Request, res: Response) => {
 
   return;
 };
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updateWorkday: any = async (req: Request, res: Response) => {
+  const {
+    pracownik_id,
+    zlecenie_id,
+    data,
+    opis_pracownika,
+    opis_managera,
+    godzina_rozpoczecia,
+    godzina_zakonczenia,
+  } = req.body;
+
+  if (!pracownik_id || !zlecenie_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await workdayService.updateWorkday({
+      pracownik_id,
+      zlecenie_id,
+      data,
+      opis_pracownika,
+      opis_managera,
+      godzina_rozpoczecia,
+      godzina_zakonczenia,
+    });
+
+    res.status(201).json({
+      info: "Dzień pracy został zaktualizowany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Work day updating.",
+    });
+  }
+
+  return;
+};

@@ -41,7 +41,7 @@ export const getClient: any = async (req: Request, res: Response) => {
 };
 
 // returns client's data and their orders
-export const getClientAsClient: any = async (req:any, res: Response) => {
+export const getClientAsClient: any = async (req: any, res: Response) => {
   const clientToken = String(req.query.token);
   const clientEmail: string = String(req.body.email);
 
@@ -50,7 +50,10 @@ export const getClientAsClient: any = async (req:any, res: Response) => {
   }
 
   try {
-    const clientData = await clientService.getClientAsClient(clientToken, clientEmail);
+    const clientData = await clientService.getClientAsClient(
+      clientToken,
+      clientEmail
+    );
     return res.status(200).json(clientData);
   } catch (err) {
     res.status(500).json({
@@ -60,7 +63,7 @@ export const getClientAsClient: any = async (req:any, res: Response) => {
           : "Error during fetching client data.",
     });
   }
-}
+};
 
 // ================================
 //        POST REQUESTS
@@ -89,7 +92,9 @@ export const createClient: any = async (req: Request, res: Response) => {
     });
 
     res.status(201).json({
-      info: "Klient został utworzony! O to adres dostępu dla klienta: http://localhost:5173/client/public?token=" + String(clientToken),
+      info:
+        "Klient został utworzony! O to adres dostępu dla klienta: http://localhost:5173/client/public?token=" +
+        String(clientToken),
     });
   } catch (err) {
     res.status(500).json({
@@ -120,6 +125,41 @@ export const deleteClient: any = async (req: Request, res: Response) => {
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during client deleting.",
+    });
+  }
+
+  return;
+};
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updateClient: any = async (req: Request, res: Response) => {
+  const { klient_id, imie, nazwisko, firma, telefon, email, adres } = req.body;
+
+  if (!klient_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await clientService.updateClient({
+      klient_id,
+      imie,
+      nazwisko,
+      firma,
+      telefon,
+      email,
+      adres,
+    });
+
+    res.status(201).json({
+      info: "Klient został zaktualizowany!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Client updating.",
     });
   }
 

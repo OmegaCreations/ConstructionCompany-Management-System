@@ -22,10 +22,7 @@ router.get(
 
 // get client's data as a client
 // passing token as search param and email address as a body parameter
-router.post(
-  "/public",
-  clientController.getClientAsClient
-)
+router.post("/public", clientController.getClientAsClient);
 
 // get specific user's data
 router.get(
@@ -34,8 +31,6 @@ router.get(
   checkAuthorizedRole(CompanyRoles.manager),
   clientController.getClient
 );
-
-
 
 // ================================
 //        POST ROUTES
@@ -57,6 +52,17 @@ router.delete(
   authenticateUserJWT,
   checkAuthorizedRole(CompanyRoles.manager),
   clientController.deleteClient
+);
+
+// ================================
+//        PUT ROUTES
+// ================================
+
+router.put(
+  "/",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  clientController.updateClient
 );
 
 export default router;

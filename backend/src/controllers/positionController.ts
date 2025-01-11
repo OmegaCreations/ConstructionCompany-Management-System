@@ -78,3 +78,30 @@ export const deletePosition: any = async (req: Request, res: Response) => {
 
   return;
 };
+
+// ================================
+//           PUT REQUESTS
+// ================================
+
+export const updatePosition: any = async (req: Request, res: Response) => {
+  const { stanowisko_id, nazwa, opis } = req.body;
+
+  if (!stanowisko_id) {
+    return res.status(400).json({ error: "Please provide all the data." });
+  }
+
+  try {
+    await positionService.updatePosition({ stanowisko_id, nazwa, opis });
+
+    res.status(201).json({
+      info: "Stanowisko zostało zaktualizowane!",
+    });
+  } catch (err) {
+    res.status(500).json({
+      error:
+        err instanceof Error ? err.message : "Error during Position updating.",
+    });
+  }
+
+  return;
+};
