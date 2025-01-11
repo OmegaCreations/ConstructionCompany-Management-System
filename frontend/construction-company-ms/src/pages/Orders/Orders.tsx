@@ -14,7 +14,7 @@ const Orders: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.ORDER_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.ORDER_UPDATE()}
         deleteEndpoint={endpoint.ORDER_DELTE()}
         addEndpoint={endpoint.ORDER_CREATE()}
         subPageURL={"/orders/details"}

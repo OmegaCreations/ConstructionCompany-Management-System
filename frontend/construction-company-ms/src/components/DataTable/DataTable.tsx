@@ -226,25 +226,43 @@ const DataTable: React.FC<DataTableProps> = ({
   };
 
   // handles saving updated object
-  const handleSave = async () => {
-    if (!editEndpoint) return;
+  const handleSave = async (retry = true) => {
+    const confirmUpdate = confirm("Czy na pewno zapisać?");
+    if (!confirmUpdate) return;
+
     try {
-      const response = await fetch(editEndpoint, {
+      const res = await fetch(editEndpoint, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(editedData),
+        body: JSON.stringify({ ...editedData, ...additionalBody }),
       });
 
-      if (response.ok) {
-        alert("Dane zapisane!");
-        setEditingItem(null);
-      } else {
-        alert("Wystąpił błąd.");
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleSave(false); // retry once
+        } else {
+          dispatch(logout());
+          return null;
+        }
       }
-    } catch (error) {
-      console.error("Błąd podczas zapisywania", error);
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(
+          errorData?.message || `Failed to update. Status: ${res.status}`
+        );
+      }
+
+      const responseData = await res.json();
+      setPostResponseData(responseData);
+    } catch (err) {
+      setPostResponseData(err);
+    } finally {
+      reloadDataComponent();
     }
   };
 
@@ -386,7 +404,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 </div>
               ))}
           </div>
-          <button onClick={handleSave}>Zapisz</button>
+          <button onClick={() => handleSave(true)}>Zapisz</button>
           <button onClick={() => setEditingItem(null)}>Anuluj</button>
         </div>
       )}

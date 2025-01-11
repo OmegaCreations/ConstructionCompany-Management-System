@@ -13,7 +13,7 @@ const Clients: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.CLIENT_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.CLIENT_UPDATE()}
         deleteEndpoint={endpoint.CLIENT_DELETE()}
         addEndpoint={endpoint.CLIENT_CREATE()}
         subPageURL={"/clients/details"}

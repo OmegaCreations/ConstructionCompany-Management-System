@@ -41,22 +41,22 @@ const ClientDetails: React.FC = () => {
       <div className={style.clientOrders}>
         <h1>Zlecenia</h1>
         <DataTable
-        endpoint={endpoint.ORDER_CLIENT_GET(Number(id))}
-        editEndpoint={"TODO"}
-        deleteEndpoint={endpoint.ORDER_DELTE()}
-        addEndpoint={endpoint.ORDER_CREATE()}
-        subPageURL={"/orders/details"}
-        editOptionalObjects={[]}
-        additionalBody={{klient_id: Number(id)}}
-        initialObjectState={(({
-          zlecenie_id,
-          klient_id,
-          klient_imie,
-          klient_nazwisko,
-          klient_firma,
-          ...o
-        }) => o)(initialOrderState)}
-      />
+          endpoint={endpoint.ORDER_CLIENT_GET(Number(id))}
+          editEndpoint={endpoint.ORDER_UPDATE()}
+          deleteEndpoint={endpoint.ORDER_DELTE()}
+          addEndpoint={endpoint.ORDER_CREATE()}
+          subPageURL={"/orders/details"}
+          editOptionalObjects={[]}
+          additionalBody={{ klient_id: Number(id) }}
+          initialObjectState={(({
+            zlecenie_id,
+            klient_id,
+            klient_imie,
+            klient_nazwisko,
+            klient_firma,
+            ...o
+          }) => o)(initialOrderState)}
+        />
       </div>
     </div>
   );

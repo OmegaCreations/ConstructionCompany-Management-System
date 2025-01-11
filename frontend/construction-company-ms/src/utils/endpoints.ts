@@ -10,7 +10,7 @@ export const endpoint = {
   USER_PAYCHECK: (pracownik_id: number) =>
     `http://localhost:5000/api/user/${pracownik_id}/paycheck`,
 
-  USER_UPDATE: () => ``,
+  USER_UPDATE: () => `http://localhost:5000/api/user`,
   USER_CREATE: () => `http://localhost:5000/api/user`,
   USER_DELETE: () => `http://localhost:5000/api/user`,
 
@@ -20,7 +20,9 @@ export const endpoint = {
     `http://localhost:5000/api/client/${klient_id}`,
   CLIENT_CREATE: () => `http://localhost:5000/api/client`,
   CLIENT_DELETE: () => `http://localhost:5000/api/client`,
-  CLIENT_GET_AS_CLIENT: (token: string) => `http://localhost:5000/api/client/public?token=${token}`,
+  CLIENT_UPDATE: () => `http://localhost:5000/api/client`,
+  CLIENT_GET_AS_CLIENT: (token: string) =>
+    `http://localhost:5000/api/client/public?token=${token}`,
 
   // order endpoints
   ORDER_GET_ALL: () => `http://localhost:5000/api/order`,
@@ -33,9 +35,11 @@ export const endpoint = {
   ORDER_GET_RESOURCES: (zlecenie_id: number) =>
     `http://localhost:5000/api/order/${zlecenie_id}/resources`,
   ORDER_CREATE: () => `http://localhost:5000/api/order/`,
-  ORDER_ADD_RESOURCE: () => `http://localhost:5000/api/order/resource/`,
   ORDER_DELTE: () => `http://localhost:5000/api/order/`,
+  ORDER_UPDATE: () => `http://localhost:5000/api/order/`,
+  ORDER_ADD_RESOURCE: () => `http://localhost:5000/api/order/resource/`,
   ORDER_DELETE_RESOURCE: () => `http://localhost:5000/api/order/resource/`,
+  ORDER_UPDATE_RESOURCE: () => `http://localhost:5000/api/order/resource/`,
 
   // profits
   PROFITS: () => `http://localhost:5000/api/order/profits`,
@@ -54,6 +58,7 @@ export const endpoint = {
     `http://localhost:5000/api/workday/${pracownik_id}/${year}/${month}/${day}`,
   WORKDAY_ADD: () => `http://localhost:5000/api/workday/`,
   WORKDAY_DELETE: () => `http://localhost:5000/api/workday/`,
+  WORKDAY_UPDATE: () => `http://localhost:5000/api/workday/`,
   WORKDAT_GET_TOTAL_HOURS: () =>
     `http://localhost:5000/api/workday/workedhours`,
 
@@ -62,7 +67,10 @@ export const endpoint = {
   WAREHOUSE_GET_RESOURCES: (magazyn_id: number) =>
     `http://localhost:5000/api/warehouse/${magazyn_id}/resources`,
   WAREHOUSE_CREATE: () => `http://localhost:5000/api/warehouse`,
+  WAREHOUSE_UPDATE: () => `http://localhost:5000/api/warehouse`,
   WAREHOUSE_ADD_RESOURCE: () => `http://localhost:5000/api/warehouse/resource`,
+  WAREHOUSE_UPDATE_RESOURCE: () =>
+    `http://localhost:5000/api/warehouse/resource`,
   WAREHOUSE_DELETE: () => `http://localhost:5000/api/warehouse`,
   WAREHOUSE_DELETE_RESOURCE: () =>
     `http://localhost:5000/api/warehouse/resource`,
@@ -71,11 +79,13 @@ export const endpoint = {
   POSITION_GET_ALL: () => `http://localhost:5000/api/position`,
   POSITION_CREATE: () => `http://localhost:5000/api/position`,
   POSITION_DELETE: () => `http://localhost:5000/api/position`,
+  POSITION_UPDATE: () => `http://localhost:5000/api/position`,
 
   // resources endpoints
   RESOURCE_GET_ALL: () => `http://localhost:5000/api/resource`,
   RESOURCE_CREATE: () => `http://localhost:5000/api/resource`,
   RESOURCE_DELETE: () => `http://localhost:5000/api/resource`,
+  RESOURCE_UPDATE: () => `http://localhost:5000/api/resource`,
 
   // shopping list
   SHOPPING_LIST_GET: (year: number, month: number, day: number) =>

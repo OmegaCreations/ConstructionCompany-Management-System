@@ -13,7 +13,7 @@ const Workers: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.USER_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.USER_UPDATE()}
         addEndpoint={endpoint.USER_CREATE()}
         deleteEndpoint={endpoint.USER_DELETE()}
         subPageURL={"/dashboard"}

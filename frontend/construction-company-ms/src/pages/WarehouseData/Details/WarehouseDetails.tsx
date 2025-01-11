@@ -43,7 +43,7 @@ const WarehouseDetails: React.FC = () => {
         <h1>Zasoby magazynu</h1>
         <DataTable
           endpoint={endpoint.WAREHOUSE_GET_RESOURCES(Number(id))}
-          editEndpoint={"TODO"}
+          editEndpoint={endpoint.WAREHOUSE_UPDATE_RESOURCE()}
           deleteEndpoint={endpoint.WAREHOUSE_DELETE_RESOURCE()}
           addEndpoint={endpoint.WAREHOUSE_ADD_RESOURCE()}
           subPageURL={""}

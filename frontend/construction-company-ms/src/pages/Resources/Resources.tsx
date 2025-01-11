@@ -14,7 +14,7 @@ const Resources: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.RESOURCE_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.RESOURCE_UPDATE()}
         deleteEndpoint={endpoint.RESOURCE_DELETE()}
         subPageURL={""}
         addEndpoint={endpoint.RESOURCE_CREATE()}

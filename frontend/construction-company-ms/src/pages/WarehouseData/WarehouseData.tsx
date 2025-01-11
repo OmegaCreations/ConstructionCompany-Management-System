@@ -13,7 +13,7 @@ const WarehouseData: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.WAREHOUSE_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.WAREHOUSE_UPDATE()}
         deleteEndpoint={endpoint.WAREHOUSE_DELETE()}
         addEndpoint={endpoint.WAREHOUSE_CREATE()}
         editOptionalObjects={[]}

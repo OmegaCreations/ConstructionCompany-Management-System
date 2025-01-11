@@ -92,7 +92,7 @@ const OrderDetails: React.FC = () => {
         <h1>Wymagane zasoby dla zlecenia</h1>
         <DataTable
           endpoint={endpoint.ORDER_GET_RESOURCES(Number(id))}
-          editEndpoint={"TODO"}
+          editEndpoint={endpoint.ORDER_UPDATE_RESOURCE()}
           addEndpoint={endpoint.ORDER_ADD_RESOURCE()}
           subPageURL={""}
           deleteEndpoint={endpoint.ORDER_DELETE_RESOURCE()}
