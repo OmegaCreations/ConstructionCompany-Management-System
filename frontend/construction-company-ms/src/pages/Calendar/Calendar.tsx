@@ -10,28 +10,50 @@ import { refreshAccessToken } from "../../utils/refreshToken";
 import { logout, setAccessToken } from "../../store/slices/authSlice";
 
 const Calendar: React.FC = () => {
+  // update work hours
   const [startHour, setStartHour] = useState("");
   const [endHour, setEndHour] = useState("");
 
-  const [monthYear, setMonthYear] = useState("");
-  const [Dates, setDates] = useState("");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeDate, setActiveDate] = useState(new Date());
+  const [dates, setDates] = useState<Date[]>([]);
+  const [employeeComment, setEmployeeComment] = useState("");
+  const [managerComment, setManagerComment] = useState("");
 
-  const currentMonth = currentDate.getMonth() + 1;
+  const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();
-
   const dispatch = useDispatch();
 
   const { user_id, role, token } = useSelector(
     (state: RootState) => state.auth
   );
+
   const [chosenUserID, setChosenUserID] = useState(user_id);
 
-  const [apiUrl, setApiUrl] = useState("");
-  const [monthApiUrl, setMonthApiUrl] = useState("");
+  const { data: monthWorkdayData, loading } = useFetchData(
+    endpoint.WORKDAY_GET_BY_MONTH(chosenUserID, currentYear, currentMonth + 1)
+  );
 
-  // new workdays data
+  const { data, loading: loadingDay } = useFetchData(
+    endpoint.WORKDAY_GET_BY_DATE(
+      chosenUserID,
+      activeDate.getFullYear(),
+      activeDate.getMonth() + 1,
+      activeDate.getDate()
+    )
+  );
+  const [workdayData, setWorkdayData] = useState(data as unknown as WorkDay);
+  useEffect(() => {
+    if (data) {
+      setWorkdayData(data as unknown as WorkDay);
+      setEmployeeComment(workdayData.opis_pracownika || "");
+      setManagerComment(workdayData.opis_managera || "");
+    }
+  }, [data]);
+
+  // =======================================================================
+  //                      NEW WORKDAYS' DATA
+  // =======================================================================
   const [postResponseData, setPostResponseData] = useState<object>({}); // for POST fetching
   const [addingWorkdays, setAddingWorkdays] = useState(false);
   const [workdays, setWorkdays] = useState([]);
@@ -47,13 +69,10 @@ const Calendar: React.FC = () => {
   );
   const ordersData: OrderData[] = ordersFetchedData as unknown as OrderData[];
 
-  // fetching data
-  const { data, loading } = useFetchData(apiUrl);
-  const workdayData: WorkDay = data as unknown as WorkDay;
-  const [employeeComment, setEmployeeComment] = useState("");
-  const [managerComment, setManagerComment] = useState("");
+  // =======================================================================
+  //                      FETCHING DAY'S DATA
+  // =======================================================================
 
-  const { data: monthWorkdayData } = useFetchData(monthApiUrl);
   const { data: userFetchedData } = useFetchData(endpoint.USER_GET_ALL());
   const userData: UserData[] = userFetchedData as unknown as UserData[];
 
@@ -64,90 +83,42 @@ const Calendar: React.FC = () => {
     }
   }, [data]);
 
+  // =======================================================================
+  //                      HANDLE CALENDAR DATES
+  // =======================================================================
   useEffect(() => {
-    const newUrl = endpoint.WORKDAY_GET_BY_DATE(
-      chosenUserID,
-      activeDate.getFullYear(),
-      activeDate.getMonth() + 1,
-      activeDate.getDate()
-    );
-    setApiUrl(newUrl);
-  }, [activeDate, chosenUserID]);
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
 
-  useEffect(() => {
-    const newMonthUrl = endpoint.WORKDAY_GET_BY_MONTH(
-      chosenUserID,
-      currentYear,
-      currentMonth
-    );
-    setMonthApiUrl(newMonthUrl);
-  }, [currentDate, chosenUserID]);
-
-  const updateCalendar = () => {
-    console.log("update calendar.")
-    const firstDay = new Date(currentYear, currentMonth - 1, 1);
-    const lastDay = new Date(currentYear, currentMonth, 0);
-    const totalDays = lastDay.getDate();
+    const daysInMonth = lastDay.getDate();
     const firstDayIndex = firstDay.getDay();
     const lastDayIndex = lastDay.getDay();
 
-    setMonthYear(
-      currentDate.toLocaleDateString("default", {
-        month: "long",
-        year: "numeric",
-      })
-    );
+    const datesArray: Date[] = [];
 
-    let datesNewContent: string = "";
-
-    const hasWorkOnDate = (date: Date) => {
-      return monthWorkdayData?.some((work: any) => {
-        const workDate = new Date(work.data);
-        return (
-          workDate.getFullYear() === date.getFullYear() &&
-          workDate.getMonth() === date.getMonth() &&
-          workDate.getDate() === date.getDate()
-        );
-      });
-    };
-
-    for (let i = firstDayIndex; i > 0; --i) {
-      const prevDate = new Date(currentYear, currentMonth - 1, 0 - i + 1);
-      datesNewContent += `<div class='${style.date} ${
-        style.inactive
-      }' data-date='${prevDate}'>${prevDate.getDate()}</div>`;
+    // Poprzedni miesiąc
+    for (let i = firstDayIndex - 1; i >= 0; i--) {
+      datesArray.push(new Date(currentYear, currentMonth, -i));
     }
 
-    for (let i = 1; i <= totalDays; ++i) {
-      const date = new Date(currentYear, currentMonth - 1, i);
-      const isToday = date.toDateString() === new Date().toDateString();
-      const hasWork = hasWorkOnDate(date);
-      datesNewContent += `<div class='${style.date} ${
-        isToday ? style.active : ""
-      } ${
-        date.toDateString() === activeDate.toDateString() ? style.selected : ""
-      } ${hasWork ? style.workday : ""}' data-date='${date}'>${i}</div>`;
+    // Bieżący miesiąc
+    for (let i = 1; i <= daysInMonth; i++) {
+      datesArray.push(new Date(currentYear, currentMonth, i));
     }
 
-    for (let i = 1; i <= 7 - lastDayIndex - 1; ++i) {
-      const nextDate = new Date(currentYear, currentMonth, i);
-      datesNewContent += `<div class='${style.date} ${
-        style.inactive
-      }' data-date='${nextDate}'>${nextDate.getDate()}</div>`;
+    // Następny miesiąc
+    for (let i = 1; i < 7 - lastDayIndex; i++) {
+      datesArray.push(new Date(currentYear, currentMonth + 1, i));
     }
 
-    setDates(datesNewContent);
-  };
+    setDates(datesArray);
+  }, [currentYear, currentMonth]);
 
-  const handleDateClick = (event: React.MouseEvent) => {
-    console.log("date click!")
-    const target = event.target as HTMLDivElement;
-    const selectedDate = new Date(target.getAttribute("data-date")!);
-
-    if (selectedDate.getMonth() !== currentMonth - 1) {
-      setCurrentDate(selectedDate);
+  const handleDateClick = (date: Date) => {
+    setActiveDate(date);
+    if (date.getMonth() !== currentMonth) {
+      setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
     }
-    setActiveDate(selectedDate);
   };
 
   const setPrevDate = () => {
@@ -162,25 +133,39 @@ const Calendar: React.FC = () => {
     );
   };
 
-  // update calendar data on date change
-  useEffect(() => {
-    updateCalendar();
-  }, [currentDate, activeDate, monthWorkdayData]);
+  const renderDates = () => {
+    return dates.map((date, index) => {
+      const isToday = date.toDateString() === new Date().toDateString();
+      const isActive = date.toDateString() === activeDate.toDateString();
+      const isCurrentMonth = date.getMonth() === currentMonth;
+      const hasWork = monthWorkdayData?.some((work: any) => {
+        const workDate = new Date(work.data);
+        return (
+          workDate.getFullYear() === date.getFullYear() &&
+          workDate.getMonth() === date.getMonth() &&
+          workDate.getDate() === date.getDate()
+        );
+      });
 
-  // add cick event handlers for each date
-  useEffect(() => {
-    const dateElements = document.querySelectorAll(`.${style.date}`);
-    dateElements.forEach((el) => {
-      el.addEventListener("click", handleDateClick);
+      return (
+        <div
+          key={index}
+          className={`${style.date} ${isToday ? style.active : ""} ${
+            isActive ? style.selected : ""
+          } ${isCurrentMonth ? "" : style.inactive} ${
+            hasWork ? style.workday : ""
+          }`}
+          onClick={() => handleDateClick(date)}
+        >
+          {date.getDate()}
+        </div>
+      );
     });
+  };
 
-  }, [Dates]);
-
-  function handleSave(event: MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    throw new Error("Function not implemented.");
-  }
-
-  // adding new workdays functions
+  // ==================================================================
+  //                        NEW WORKDAYS
+  // ==================================================================
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (value) {
@@ -206,6 +191,9 @@ const Calendar: React.FC = () => {
     }
   };
 
+  // ==================================================================
+  //                    API CONNECTION
+  // ==================================================================
   // refresh access token if needed
   const refreshToken = async () => {
     const newToken = await refreshAccessToken();
@@ -242,6 +230,14 @@ const Calendar: React.FC = () => {
       .catch((err) => setPostResponseData(err));
   };
 
+  // ==================================================================
+  //                       UPDATE WORKDAYS
+  // ==================================================================
+  const handleSave = () => {};
+
+  // ==================================================================
+  //                          POPUP
+  // ==================================================================
   const popup = () => {
     return (
       <div className={style.popup}>
@@ -255,6 +251,9 @@ const Calendar: React.FC = () => {
     );
   };
 
+  // ==================================================================
+  //                          MAIN RENDER
+  // ==================================================================
   return (
     <div className={style.calendarContainer}>
       {loading ? (
@@ -296,7 +295,12 @@ const Calendar: React.FC = () => {
                 </button>
               </>
             )}
-            <div className={style.monthYearDisplay}>{monthYear}</div>
+            <div className={style.monthYearDisplay}>
+              {currentDate.toLocaleDateString("default", {
+                month: "long",
+                year: "numeric",
+              })}
+            </div>
             <button onClick={setNextDate}>
               <svg
                 style={{ transform: "rotate(180deg)", marginRight: "10px" }}
@@ -317,10 +321,7 @@ const Calendar: React.FC = () => {
               </div>
             ))}
           </div>
-          <div
-            className={style.dates}
-            dangerouslySetInnerHTML={{ __html: Dates }}
-          ></div>
+          <div className={style.dates}>{renderDates()}</div>
         </section>
       )}
       <aside className={style.workInfo}>
@@ -330,7 +331,7 @@ const Calendar: React.FC = () => {
             day: "numeric",
           })}
         </h1>
-        {loading ? (
+        {loadingDay ? (
           <Loading />
         ) : (
           <>

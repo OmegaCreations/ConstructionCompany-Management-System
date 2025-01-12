@@ -338,9 +338,9 @@ const DataTable: React.FC<DataTableProps> = ({
           </thead>
           <tbody>
             {data.map((obj, index) => (
-              <tr key={index}>
+              <tr key={`row-${index}`}>
                 {Object.entries(obj).map(([key, objData], i) => (
-                  <td key={i}>
+                  <td key={`cell-${index}-${key}`}>
                     {/data|date/i.test(key) && typeof objData === "string"
                       ? new Date(objData).toLocaleDateString("pl-PL")
                       : (objData as string)}
