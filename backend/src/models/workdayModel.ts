@@ -14,12 +14,15 @@ import {
 // returns DzienPracy[] type
 
 export const getAllByMonthAndYear = async (year: number, month: number) => {
-  const query = "select * from get_dzienpracy_by_month($1, $2, null)";
+  const query =
+    "select *, to_char(data, 'YYYY-MM-DD') AS data from get_dzienpracy_by_month($1, $2, null)";
 
   const result: QueryResult<DzienPracy> = await client.query(query, [
     year,
     month,
   ]);
+
+  console.log(result.rows);
   return result.rows;
 };
 
@@ -30,7 +33,8 @@ export const getByMonthAndYear = async (
   year: number,
   month: number
 ) => {
-  const query = "select * from get_dzienpracy_by_month($1, $2, $3)";
+  const query =
+    "select *, to_char(data, 'YYYY-MM-DD') AS data from get_dzienpracy_by_month($1, $2, $3)";
   const result: QueryResult<DzienPracy> = await client.query(query, [
     year,
     month,
@@ -47,7 +51,8 @@ export const getByFullDate = async (
   month: number,
   day: number
 ) => {
-  const query = "select * from get_dzienpracy_by_date($1, $2, $3, $4)";
+  const query =
+    "select *, to_char(data, 'YYYY-MM-DD') AS data from get_dzienpracy_by_date($1, $2, $3, $4)";
   const result: QueryResult<DzienPracy> = await client.query(query, [
     pracownik_id,
     year,

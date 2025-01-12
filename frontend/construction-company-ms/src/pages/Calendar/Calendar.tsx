@@ -5,15 +5,16 @@ import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
-import { OrderData, UserData, WorkDay } from "../../utils/types";
+import {
+  InitialWorkDayState,
+  OrderData,
+  UserData,
+  WorkDay,
+} from "../../utils/types";
 import { refreshAccessToken } from "../../utils/refreshToken";
 import { logout, setAccessToken } from "../../store/slices/authSlice";
 
 const Calendar: React.FC = () => {
-  // update work hours
-  const [startHour, setStartHour] = useState("");
-  const [endHour, setEndHour] = useState("");
-
   const [currentDate, setCurrentDate] = useState(new Date());
   const [activeDate, setActiveDate] = useState(new Date());
   const [dates, setDates] = useState<Date[]>([]);
@@ -34,7 +35,11 @@ const Calendar: React.FC = () => {
     endpoint.WORKDAY_GET_BY_MONTH(chosenUserID, currentYear, currentMonth + 1)
   );
 
-  const { data, loading: loadingDay } = useFetchData(
+  const {
+    data,
+    loading: loadingDay,
+    reloadDataComponent,
+  } = useFetchData(
     endpoint.WORKDAY_GET_BY_DATE(
       chosenUserID,
       activeDate.getFullYear(),
@@ -43,12 +48,18 @@ const Calendar: React.FC = () => {
     )
   );
   const [workdayData, setWorkdayData] = useState(data as unknown as WorkDay);
+
+  // update work hours
+  const [startHour, setStartHour] = useState(workdayData.godzina_rozpoczecia);
+  const [endHour, setEndHour] = useState(workdayData.godzina_zakonczenia);
+
   useEffect(() => {
-    if (data) {
-      setWorkdayData(data as unknown as WorkDay);
-      setEmployeeComment(workdayData.opis_pracownika || "");
-      setManagerComment(workdayData.opis_managera || "");
-    }
+    console.log(data);
+    setWorkdayData(data as unknown as WorkDay);
+    setStartHour(data.godzina_rozpoczecia);
+    setEndHour(data.godzina_zakonczenia);
+    setEmployeeComment(data.opis_pracownika);
+    setManagerComment(data.opis_managera);
   }, [data]);
 
   // =======================================================================
@@ -75,13 +86,6 @@ const Calendar: React.FC = () => {
 
   const { data: userFetchedData } = useFetchData(endpoint.USER_GET_ALL());
   const userData: UserData[] = userFetchedData as unknown as UserData[];
-
-  useEffect(() => {
-    if (data) {
-      setEmployeeComment(workdayData.opis_pracownika || "");
-      setManagerComment(workdayData.opis_managera || "");
-    }
-  }, [data]);
 
   // =======================================================================
   //                      HANDLE CALENDAR DATES
@@ -116,6 +120,7 @@ const Calendar: React.FC = () => {
 
   const handleDateClick = (date: Date) => {
     setActiveDate(date);
+    reloadDataComponent();
     if (date.getMonth() !== currentMonth) {
       setCurrentDate(new Date(date.getFullYear(), date.getMonth(), 1));
     }
@@ -176,7 +181,7 @@ const Calendar: React.FC = () => {
     }
   };
 
-  // adding new workday handler
+  // adding new workday to list
   const handleAddWorkday = () => {
     if (newWorkday.zlecenie_id && newWorkday.data) {
       setWorkdays([...workdays, newWorkday]);
@@ -230,10 +235,147 @@ const Calendar: React.FC = () => {
       .catch((err) => setPostResponseData(err));
   };
 
+  const handleUpdate = () => {
+    let payload: WorkDay = InitialWorkDayState;
+
+    if (role === "worker") {
+      payload.opis_pracownika = employeeComment;
+      payload.pracownik_id = chosenUserID;
+      payload.zlecenie_id = workdayData.zlecenie_id;
+      payload.data = workdayData.data;
+      payload.godzina_rozpoczecia = startHour;
+      payload.godzina_zakonczenia = endHour;
+    } else if (role === "manager") {
+      payload = { ...payload, ...workdayData };
+      payload.opis_managera = managerComment;
+      payload.godzina_rozpoczecia = startHour;
+      payload.godzina_zakonczenia = endHour;
+      payload.pracownik_id = chosenUserID;
+    }
+
+    // Sending payload to endpoint
+    fetch(endpoint.WORKDAY_UPDATE(), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    })
+      .then(async (res) => {
+        if (res.status === 401) {
+          await refreshToken();
+        }
+        return res.json();
+      })
+      .then((responseData) => {
+        setPostResponseData(responseData);
+      })
+      .catch((err) => setPostResponseData(err));
+  };
+
+  const handleDelete = async () => {
+    fetch(endpoint.WORKDAY_DELETE(), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        pracownik_id: workdayData.pracownik_id,
+        zlecenie_id: workdayData.zlecenie_id,
+        data: workdayData.data,
+      }),
+    })
+      .then(async (res) => {
+        if (res.status === 401) {
+          await refreshToken();
+        }
+        return res.json();
+      })
+      .then((responseData) => {
+        setPostResponseData(responseData);
+      })
+      .catch((err) => setPostResponseData(err));
+  };
+
   // ==================================================================
-  //                       UPDATE WORKDAYS
+  //                       SINGLE WORKDAYS
   // ==================================================================
-  const handleSave = () => {};
+  const workdayRender = () => {
+    return (
+      <>
+        {Object.keys(workdayData).length === 0 ? (
+          <h2>Dzień wolny, brak pracy</h2>
+        ) : (
+          <div className={style.inputs}>
+            <h3>
+              {workdayData.pracownik_imie} {workdayData.pracownik_nazwisko}
+            </h3>
+            <span>
+              <strong>Lokalizacja: </strong>
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${(
+                  workdayData as unknown as WorkDay
+                ).zlecenie_lokalizacja
+                  .split(" ")
+                  .join("+")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {workdayData.zlecenie_lokalizacja}
+              </a>
+            </span>
+            <span>
+              <strong>Zleceniodawca:</strong>
+              {workdayData.klient_imie} {workdayData.klient_nazwisko} -{" "}
+              {workdayData.klient_firma}
+            </span>
+            <p>
+              <strong>Opis zleceniodawcy:</strong>
+              {(workdayData as unknown as WorkDay).zlecenie_opis}
+            </p>
+            <div>
+              <label>Godzina rozpoczęcia:</label>
+              <input
+                type="time"
+                value={startHour}
+                onChange={(e) => setStartHour(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Godzina zakończenia:</label>
+              <input
+                type="time"
+                value={endHour}
+                onChange={(e) => setEndHour(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>
+                {role === "worker" ? "Twój komentarz" : "Komentarz pracownika"}
+              </label>
+              <textarea
+                value={employeeComment}
+                onChange={(e) => setEmployeeComment(e.target.value)}
+                readOnly={role === "manager"}
+              ></textarea>
+            </div>
+            <div>
+              <label>Komentarz od menedżera</label>
+              <textarea
+                value={managerComment}
+                onChange={(e) => setManagerComment(e.target.value)}
+                readOnly={role === "worker"}
+              ></textarea>
+            </div>
+            <button onClick={handleUpdate}>Zapisz</button>
+            {role === "manager" && <button onClick={handleDelete}>Usuń</button>}
+          </div>
+        )}
+      </>
+    );
+  };
 
   // ==================================================================
   //                          POPUP
@@ -331,88 +473,7 @@ const Calendar: React.FC = () => {
             day: "numeric",
           })}
         </h1>
-        {loadingDay ? (
-          <Loading />
-        ) : (
-          <>
-            {Object.keys(workdayData).length === 0 ? (
-              <h2>Dzień wolny, brak pracy</h2>
-            ) : (
-              <div className={style.inputs}>
-                <h3>
-                  {workdayData.pracownik_imie} {workdayData.pracownik_nazwisko}
-                </h3>
-                <span>
-                  <strong>Lokalizacja: </strong>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${(
-                      workdayData as unknown as WorkDay
-                    ).zlecenie_lokalizacja
-                      .split(" ")
-                      .join("+")}`}
-                    target="_blank"
-                  >
-                    {workdayData.zlecenie_lokalizacja}
-                  </a>
-                </span>
-                <span>
-                  <strong>Zleceniodawca:</strong>
-                  {workdayData.klient_imie} {workdayData.klient_nazwisko} -
-                  {workdayData.klient_firma}
-                </span>
-                <p>
-                  <strong>Opis zleceniodawcy:</strong>
-                  {(workdayData as unknown as WorkDay).zlecenie_opis}
-                </p>
-                <div>
-                  <label>Godzina rozpoczęcia:</label>
-                  <input
-                    type="time"
-                    value={
-                      !workdayData.godzina_rozpoczecia
-                        ? "12:00"
-                        : workdayData.godzina_rozpoczecia
-                    }
-                    onChange={(e) => setStartHour(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label>Godzina zakończenia:</label>
-                  <input
-                    type="time"
-                    value={
-                      !workdayData.godzina_zakonczenia
-                        ? "12:00"
-                        : workdayData.godzina_zakonczenia
-                    }
-                    onChange={(e) => setEndHour(e.target.value)}
-                  />
-                </div>
-                <div>
-                  <label>
-                    {role === "worker"
-                      ? "Twój komentarz"
-                      : "Komentarz pracownika"}
-                  </label>
-                  <textarea
-                    value={employeeComment}
-                    onChange={(e) => setEmployeeComment(e.target.value)}
-                    readOnly={role === "manager"}
-                  ></textarea>
-                </div>
-                <div>
-                  <label>Komentarz od menedżera</label>
-                  <textarea
-                    value={managerComment}
-                    onChange={(e) => setManagerComment(e.target.value)}
-                    readOnly={role === "worker"}
-                  ></textarea>
-                </div>
-                <button onClick={handleSave}>Zapisz</button>
-              </div>
-            )}
-          </>
-        )}
+        {loadingDay ? <Loading /> : workdayRender()}
       </aside>
 
       {addingWorkdays && role === "manager" && (

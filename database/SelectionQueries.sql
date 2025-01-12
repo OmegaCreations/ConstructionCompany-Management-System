@@ -320,7 +320,7 @@ BEGIN
         k.firma AS klient_firma,
         dp.opis_pracownika,
         dp.opis_managera,
-        dp.data,
+        dp.data::date AS data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
@@ -332,7 +332,6 @@ BEGIN
       AND (pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param);
 END;
 $$ LANGUAGE plpgsql;
-
 
 -- =========================================
 -- Funkcja: Zwraca dni pracy dla danej daty

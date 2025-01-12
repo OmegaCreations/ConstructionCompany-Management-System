@@ -84,8 +84,8 @@ export interface OrderCosts {
 export interface WorkDay {
   pracownik_id: number;
   zlecenie_id: number;
-  opis_pracownika: string;
-  opis_managera: string;
+  opis_pracownika: string | null;
+  opis_managera: string | null;
   data: string;
   godzina_rozpoczecia: string | null;
   godzina_zakonczenia: string | null;
@@ -97,6 +97,23 @@ export interface WorkDay {
   klient_nazwisko: string;
   klient_firma: string;
 }
+
+export const InitialWorkDayState = {
+  pracownik_id: -1,
+  zlecenie_id: -1,
+  opis_pracownika: null,
+  opis_managera: null,
+  data: "",
+  godzina_rozpoczecia: null,
+  godzina_zakonczenia: null,
+  pracownik_imie: "",
+  pracownik_nazwisko: "",
+  zlecenie_opis: "",
+  zlecenie_lokalizacja: "",
+  klient_imie: "",
+  klient_nazwisko: "",
+  klient_firma: "",
+};
 
 // position data
 export interface Position {

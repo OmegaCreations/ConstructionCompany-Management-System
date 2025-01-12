@@ -210,16 +210,26 @@ export const updateWorkday: any = async (req: Request, res: Response) => {
     godzina_rozpoczecia,
     godzina_zakonczenia,
   } = req.body;
-
-  if (!pracownik_id || !zlecenie_id) {
+  console.log(
+    pracownik_id,
+    zlecenie_id,
+    data.split("T")[0],
+    opis_pracownika,
+    opis_managera,
+    godzina_rozpoczecia,
+    godzina_zakonczenia
+  );
+  if (!pracownik_id || !zlecenie_id || !data.split("T")[0]) {
     return res.status(400).json({ error: "Please provide all the data." });
   }
+
+  const parsedData: string = data.split("T")[0];
 
   try {
     await workdayService.updateWorkday({
       pracownik_id,
       zlecenie_id,
-      data,
+      data: parsedData,
       opis_pracownika,
       opis_managera,
       godzina_rozpoczecia,
