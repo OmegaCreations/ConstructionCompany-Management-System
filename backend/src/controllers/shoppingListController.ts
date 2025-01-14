@@ -14,13 +14,14 @@ export const getShoppingList: any = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Invalid credentials." });
   }
 
-  const data = `${month}-${day}-${year}`;
+  const data = `${year}-${month}-${day}`;
 
   try {
     const shoppingListData: Zakupy[] =
       await shoppingListService.getShoppingList(data);
     return res.status(200).json(shoppingListData);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error

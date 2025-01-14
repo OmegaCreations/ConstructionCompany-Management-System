@@ -71,4 +71,11 @@ router.put(
   warehouseController.updateWarehouse
 );
 
+router.put(
+  "/resource",
+  authenticateUserJWT,
+  checkAuthorizedRole(CompanyRoles.manager),
+  warehouseController.updateWarehouseResource
+);
+
 export default router;

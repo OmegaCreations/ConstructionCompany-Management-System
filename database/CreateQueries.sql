@@ -113,10 +113,8 @@ CREATE TABLE zakupy (
 CREATE TABLE zakupy_zasob (
     zasob_id INT NOT NULL,
     zakupy_id INT NOT NULL,
-    zlecenie_id INT NOT NULL,
     ilosc INT,
-    PRIMARY KEY (zasob_id, zakupy_id, zlecenie_id),
+    PRIMARY KEY (zasob_id, zakupy_id),
     FOREIGN KEY (zasob_id) REFERENCES zasob(zasob_id),
-    FOREIGN KEY (zakupy_id) REFERENCES zakupy(zakupy_id),
-    FOREIGN KEY (zlecenie_id) REFERENCES zlecenie(zlecenie_id)
+    FOREIGN KEY (zakupy_id) REFERENCES zakupy(zakupy_id)
 );

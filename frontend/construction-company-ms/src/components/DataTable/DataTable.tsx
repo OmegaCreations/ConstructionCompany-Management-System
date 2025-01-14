@@ -138,6 +138,12 @@ const DataTable: React.FC<DataTableProps> = ({
         body: JSON.stringify({ ...newData, ...additionalBody }),
       });
 
+      if (res.status === 500) {
+        const errorData = await res.json();
+        setPostResponseData(errorData);
+        return null;
+      }
+
       if (res.status === 401 && retry) {
         const success = await refreshToken();
         if (success) {
@@ -179,6 +185,12 @@ const DataTable: React.FC<DataTableProps> = ({
         },
         body: JSON.stringify({ ...item, ...additionalBody }),
       });
+
+      if (res.status === 500) {
+        const errorData = await res.json();
+        setPostResponseData(errorData);
+        return null;
+      }
 
       if (res.status === 401 && retry) {
         const success = await refreshToken();
@@ -239,6 +251,12 @@ const DataTable: React.FC<DataTableProps> = ({
         },
         body: JSON.stringify({ ...editedData, ...additionalBody }),
       });
+
+      if (res.status === 500) {
+        const errorData = await res.json();
+        setPostResponseData(errorData);
+        return null;
+      }
 
       if (res.status === 401 && retry) {
         const success = await refreshToken();

@@ -163,6 +163,7 @@ export const update = async (zlecenieData: ZlecenieUpdate) => {
     data_zakonczenia,
     lokalizacja,
   ]);
+  console.log("Result: ", result);
   return result.rows[0];
 };
 

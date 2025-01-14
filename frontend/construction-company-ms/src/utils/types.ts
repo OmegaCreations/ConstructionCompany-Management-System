@@ -189,9 +189,6 @@ export interface ShoppingList {
   koszt_jednostkowy: number;
   ilosc: number;
   suma_kosztow: number;
-  nazwa_firmy: string;
-  data_rozpoczecia: string;
-  opis_zlecenia: string;
 }
 
 export const initialShoppingListState: ShoppingList = {
@@ -199,7 +196,4 @@ export const initialShoppingListState: ShoppingList = {
   koszt_jednostkowy: 0,
   ilosc: 0,
   suma_kosztow: 0,
-  nazwa_firmy: "",
-  data_rozpoczecia: "",
-  opis_zlecenia: "",
 };

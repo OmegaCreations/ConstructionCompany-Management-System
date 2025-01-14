@@ -435,6 +435,7 @@ select * from get_magazyny();
 -- =========================================
 CREATE OR REPLACE FUNCTION get_zasoby_magazynu(magazyn_id_param INT)
 RETURNS TABLE (
+    magazyn_zasob_id INT,
     zasob_id INT,
     nazwa_zasobu VARCHAR,
     jednostka VARCHAR,
@@ -446,6 +447,7 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT 
+        mz.magazyn_zasob_id,
         mz.zasob_id,
         z.nazwa AS nazwa_zasobu,
         z.jednostka,
@@ -538,10 +540,7 @@ RETURNS TABLE (
     nazwa_zasobu VARCHAR(50),
     koszt_jednostkowy DECIMAL,
     ilosc INT,
-    suma_kosztow DECIMAL,
-    nazwa_firmy VARCHAR(50),
-    data_rozpoczecia DATE,
-    opis_zlecenia TEXT
+    suma_kosztow DECIMAL
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -549,24 +548,18 @@ BEGIN
         z.nazwa AS nazwa_zasobu,
         z.koszt_jednostkowy,
         zz.ilosc,
-        z.koszt_jednostkowy * zz.ilosc AS suma_kosztow,
-        k.firma AS nazwa_firmy,
-        zl.data_rozpoczecia,
-        zl.opis AS opis_zlecenia
+        z.koszt_jednostkowy * zz.ilosc AS suma_kosztow
     FROM 
         zakupy za
     JOIN 
         zakupy_zasob zz ON za.zakupy_id = zz.zakupy_id
     JOIN 
         zasob z ON zz.zasob_id = z.zasob_id
-    JOIN 
-        zlecenie zl ON zz.zlecenie_id = zl.zlecenie_id
-    JOIN 
-        klient k ON zl.klient_id = k.klient_id
     WHERE 
         DATE_TRUNC('month', za.miesiac) = DATE_TRUNC('month', p_month);
 END;
 $$ LANGUAGE plpgsql;
+
 
 
 

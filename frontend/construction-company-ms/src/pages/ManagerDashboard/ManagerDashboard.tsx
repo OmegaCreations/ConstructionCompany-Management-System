@@ -79,6 +79,7 @@ const ManagerDashboard: React.FC = () => {
           subPageURL={""}
           editEndpoint={""}
           addEndpoint={""}
+          deleteEndpoint={""}
           editOptionalObjects={[]}
           additionalBody={{}}
           initialObjectState={initialShoppingListState}

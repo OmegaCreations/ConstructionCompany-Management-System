@@ -67,11 +67,6 @@ router.delete(
 //        PUT ROUTES
 // ================================
 
-router.put(
-  "/",
-  authenticateUserJWT,
-  checkAuthorizedRole(CompanyRoles.manager),
-  workdayController.updateWorkday
-);
+router.put("/", authenticateUserJWT, workdayController.updateWorkday);
 
 export default router;
