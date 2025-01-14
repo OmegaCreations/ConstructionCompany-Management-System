@@ -164,7 +164,7 @@ BEGIN
     END IF;
 
     RETURN NEW;
-END;
+END;	
 $$ LANGUAGE plpgsql;
 
 -- Trigger uruchamiany przy zmianie daty zakończenia
