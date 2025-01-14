@@ -7,7 +7,7 @@ set search_path to construction_company;
 SET datestyle = 'ISO, DMY'; -- daty chcemy formatowane auropejski bo tak wysyłamy z frontendu
 
 -- new user
-CREATE USER construction_company_admin WITH PASSWORD '<secret-password-to-tembo>';
+CREATE USER construction_company_admin WITH PASSWORD '<secret-password-to-tembo>'; -- tutaj hasło jest takie samo jak do tembo, po stronie serwera jest ono przechowywane w pliku .env
 
 -- create new role for this schema
 CREATE ROLE construction_company_admin_role;
@@ -37,7 +37,7 @@ CREATE TABLE pracownik (
     imie VARCHAR(50) NOT NULL,
     nazwisko VARCHAR(50) NOT NULL,
     telefon VARCHAR(15),
-    email VARCHAR(50) UNIQUE,
+    email VARCHAR(50) NOT NULL UNIQUE,
     haslo VARCHAR(255) NOT NULL,
     stawka_godzinowa DECIMAL NOT NULL,
     stanowisko_id INT NOT NULL REFERENCES stanowisko(stanowisko_id)
@@ -47,7 +47,7 @@ CREATE TABLE klient (
     klient_id SERIAL PRIMARY KEY,
     imie VARCHAR(50),
     nazwisko VARCHAR(50),
-    firma VARCHAR(50),
+    firma VARCHAR(50) NOT NULL,
     telefon VARCHAR(15),
     email VARCHAR(50) UNIQUE,
     adres TEXT

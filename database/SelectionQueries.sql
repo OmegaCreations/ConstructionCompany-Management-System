@@ -320,7 +320,7 @@ BEGIN
         k.firma AS klient_firma,
         dp.opis_pracownika,
         dp.opis_managera,
-        dp.data::date AS data,
+        dp.data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
@@ -559,8 +559,6 @@ BEGIN
         DATE_TRUNC('month', za.miesiac) = DATE_TRUNC('month', p_month);
 END;
 $$ LANGUAGE plpgsql;
-
-
 
 
 
