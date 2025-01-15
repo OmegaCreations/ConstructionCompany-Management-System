@@ -58,6 +58,7 @@ export const getWorkDays: any = async (req: any, res: Response) => {
     );
     return res.status(200).json(workdayData);
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error

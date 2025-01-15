@@ -46,7 +46,7 @@ export const endpoint = {
 
   // workdays endpoints
   WORKDAY_GET_ALL: (year: number, month: number) =>
-    `http://localhost:5000/api/workday/${year}/${month}`,
+    `http://localhost:5000/api/workday/${month}/${year}`,
   WORKDAY_GET_BY_MONTH: (pracownik_id: number, year: number, month: number) =>
     `http://localhost:5000/api/workday/${pracownik_id}/${year}/${month}`,
   WORKDAY_GET_BY_DATE: (
