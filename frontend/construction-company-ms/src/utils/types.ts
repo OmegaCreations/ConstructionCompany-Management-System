@@ -53,7 +53,7 @@ export interface OrderData {
   klient_id: number;
   opis: string;
   data_zlozenia: string;
-  data_rozpoczenia: string;
+  data_rozpoczecia: string;
   wycena: number;
   data_zakonczenia: string;
   lokalizacja: string;
@@ -67,7 +67,7 @@ export const initialOrderState: OrderData = {
   klient_id: -1,
   opis: "",
   data_zlozenia: "",
-  data_rozpoczenia: "",
+  data_rozpoczecia: "",
   wycena: 0,
   data_zakonczenia: "",
   lokalizacja: "",

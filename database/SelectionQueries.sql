@@ -133,9 +133,9 @@ RETURNS TABLE (
     adres TEXT,
     zlecenie_id INT,
     opis TEXT,
-    data_zlozenia DATE,
-    data_rozpoczecia DATE,
-    data_zakonczenia DATE,
+    data_zlozenia TEXT,
+    data_rozpoczecia TEXT,
+    data_zakonczenia TEXT,
     lokalizacja VARCHAR
 ) AS $$
 BEGIN
@@ -144,9 +144,9 @@ BEGIN
         k.*, 
         z.zlecenie_id, 
         z.opis, 
-        z.data_zlozenia, 
-        z.data_rozpoczecia, 
-        z.data_zakonczenia, 
+        to_char(z.data_zlozenia, 'YYYY-MM-DD') AS data_zlozenia, -- ten format daty nie będzie mieszał dat ze względu na strefy czasowe 
+        to_char(z.data_rozpoczecia, 'YYYY-MM-DD') AS data_rozpoczecia, 
+        to_char(z.data_zakonczenia, 'YYYY-MM-DD') AS data_zakonczenia, 
         z.lokalizacja
     FROM klient k
     JOIN zlecenie z ON k.klient_id = z.klient_id
@@ -164,9 +164,9 @@ RETURNS TABLE (
     klient_nazwisko VARCHAR,
     klient_firma VARCHAR,
     opis TEXT,
-    data_zlozenia DATE,
-    data_rozpoczecia DATE,
-    data_zakonczenia DATE,
+    data_zlozenia TEXT,
+    data_rozpoczecia TEXT,
+    data_zakonczenia TEXT,
     lokalizacja VARCHAR,
     wycena DECIMAL
 ) AS $$
@@ -178,9 +178,9 @@ BEGIN
         k.nazwisko AS klient_nazwisko,
         k.firma AS klient_firma,
         z.opis,
-        z.data_zlozenia,
-        z.data_rozpoczecia,
-        z.data_zakonczenia,
+        to_char(z.data_zlozenia, 'YYYY-MM-DD') AS data_zlozenia, -- ten format daty nie będzie mieszał dat ze względu na strefy czasowe 
+        to_char(z.data_rozpoczecia, 'YYYY-MM-DD') AS data_rozpoczecia, 
+        to_char(z.data_zakonczenia, 'YYYY-MM-DD') AS data_zakonczenia, 
         z.lokalizacja,
         z.wycena
     FROM zlecenie z
@@ -302,7 +302,7 @@ RETURNS TABLE (
     klient_firma VARCHAR,
     opis_pracownika TEXT,
     opis_managera TEXT,
-    data DATE,
+    data TEXT,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
 ) AS $$
@@ -320,7 +320,7 @@ BEGIN
         k.firma AS klient_firma,
         dp.opis_pracownika,
         dp.opis_managera,
-        dp.data,
+        to_char(dp.data, 'YYYY-MM-DD') AS data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
@@ -349,7 +349,7 @@ RETURNS TABLE (
     klient_firma VARCHAR,
     opis_pracownika TEXT,
     opis_managera TEXT,
-    data DATE,
+    data TEXT,
     godzina_rozpoczecia TIME,
     godzina_zakonczenia TIME
 ) AS $$
@@ -367,7 +367,7 @@ BEGIN
         k.firma AS klient_firma,
         dp.opis_pracownika,
         dp.opis_managera,
-        dp.data,
+        to_char(dp.data, 'YYYY-MM-DD') AS data,
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp

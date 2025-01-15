@@ -105,7 +105,7 @@ const DataTable: React.FC<DataTableProps> = ({
       }
 
       const result = await response.json();
-      console.log("res: ", result);
+      // DEBUG: console.log("res: ", result);
       return { [obj.field_name[0]]: result };
     });
 
@@ -156,7 +156,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
       if (res.ok) {
         const responseData = await res.json();
-        console.log(responseData);
+        // DEBUG: console.log(responseData);
         setPostResponseData(responseData);
       } else {
         const errorData = await res.json();
@@ -314,13 +314,17 @@ const DataTable: React.FC<DataTableProps> = ({
         onChange={(e) => {
           handleChangeEdit(optionalObj?.data_id_name, e.target.value);
           handleChangeCreate(optionalObj?.data_id_name, e.target.value);
+          setEditedData((prev) => ({
+            ...prev,
+            [key]: e.target.value,
+          }));
         }}
       >
         <option value="">Wybierz...</option>
         {options.map((item) => (
           <option
             key={item[optionalObj?.data_id_name]}
-            value={item[optionalObj?.data_id_name]}
+            value={item[optionalObj?.data_name]}
           >
             {item[optionalObj?.data_name]}{" "}
             {optionalObj?.field_name.map((field, idx) => {
@@ -406,7 +410,7 @@ const DataTable: React.FC<DataTableProps> = ({
           <h3>Edytuj dane</h3>
           <div className={style.inputsContainer}>
             {Object.entries(editingItem)
-              .filter(([key]) => !key.toLowerCase().includes("id"))
+              .filter(([key]) => key in initialObjectState)
               .map(([key]) => (
                 <div key={key}>
                   <label>{key.split("_").join(" ")}</label>
