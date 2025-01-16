@@ -173,3 +173,98 @@ AFTER UPDATE OF data_zakonczenia
 ON zlecenie
 FOR EACH ROW
 EXECUTE FUNCTION odejmij_zasoby_po_zakonczeniu();
+
+
+-- ============================================================================================
+
+CREATE OR REPLACE FUNCTION sprawdz_dostepnosc_sprzetu()
+RETURNS TRIGGER AS $$
+DECLARE
+    calkowita_ilosc INT;  -- Ilość sprzętu w magazynach
+    ilosc_w_uzyciu INT;   -- Ilość sprzętu używanego w tym samym okresie
+    typ_zasobu TEXT;      -- Typ zasobu (sprzęt/materiał)
+    poczatek_okresu DATE; -- Początek przedziału czasowego
+    koniec_okresu DATE;   -- Koniec przedziału czasowego
+BEGIN
+    -- Pobranie typu zasobu
+    SELECT typ INTO typ_zasobu
+    FROM zasob
+    WHERE zasob_id = NEW.zasob_id;
+
+    -- Sprawdzaj tylko zasoby typu 'sprzęt'
+    IF typ_zasobu != 'sprzet' THEN
+        RETURN NEW;
+    END IF;
+
+    -- Pobranie dat zlecenia
+    SELECT data_rozpoczecia, data_zakonczenia
+    INTO poczatek_okresu, koniec_okresu
+    FROM zlecenie
+    WHERE zlecenie_id = NEW.zlecenie_id;
+
+    -- Jeśli brak daty zakończenia, ustaw koniec na ostatni dzień bieżącego miesiąca
+    IF koniec_okresu IS NULL THEN
+        koniec_okresu := date_trunc('month', CURRENT_DATE) + INTERVAL '1 month' - INTERVAL '1 day';
+    END IF;
+
+    -- Oblicz całkowitą ilość sprzętu w magazynach
+    SELECT COALESCE(SUM(mz.ilosc), 0)
+    INTO calkowita_ilosc
+    FROM magazyn_zasob mz
+    WHERE mz.zasob_id = NEW.zasob_id;
+
+    -- Oblicz ilość sprzętu w użyciu w tym samym przedziale czasowym, wykluczając bieżący rekord podczas UPDATE
+    SELECT COALESCE(SUM(zzasob.ilosc_potrzebna), 0)
+    INTO ilosc_w_uzyciu
+    FROM zasob_zlecenie zzasob
+    JOIN zlecenie z ON zzasob.zlecenie_id = z.zlecenie_id
+    WHERE zzasob.zasob_id = NEW.zasob_id
+      AND z.data_rozpoczecia <= koniec_okresu
+      AND (z.data_zakonczenia IS NULL OR z.data_zakonczenia >= poczatek_okresu)
+      AND (TG_OP = 'INSERT' OR zzasob.zlecenie_id != NEW.zlecenie_id);
+
+    -- Sprawdź, czy wystarczy sprzętu
+    IF calkowita_ilosc - ilosc_w_uzyciu < NEW.ilosc_potrzebna THEN
+        RAISE EXCEPTION 'Brak wystarczającej ilości sprzętu w magazynach lub sprzęt jest już w użyciu w tym okresie.';
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-- Trigger wywołujący funkcję przy dodawaniu/aktualizacji zasobu do zlecenia
+CREATE OR REPLACE TRIGGER sprawdz_sprzet_trigger
+BEFORE INSERT OR UPDATE ON zasob_zlecenie
+FOR EACH ROW
+EXECUTE FUNCTION sprawdz_dostepnosc_sprzetu();
+
+
+-- =========================================================================
+
+-- Funkcja do obsługi logiki triggera
+CREATE OR REPLACE FUNCTION update_or_insert_zasob_zlecenie()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Sprawdź, czy rekord już istnieje
+    IF EXISTS (
+        SELECT 1
+        FROM zasob_zlecenie
+        WHERE zasob_id = NEW.zasob_id AND zlecenie_id = NEW.zlecenie_id
+    ) THEN
+        -- Jeśli istnieje, zaktualizuj ilość
+        UPDATE zasob_zlecenie
+        SET ilosc_potrzebna = ilosc_potrzebna + NEW.ilosc_potrzebna
+        WHERE zasob_id = NEW.zasob_id AND zlecenie_id = NEW.zlecenie_id;
+        RETURN NULL; -- Nie dodawaj nowego rekordu
+    ELSE
+        -- Jeśli nie istnieje, wstaw nowy rekord
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_update_or_insert_zasob_zlecenie
+BEFORE INSERT ON zasob_zlecenie
+FOR EACH ROW
+EXECUTE FUNCTION update_or_insert_zasob_zlecenie();

@@ -39,7 +39,7 @@ export interface Zlecenie {
   klient_firma: string;
   opis: string;
   data_zlozenia: string;
-  data_rozpoczenia: string;
+  data_rozpoczecia: string;
   data_zakonczenia: string;
   lokalizacja: string;
 }
@@ -50,7 +50,7 @@ export interface ZlecenieUpdate {
   wycena: string;
   opis: string;
   data_zlozenia: string;
-  data_rozpoczenia: string;
+  data_rozpoczecia: string;
   data_zakonczenia: string;
   lokalizacja: string;
 }
@@ -226,7 +226,7 @@ export interface CreateOrderInput {
   klient_id: number;
   opis: string;
   data_zlozenia: string;
-  data_rozpoczenia: string;
+  data_rozpoczecia: string;
   lokalizacja: string;
   wycena: number;
   data_zakonczenia: string | null;

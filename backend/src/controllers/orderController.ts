@@ -136,18 +136,28 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
     klient_id,
     opis,
     data_zlozenia,
-    data_rozpoczenia,
+    data_rozpoczecia,
     lokalizacja,
     wycena,
     data_zakonczenia,
   } = req.body;
+
+  console.log(
+    klient_id,
+    opis,
+    data_zlozenia,
+    data_rozpoczecia,
+    lokalizacja,
+    wycena,
+    data_zakonczenia
+  );
 
   // check if required data was passed
   if (
     !klient_id ||
     !opis ||
     !data_zlozenia ||
-    !data_rozpoczenia ||
+    !data_rozpoczecia ||
     !wycena ||
     !lokalizacja
   ) {
@@ -160,16 +170,16 @@ export const createNewOrder: any = async (req: Request, res: Response) => {
       klient_id,
       opis,
       data_zlozenia,
-      data_rozpoczenia,
+      data_rozpoczecia,
       lokalizacja,
       wycena,
       data_zakonczenia,
     });
-
     res.status(201).json({
       info: "Nowe zlecenie zostało dodane!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during creating order.",
@@ -186,6 +196,8 @@ export const addResourcesToOrder: any = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Please provide all the data." });
   }
 
+  console.log(zlecenie_id, zasob_id, ilosc_potrzebna);
+
   // adding new resource
   try {
     await orderService.addResourcesToOrder({
@@ -198,6 +210,7 @@ export const addResourcesToOrder: any = async (req: Request, res: Response) => {
       info: "Nowe zasoby zostały dodane do zlecenia!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during adding resources.",
@@ -269,7 +282,7 @@ export const updateOrder: any = async (req: Request, res: Response) => {
     wycena,
     opis,
     data_zlozenia,
-    data_rozpoczenia,
+    data_rozpoczecia,
     data_zakonczenia,
     lokalizacja,
   } = req.body;
@@ -285,7 +298,7 @@ export const updateOrder: any = async (req: Request, res: Response) => {
       wycena,
       opis,
       data_zlozenia,
-      data_rozpoczenia,
+      data_rozpoczecia,
       data_zakonczenia,
       lokalizacja,
     });

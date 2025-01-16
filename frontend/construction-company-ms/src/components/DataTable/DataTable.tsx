@@ -324,7 +324,7 @@ const DataTable: React.FC<DataTableProps> = ({
         {options.map((item) => (
           <option
             key={item[optionalObj?.data_id_name]}
-            value={item[optionalObj?.data_name]}
+            value={item[optionalObj?.data_id_name]}
           >
             {item[optionalObj?.data_name]}{" "}
             {optionalObj?.field_name.map((field, idx) => {

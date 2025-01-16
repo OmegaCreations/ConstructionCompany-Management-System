@@ -129,7 +129,7 @@ Poniżej znajdą Państwo opis wszystkich endpoint'ów potrzebnych do zaimplemen
 
 #### Zapytania DB
 
-- `SELECT dodaj_zlecenie(klient_id, opis, data_zlozenia, data_rozpoczenia, lokalizacja, data_zakonczenia/null);`
+- `SELECT dodaj_zlecenie(klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja, data_zakonczenia/null);`
 
 #### Endpointy
 

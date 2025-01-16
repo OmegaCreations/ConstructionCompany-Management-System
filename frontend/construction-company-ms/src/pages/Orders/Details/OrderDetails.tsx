@@ -51,7 +51,7 @@ const OrderDetails: React.FC = () => {
           <span>
             <strong>Data rozpoczęcia: </strong>
             {order.data_zakonczenia
-              ? new Date(order.data_rozpoczenia).toLocaleDateString("pl-PL")
+              ? new Date(order.data_rozpoczecia).toLocaleDateString("pl-PL")
               : "Brak"}
           </span>
           <span>
