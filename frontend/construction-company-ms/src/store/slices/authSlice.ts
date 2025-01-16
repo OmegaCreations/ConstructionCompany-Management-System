@@ -13,7 +13,7 @@ const initialState: AuthState = {
   isUserAuthenticated: false,
   user_id: -1,
   role: null,
-  token: null,
+  token: "",
 };
 
 // new slice with login/logout reducers
@@ -43,9 +43,10 @@ const authSlice = createSlice({
     },
 
     // sets new access token
-    setAccessToken: (state, action: PayloadAction<{ token: string }>) => {
-      state.token = action.payload.token;
-      localStorage.setItem("jwt", state.token);
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      // DEBUG: console.log("payload: ", action.payload);
+      state.token = action.payload;
+      localStorage.setItem("accessToken", action.payload);
     },
   },
 });

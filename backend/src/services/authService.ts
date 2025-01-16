@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { getRoleByPositionId } from "../utils/appTypes";
 import { AuthPracownik } from "../utils/types";
+import { accessTokenExpire, refreshTokenExpire } from "../utils/appTestConfig";
 
 dotenv.config();
 const JWT_SECRET = String(process.env.JWT_SECRET); // secret key for JWT
@@ -28,7 +29,7 @@ export const loginUser = async (email: string, haslo: string) => {
     { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_SECRET,
     {
-      expiresIn: "1h", // jwt expire time
+      expiresIn: accessTokenExpire, // jwt expire time
     }
   );
 
@@ -36,7 +37,7 @@ export const loginUser = async (email: string, haslo: string) => {
     { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_REFRESH_SECRET,
     {
-      expiresIn: "7d",
+      expiresIn: refreshTokenExpire,
     }
   );
 
@@ -52,7 +53,7 @@ export const refreshToken = (refreshToken: string) => {
   const token = jwt.sign(
     { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_SECRET,
-    { expiresIn: "1h" }
+    { expiresIn: accessTokenExpire }
   );
 
   const role = getRoleByPositionId(user.stanowisko_id);

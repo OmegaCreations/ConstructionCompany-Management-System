@@ -47,7 +47,7 @@ const Auth: React.FC = () => {
       }
 
       const { token, role, user_id } = await response.json();
-      localStorage.setItem("jwt", token); // save jwt to local storage
+      localStorage.setItem("accessToken", token); // save jwt to local storage
       localStorage.setItem("userRole", role); // save role to local storage
       localStorage.setItem("userID", user_id); // save role to local storage
       dispatch(login({ token, role, user_id }));
@@ -62,15 +62,20 @@ const Auth: React.FC = () => {
 
   const checkLocalStorage = () => {
     if (!isUserAuthenticated || !role) {
-      const token: string | null = localStorage.getItem("jwt");
+      const token: string | null = localStorage.getItem("accessToken");
       const user_role: string | null = localStorage.getItem("userRole");
       const user_id: string | null = localStorage.getItem("userID");
 
-      if (token && user_role) {
-        console.log("hello", token, user_role, user_id);
-        dispatch(
-          login({ token: token, role: user_role, user_id: Number(user_id) })
+      // Sprawdzamy, czy wszystkie wartości istnieją i są prawidłowe
+      if (token && user_role && user_id) {
+        console.log(
+          "INIT DATA ON LOAD: ",
+          token,
+          user_role,
+          user_id,
+          typeof token
         );
+        dispatch(login({ token, role: user_role, user_id: Number(user_id) }));
         navigate("/dashboard");
       }
     }

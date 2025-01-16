@@ -25,7 +25,7 @@ const OrderDetails: React.FC = () => {
     loading: costsLoading,
   } = useFetchData(endpoint.ORDER_GET_COSTS(Number(id)));
   const orderCosts: OrderCosts = costsData as unknown as OrderCosts;
-  console.log(orderCosts);
+
   if (error || costsError) return error;
 
   return (

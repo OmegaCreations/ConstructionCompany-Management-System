@@ -57,18 +57,25 @@ const DataTable: React.FC<DataTableProps> = ({
 
   // other
   const { token } = useSelector((state: RootState) => state.auth);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const refreshToken = async () => {
-    const newToken = await refreshAccessToken();
-    if (newToken.token === "") {
-      dispatch(logout());
-      return false;
-    } else {
+    try {
+      const newToken = await refreshAccessToken();
+      if (!newToken || newToken.token === "") {
+        dispatch(logout());
+        return false;
+      }
+
       localStorage.setItem("accessToken", newToken.token);
       dispatch(setAccessToken(newToken.token));
       return true;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      dispatch(logout());
+      return false;
     }
   };
 
@@ -126,14 +133,17 @@ const DataTable: React.FC<DataTableProps> = ({
   }, [editOptionalObjects]);
 
   // POSTing new data
-  const handleAdd = async (retry = true) => {
+  const handleAdd = async (
+    retry = true,
+    f_token = localStorage.getItem("accessToken")
+  ) => {
     try {
       setPostLoading(true);
       const res = await fetch(addEndpoint, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${f_token}`,
         },
         body: JSON.stringify({ ...newData, ...additionalBody }),
       });
@@ -172,7 +182,11 @@ const DataTable: React.FC<DataTableProps> = ({
   };
 
   // handle DELETE request
-  const handleDelete = async (retry = true, item: Record<string, unknown>) => {
+  const handleDelete = async (
+    retry = true,
+    item: Record<string, unknown>,
+    f_token = localStorage.getItem("accessToken")
+  ) => {
     const confirmDelete = confirm("Czy na pewno usunąć?");
     if (!confirmDelete) return;
 
@@ -181,7 +195,7 @@ const DataTable: React.FC<DataTableProps> = ({
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${f_token}`,
         },
         body: JSON.stringify({ ...item, ...additionalBody }),
       });
@@ -238,7 +252,10 @@ const DataTable: React.FC<DataTableProps> = ({
   };
 
   // handles saving updated object
-  const handleSave = async (retry = true) => {
+  const handleSave = async (
+    retry = true,
+    f_token = localStorage.getItem("accessToken")
+  ) => {
     const confirmUpdate = confirm("Czy na pewno zapisać?");
     if (!confirmUpdate) return;
 
@@ -247,7 +264,7 @@ const DataTable: React.FC<DataTableProps> = ({
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${f_token}`,
         },
         body: JSON.stringify({ ...editedData, ...additionalBody }),
       });

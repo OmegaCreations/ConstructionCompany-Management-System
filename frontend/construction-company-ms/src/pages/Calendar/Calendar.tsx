@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import style from "./Calendar.module.css";
 import { endpoint } from "../../utils/endpoints";
-import { RootState } from "../../store/store";
+import store, { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
@@ -54,7 +54,7 @@ const Calendar: React.FC = () => {
   const [endHour, setEndHour] = useState(workdayData.godzina_zakonczenia);
 
   useEffect(() => {
-    console.log(data);
+    // DEBUG: console.log(data);
     setWorkdayData(data as unknown as WorkDay);
     setStartHour(data.godzina_rozpoczecia);
     setEndHour(data.godzina_zakonczenia);
@@ -101,7 +101,7 @@ const Calendar: React.FC = () => {
     const datesArray: Date[] = [];
 
     // Poprzedni miesiąc
-    for (let i = firstDayIndex - 1; i >= 0; i--) {
+    for (let i = firstDayIndex - 2; i >= 0; i--) {
       datesArray.push(new Date(currentYear, currentMonth, -i));
     }
 
@@ -111,7 +111,7 @@ const Calendar: React.FC = () => {
     }
 
     // Następny miesiąc
-    for (let i = 1; i < 7 - lastDayIndex; i++) {
+    for (let i = 1; i < 7 - lastDayIndex + 1; i++) {
       datesArray.push(new Date(currentYear, currentMonth + 1, i));
     }
 
@@ -202,7 +202,7 @@ const Calendar: React.FC = () => {
   // refresh access token if needed
   const refreshToken = async () => {
     const newToken = await refreshAccessToken();
-    if (newToken.token === "") {
+    if (newToken.token === "" || !newToken) {
       dispatch(logout());
       return false;
     } else {
@@ -212,91 +212,145 @@ const Calendar: React.FC = () => {
     }
   };
 
-  const handleSubmitWorkdays = () => {
-    fetch(endpoint.WORKDAY_ADD(), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(workdays),
-    })
-      .then(async (res) => {
-        if (res.status === 401) {
-          await refreshToken();
+  const handleSubmitWorkdays = async (retry = true) => {
+    try {
+      // Ustaw stan początkowy
+      setAddingWorkdays(true);
+      // Wykonaj żądanie
+      const res = await fetch(endpoint.WORKDAY_ADD(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(workdays),
+      });
+
+      // Obsłuż przypadek 500 (błąd serwera)
+      if (res.status === 500) {
+        const errorData = await res.json();
+        setPostResponseData(errorData);
+        return null;
+      }
+
+      // Obsłuż przypadek 401 (token nieważny)
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleSubmitWorkdays(false);
+        } else {
+          dispatch(logout());
+          return null;
         }
-        return res.json();
-      })
-      .then((responseData) => {
-        setAddingWorkdays(false);
-        setWorkdays([]);
-        setPostResponseData(responseData);
-      })
-      .catch((err) => setPostResponseData(err));
-  };
+      }
 
-  const handleUpdate = () => {
-    let payload: WorkDay = InitialWorkDayState;
-
-    if (role === "worker") {
-      payload.opis_pracownika = employeeComment;
-      payload.pracownik_id = chosenUserID;
-      payload.zlecenie_id = workdayData.zlecenie_id;
-      payload.data = workdayData.data;
-      payload.godzina_rozpoczecia = startHour;
-      payload.godzina_zakonczenia = endHour;
-    } else if (role === "manager") {
-      payload = { ...payload, ...workdayData };
-      payload.opis_managera = managerComment;
-      payload.godzina_rozpoczecia = startHour;
-      payload.godzina_zakonczenia = endHour;
-      payload.pracownik_id = chosenUserID;
+      // Jeśli odpowiedź jest OK
+      if (res.ok) {
+        const responseData = await res.json();
+        setWorkdays([]); // Resetuj dane wejściowe
+        setPostResponseData(responseData); // Zapisz odpowiedź
+      } else {
+        // Rzucenie błędu w przypadku nieoczekiwanych statusów
+        const errorData = await res.json();
+        throw new Error(
+          errorData.message || "Nie udało się dodać dni roboczych"
+        );
+      }
+    } catch (err) {
+      console.error("Błąd: ", err);
+      setPostResponseData(err); // Zapisz błąd
+    } finally {
+      setAddingWorkdays(false); // Ustaw zakończenie dodawania
     }
-
-    // Sending payload to endpoint
-    fetch(endpoint.WORKDAY_UPDATE(), {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    })
-      .then(async (res) => {
-        if (res.status === 401) {
-          await refreshToken();
-        }
-        return res.json();
-      })
-      .then((responseData) => {
-        setPostResponseData(responseData);
-      })
-      .catch((err) => setPostResponseData(err));
   };
 
-  const handleDelete = async () => {
-    fetch(endpoint.WORKDAY_DELETE(), {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        pracownik_id: workdayData.pracownik_id,
-        zlecenie_id: workdayData.zlecenie_id,
-        data: workdayData.data,
-      }),
-    })
-      .then(async (res) => {
-        if (res.status === 401) {
-          await refreshToken();
+  const handleUpdate = async (retry = true) => {
+    try {
+      let payload: WorkDay = InitialWorkDayState;
+
+      if (role === "worker") {
+        payload.opis_pracownika = employeeComment;
+        payload.pracownik_id = chosenUserID;
+        payload.zlecenie_id = workdayData.zlecenie_id;
+        payload.data = workdayData.data;
+        payload.godzina_rozpoczecia = startHour;
+        payload.godzina_zakonczenia = endHour;
+      } else if (role === "manager") {
+        payload = { ...payload, ...workdayData };
+        payload.opis_managera = managerComment;
+        payload.godzina_rozpoczecia = startHour;
+        payload.godzina_zakonczenia = endHour;
+        payload.pracownik_id = chosenUserID;
+      }
+
+      const res = await fetch(endpoint.WORKDAY_UPDATE(), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleUpdate(false);
+        } else {
+          dispatch(logout());
+          return null;
         }
-        return res.json();
-      })
-      .then((responseData) => {
+      }
+
+      if (res.ok) {
+        const responseData = await res.json();
         setPostResponseData(responseData);
-      })
-      .catch((err) => setPostResponseData(err));
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Aktualizacja nie powiodła się");
+      }
+    } catch (err) {
+      console.error("Błąd: ", err);
+      setPostResponseData(err);
+    }
+  };
+
+  const handleDelete = async (retry = true) => {
+    try {
+      const res = await fetch(endpoint.WORKDAY_DELETE(), {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          pracownik_id: workdayData.pracownik_id,
+          zlecenie_id: workdayData.zlecenie_id,
+          data: workdayData.data,
+        }),
+      });
+
+      if (res.status === 401 && retry) {
+        const success = await refreshToken();
+        if (success) {
+          return handleDelete(false);
+        } else {
+          dispatch(logout());
+          return null;
+        }
+      }
+
+      if (res.ok) {
+        const responseData = await res.json();
+        setPostResponseData(responseData);
+      } else {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Usuwanie nie powiodło się");
+      }
+    } catch (err) {
+      console.error("Błąd: ", err);
+      setPostResponseData(err);
+    }
   };
 
   // ==================================================================
@@ -339,7 +393,7 @@ const Calendar: React.FC = () => {
               <label>Godzina rozpoczęcia:</label>
               <input
                 type="time"
-                value={startHour}
+                value={startHour || "00:00"}
                 onChange={(e) => setStartHour(e.target.value)}
               />
             </div>
@@ -347,7 +401,7 @@ const Calendar: React.FC = () => {
               <label>Godzina zakończenia:</label>
               <input
                 type="time"
-                value={endHour}
+                value={endHour || "00:00"}
                 onChange={(e) => setEndHour(e.target.value)}
               />
             </div>

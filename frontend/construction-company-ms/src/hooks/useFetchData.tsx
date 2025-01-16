@@ -19,6 +19,7 @@ export const useFetchData = (url: string) => {
   };
 
   const refreshToken = async () => {
+    // DEBUG: console.log("REFRESH IN FETCH DATA!");
     try {
       const newToken = await refreshAccessToken();
       if (!newToken || newToken.token === "") {
