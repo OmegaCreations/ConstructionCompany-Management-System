@@ -61,7 +61,7 @@ BEGIN
         RAISE EXCEPTION 'Nie można usunąć zlecenia, ponieważ nie jest ono jeszcze ukończone.';
     END IF;
 
-    DELETE FROM zakupy_zasob WHERE zlecenie_id = OLD.zlecenie_id;
+    --DELETE FROM zakupy_zasob WHERE zlecenie_id = OLD.zlecenie_id;
     DELETE FROM dzien_pracy WHERE zlecenie_id = OLD.zlecenie_id;
     DELETE FROM zasob_zlecenie WHERE zlecenie_id = OLD.zlecenie_id;
 

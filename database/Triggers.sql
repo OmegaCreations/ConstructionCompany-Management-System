@@ -34,13 +34,14 @@ CREATE TRIGGER przed_usunieciem_magazynu
 
 
 -- ==============================================================================
-CREATE OR REPLACE FUNCTION zarzadz_zakupami(p_miesiac DATE) RETURNS void AS $$
+CREATE OR REPLACE FUNCTION zarzadz_zakupami() RETURNS trigger AS $$
 DECLARE
     v_zasob_id INT;
     brakujaca_ilosc INT;
     v_zakupy_id INT;
+    p_miesiac DATE := date_trunc('month', CURRENT_DATE);
 BEGIN
-    -- Pobierz ID zakupów dla danego miesiąca lub dodaj nowe
+    -- Pobierz ID zakupów dla bieżącego miesiąca lub dodaj nowe
     SELECT zakupy_id INTO v_zakupy_id 
     FROM zakupy z
     WHERE z.miesiac = p_miesiac;
@@ -56,51 +57,48 @@ BEGIN
         SELECT DISTINCT zzasob.zasob_id
         FROM zasob_zlecenie zzasob
         JOIN zlecenie z ON zzasob.zlecenie_id = z.zlecenie_id
-        WHERE z.data_rozpoczecia <= date_trunc('month', p_miesiac) + INTERVAL '1 month' - INTERVAL '1 day'
-          AND (z.data_zakonczenia IS NULL OR z.data_zakonczenia >= date_trunc('month', p_miesiac))
+        WHERE z.data_rozpoczecia <= p_miesiac + INTERVAL '1 month' - INTERVAL '1 day'
+          AND (z.data_zakonczenia IS NULL OR z.data_zakonczenia >= p_miesiac)
     ) LOOP
         -- Oblicz brakującą ilość dla zasobu
         SELECT 
-            -- Sumujemy ilość potrzebną ze wszystkich zleceń
             COALESCE(SUM(zzasob.ilosc_potrzebna), 0) 
-            -- Odejmujemy ilość zasobu w magazynie (liczymy tylko raz dla każdego zasobu)
             - (SELECT COALESCE(SUM(mz.ilosc), 0) FROM magazyn_zasob mz WHERE mz.zasob_id = v_zasob_id)
         INTO brakujaca_ilosc
         FROM zasob_zlecenie zzasob
         JOIN zlecenie z ON zzasob.zlecenie_id = z.zlecenie_id
         WHERE zzasob.zasob_id = v_zasob_id
-          AND z.data_rozpoczecia <= date_trunc('month', p_miesiac) + INTERVAL '1 month' - INTERVAL '1 day'
-          AND (z.data_zakonczenia IS NULL OR z.data_zakonczenia >= date_trunc('month', p_miesiac));
+          AND z.data_rozpoczecia <= p_miesiac + INTERVAL '1 month' - INTERVAL '1 day'
+          AND (z.data_zakonczenia IS NULL OR z.data_zakonczenia >= p_miesiac);
 
         -- Zarządzaj zakupami
         IF brakujaca_ilosc > 0 THEN
-            -- Zaktualizuj lub dodaj brakujące zasoby do zakupy_zasob
             INSERT INTO zakupy_zasob (zasob_id, zakupy_id, ilosc)
             VALUES (v_zasob_id, v_zakupy_id, brakujaca_ilosc)
             ON CONFLICT (zasob_id, zakupy_id) DO UPDATE
             SET ilosc = brakujaca_ilosc;
         ELSE
-            -- Usuń zasób z listy zakupów, jeśli ilość w magazynie pokrywa zapotrzebowanie
             DELETE FROM zakupy_zasob 
             WHERE zasob_id = v_zasob_id AND zakupy_id = v_zakupy_id;
         END IF;
     END LOOP;
+
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
 
-
--- Trigger dla magazyn_zasob
-CREATE TRIGGER aktualizacja_zakupow_magazyn
+-- Trigger dla tabeli magazyn_zasob
+CREATE OR REPLACE TRIGGER aktualizacja_zakupow_magazyn
 AFTER INSERT OR UPDATE OR DELETE ON magazyn_zasob
 FOR EACH ROW
-EXECUTE FUNCTION trigger_aktualizacja_zakupow();
+EXECUTE FUNCTION zarzadz_zakupami();
 
--- Trigger dla zasob_zlecenie
-CREATE TRIGGER aktualizacja_zakupow_zlecenie
+-- Trigger dla tabeli zasob_zlecenie
+CREATE OR REPLACE TRIGGER aktualizacja_zakupow_zlecenie
 AFTER INSERT OR UPDATE OR DELETE ON zasob_zlecenie
 FOR EACH ROW
-EXECUTE FUNCTION trigger_aktualizacja_zakupow();
+EXECUTE FUNCTION zarzadz_zakupami();
 
 
 

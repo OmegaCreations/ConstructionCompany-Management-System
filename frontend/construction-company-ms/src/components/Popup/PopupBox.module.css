@@ -1,0 +1,43 @@
+/* Popup styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--secondary);
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inputsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.popup input,
+.popup select {
+  display: block;
+  margin: 10px 0;
+  padding: 10px 5px;
+}
+
+.popup button {
+  background-color: var(--blue1);
+  color: var(--secondary);
+  font-weight: 500;
+  border: none;
+  padding: 15px 10px;
+
+  transition: 0.3s ease;
+}
+
+.popup button:hover {
+  background-color: var(--primary);
+  cursor: pointer;
+}

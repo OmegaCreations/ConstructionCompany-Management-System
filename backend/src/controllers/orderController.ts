@@ -236,6 +236,7 @@ export const deleteOrder: any = async (req: Request, res: Response) => {
       info: "Zlecenie zostało usunięte!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during Order deleting.",
@@ -262,6 +263,7 @@ export const deleteResourceFromOrder: any = async (
       info: "Zasob zlecenia został usunięty!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during resource deleting.",

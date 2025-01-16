@@ -130,6 +130,17 @@ export const updateUser: any = async (req: Request, res: Response) => {
     stanowisko_nazwa,
   } = req.body;
 
+  console.log(
+    pracownik_id,
+    imie,
+    nazwisko,
+    telefon,
+    email,
+    stawka_godzinowa,
+    stanowisko_id,
+    stanowisko_nazwa
+  );
+
   if (!pracownik_id) {
     return res.status(400).json({ error: "Please provide all the data." });
   }
