@@ -38,6 +38,7 @@ export interface Zlecenie {
   klient_nazwisko: string;
   klient_firma: string;
   opis: string;
+  wycena?: number | null;
   data_zlozenia: string;
   data_rozpoczecia: string;
   data_zakonczenia: string;

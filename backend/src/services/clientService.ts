@@ -47,7 +47,7 @@ export const getClientAsClient = async (clientToken: string, email: string) => {
     }
 
     // get all orders for a client
-    const clientOrders: Zlecenie[] = await orderModel.getAllForClient(
+    const clientOrders: Zlecenie[] = await orderModel.getAllForClientAsClient(
       clientAccessData.klient_id
     );
     return { client: existingClient, orders: clientOrders };

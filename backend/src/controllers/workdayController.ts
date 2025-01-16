@@ -188,6 +188,7 @@ export const deleteWorkday: any = async (req: Request, res: Response) => {
       info: "Dzień pracy został usunięty!",
     });
   } catch (err) {
+    console.log(err);
     res.status(500).json({
       error:
         err instanceof Error ? err.message : "Error during Workday deleting.",

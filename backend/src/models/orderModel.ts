@@ -30,6 +30,12 @@ export const getAllForClient = async (klient_id: number) => {
   return result.rows;
 };
 
+export const getAllForClientAsClient = async (klient_id: number) => {
+  const query = "select * from get_klient_zlecenia_as_client($1)";
+  const result: QueryResult<Zlecenie> = await client.query(query, [klient_id]);
+  return result.rows;
+};
+
 // Specific order's data
 // returns Zlecenie type
 export const findById = async (zlecenie_id: number) => {

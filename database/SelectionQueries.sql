@@ -154,6 +154,31 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_klient_zlecenia_as_client(klient_id_param INT)
+RETURNS TABLE (
+    klient_id INT,
+    imie VARCHAR,
+    nazwisko VARCHAR,
+    firma VARCHAR,
+    telefon VARCHAR,
+    email VARCHAR,
+    adres TEXT,
+    opis TEXT,
+    wycena DECIMAL,
+    data_zlozenia TEXT,
+    data_rozpoczecia TEXT,
+    data_zakonczenia TEXT,
+    lokalizacja VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM client_view c
+    WHERE c.klient_id = klient_id_param;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- =========================================
 -- Funkcja: Pobiera informacje o zleceniach
 -- =========================================

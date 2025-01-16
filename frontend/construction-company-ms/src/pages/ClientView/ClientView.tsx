@@ -4,6 +4,7 @@ import style from "./ClientView.module.css";
 import Loading from "../../components/Loading/Loading";
 
 interface Order {
+  wycena: number;
   zlecenie_id: number;
   opis: string;
   data_zlozenia: string;
@@ -116,9 +117,17 @@ const ClientView: React.FC = () => {
           <h3>Zlecenia</h3>
           {clientData.orders.length > 0 ? (
             <ul>
-              {clientData.orders.map((order) => (
-                <li key={order.zlecenie_id}>
-                  <h4>Zlecenie #{order.zlecenie_id}</h4>
+              {clientData.orders.map((order, idx) => (
+                <li key={idx}>
+                  <h4
+                    style={{ color: order.data_zakonczenia ? "green" : "red" }}
+                  >
+                    Zlecenie{" "}
+                    {order.data_zakonczenia ? "[ukończone]" : "[nieukończone]"}
+                  </h4>
+                  <p style={{ color: "blue" }}>
+                    <strong>Wycena:</strong> {order.wycena}
+                  </p>
                   <p>
                     <strong>Opis:</strong> {order.opis}
                   </p>
