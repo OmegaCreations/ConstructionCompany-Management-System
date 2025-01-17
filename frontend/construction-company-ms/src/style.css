@@ -61,3 +61,19 @@ main {
     height: 65px;
   }
 }
+
+
+/* FADE IN */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.fadeIn {
+  animation: fadeIn 1s 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+  opacity: 0;
+}

@@ -32,13 +32,15 @@ createRoot(document.getElementById("root")!).render(
       {/* Routing for application */}
 
       <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
         {/* Navbar for all routes */}
         <div className="navContainer">
           <Navbar />
         </div>
         <main>
           <Routes>
-            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/client/public" element={<ClientView />} />
 
