@@ -69,7 +69,7 @@ const ManagerDashboard: React.FC = () => {
 
   return (
     <div className={style.dashboardContainer}>
-      <section className={`fadeIn`}>
+      <section className={``}>
         <h3>Lista zakupów na ten miesiąc</h3>
         <DataTable
           endpoint={endpoint.SHOPPING_LIST_GET(
@@ -86,11 +86,11 @@ const ManagerDashboard: React.FC = () => {
           initialObjectState={initialShoppingListState}
         />
       </section>
-      <section className={`fadeIn`}>
+      <section className={``}>
         <h3>Oszacowane przyszłe zyski/wydatki z aktualnych zleceń</h3>
         <canvas ref={canvasRef} width={200} height={200} style={{height: 300, width: 300}} />
       </section>
-      <section className={`fadeIn`}>
+      <section className={``}>
         <h1>Dzisiejsza praca {new Date().toLocaleDateString("pl-PL")}</h1>
         {Object.keys(workday).length === 0 ? (
           <h2>Dzisiaj masz wolne!</h2>
@@ -102,7 +102,7 @@ const ManagerDashboard: React.FC = () => {
           </>
         )}
       </section>
-      <section className={`fadeIn`}>
+      <section className={``}>
         <h3>Przepracowane godziny w tym miesiącu</h3>
         <h3>{Math.floor(Number(workHoursData.total_hours))}</h3>
       </section>

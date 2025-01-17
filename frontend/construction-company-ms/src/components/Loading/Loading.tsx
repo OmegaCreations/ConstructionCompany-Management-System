@@ -1,5 +1,7 @@
+import style from "./Loading.module.css";
+
 const Loading: React.FC = () => {
-  return <h1>Loading...</h1>;
+  return <div className={style.loader}></div>;
 };
 
 export default Loading;
