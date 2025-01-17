@@ -3,6 +3,7 @@ import { RootState } from "../../store/store";
 import { endpoint } from "../../utils/endpoints";
 import { useFetchData } from "../../hooks/useFetchData";
 import { useParams } from "react-router";
+import style from "./WorkerDashboard.module.css";
 
 // we want it to be publicly visible for managers but worker can only access his own page
 const WorkerDashboard: React.FC = () => {
@@ -28,11 +29,13 @@ const WorkerDashboard: React.FC = () => {
   );
 
   return (
-    <div>
-      <h1>
-        {userData.imie} {userData.nazwisko}
-      </h1>
-      <div>
+    <div className={style.dashboardContainer}>
+      <section>
+        <h1>
+          {userData.imie} {userData.nazwisko}
+        </h1>
+      </section>
+      <section>
         <h1>Dzisiejsza praca {new Date().toLocaleDateString("pl-PL")}</h1>
         {Object.keys(workday).length === 0 ? (
           <h2>Dzisiaj masz wolne!</h2>
@@ -43,15 +46,15 @@ const WorkerDashboard: React.FC = () => {
             <p>{workday.opis_managera}</p>
           </>
         )}
-      </div>
-      <div>
+      </section>
+      <section>
         <h3>Przepracowane godziny w tym miesiącu</h3>
         <h2>
           {Math.floor(
             Number(!workHoursData.total_hours ? 0 : workHoursData.total_hours)
           )}
         </h2>
-      </div>
+      </section>
     </div>
   );
 };

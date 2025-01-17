@@ -6,6 +6,8 @@ import { initialShoppingListState } from "../../utils/types";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 
+import style from "./ManagerDashboard.module.css";
+
 const ManagerDashboard: React.FC = () => {
   const { user_id } = useSelector((state: RootState) => state.auth);
   const { data: profitsData } = useFetchData(endpoint.PROFITS());
@@ -66,9 +68,8 @@ const ManagerDashboard: React.FC = () => {
   }, [zyski, wydatki]);
 
   return (
-    <div>
-      <h1>Hello manager dashboard!</h1>
-      <div>
+    <div className={style.dashboardContainer}>
+      <section className={`fadeIn`}>
         <h3>Lista zakupów na ten miesiąc</h3>
         <DataTable
           endpoint={endpoint.SHOPPING_LIST_GET(
@@ -84,12 +85,12 @@ const ManagerDashboard: React.FC = () => {
           additionalBody={{}}
           initialObjectState={initialShoppingListState}
         />
-      </div>
-      <div>
+      </section>
+      <section className={`fadeIn`}>
         <h3>Oszacowane przyszłe zyski/wydatki z aktualnych zleceń</h3>
-        <canvas ref={canvasRef} width={300} height={300} />
-      </div>
-      <div>
+        <canvas ref={canvasRef} width={200} height={200} style={{height: 300, width: 300}} />
+      </section>
+      <section className={`fadeIn`}>
         <h1>Dzisiejsza praca {new Date().toLocaleDateString("pl-PL")}</h1>
         {Object.keys(workday).length === 0 ? (
           <h2>Dzisiaj masz wolne!</h2>
@@ -100,11 +101,11 @@ const ManagerDashboard: React.FC = () => {
             <p>{workday.opis_managera}</p>
           </>
         )}
-      </div>
-      <div>
+      </section>
+      <section className={`fadeIn`}>
         <h3>Przepracowane godziny w tym miesiącu</h3>
-        <h2>{Math.floor(Number(workHoursData.total_hours))}</h2>
-      </div>
+        <h3>{Math.floor(Number(workHoursData.total_hours))}</h3>
+      </section>
     </div>
   );
 };

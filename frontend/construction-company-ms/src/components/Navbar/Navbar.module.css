@@ -18,6 +18,8 @@
   overflow-x: hidden;
   overflow-y: auto;
   text-wrap: nowrap;
+
+  z-index: 1000;
 }
 
 .sidebar svg {
@@ -174,6 +176,7 @@
 @media (max-width: 800px) {
   .sidebar {
     width: 100%;
+    padding: 0;
   }
 
   .sidebar .logo {

@@ -229,3 +229,30 @@
   background-color: var(--primary);
   cursor: pointer;
 }
+
+/* MOBILE VERSION */
+@media (max-width: 800px) {
+  .calendarContainer {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+
+    max-width: 350px;
+  }
+
+  .calendarSection {
+    max-width: 300px;
+  }
+
+  .date {
+    max-width: 10px;
+    max-height: 10px;
+  }
+
+  .calendarHeader {
+    gap: 2px;;
+    font-size: 14px !important;
+    max-width: 300px;
+  }
+}
