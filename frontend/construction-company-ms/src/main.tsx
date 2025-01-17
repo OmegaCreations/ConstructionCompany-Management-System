@@ -22,6 +22,7 @@ import Calendar from "./pages/Calendar/Calendar";
 import WarehouseDetails from "./pages/WarehouseData/Details/WarehouseDetails";
 import WorkerDashboard from "./pages/WorkerDashboard/WorkerDashboard";
 import ClientView from "./pages/ClientView/ClientView.tsx";
+import LandingPage from "./pages/LandingPage/LandingPage.tsx";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById("root")!).render(
         </div>
         <main>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/client/public" element={<ClientView />} />
 
