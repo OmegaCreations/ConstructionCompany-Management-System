@@ -49,7 +49,7 @@ export const loginUser = async (email: string, haslo: string) => {
 
 export const refreshToken = (refreshToken: string) => {
   const user = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as any;
-  console.log(user.pracownik_id);
+  // DEBUG: console.log(user.pracownik_id);
   const token = jwt.sign(
     { pracownik_id: user.pracownik_id, stanowisko_id: user.stanowisko_id },
     JWT_SECRET,
