@@ -1,6 +1,6 @@
 // easier to later change all endpoints' url
 // i love working with endpoints this way
-const serverUrl = "http://localhost:5000";
+const serverUrl = "http://walicki.azurewebsites.net:5000";
 export const endpoint = {
   // user endpoints
   USER_GET_ALL: () => `${serverUrl}/api/user`,
