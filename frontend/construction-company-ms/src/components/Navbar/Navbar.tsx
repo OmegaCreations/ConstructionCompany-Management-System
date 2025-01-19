@@ -1,7 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { useDispatch, useSelector } from "react-redux";
-import image from "../../assets/images/banner.png";
 import style from "./Navbar.module.css";
 import { RootState } from "../../store/store";
 import { NavLink, useNavigate } from "react-router";
@@ -67,7 +66,6 @@ const Navbar: React.FC = () => {
       <nav className={`${style.sidebar} ${menu ? style.closed : ""}`}>
         <ul>
           <li className={style.logo}>
-            <img src={image} />
             <button className={style.toggleBtn} onClick={handleToggleMenu}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -157,7 +155,6 @@ const Navbar: React.FC = () => {
       <nav className={`${style.sidebar} ${menu ? "" : style.closed}`}>
         <ul>
           <li className={style.logo}>
-            <img src={image} />
             <button className={style.toggleBtn} onClick={handleToggleMenu}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
