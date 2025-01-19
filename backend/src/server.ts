@@ -1,7 +1,7 @@
 import app from "./app";
 import { connectToDatabase } from "./config/db";
 
-const PORT = 5000;
+const PORT = 8080;
 
 // starts server and connects to database
 const startServer = async () => {
