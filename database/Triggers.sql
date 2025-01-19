@@ -169,7 +169,7 @@ $$ LANGUAGE plpgsql;
 
 -- trigger uruchamiany przy zmianie daty zakończenia
 CREATE TRIGGER trg_odejmij_zasoby
-AFTER UPDATE ON data_zakonczenia
+AFTER UPDATE OF data_zakonczenia
 ON zlecenie
 FOR EACH ROW
 EXECUTE FUNCTION odejmij_zasoby_po_zakonczeniu();

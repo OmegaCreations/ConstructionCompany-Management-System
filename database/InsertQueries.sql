@@ -3,6 +3,7 @@ SET search_path TO construction_company;
 set client_encoding to 'UTF8';
 
 -- delete from all tables
+
 select from truncate_schema();
 
 -- =========================================
@@ -24,20 +25,18 @@ VALUES
 -- =========================================
 -- pracownik  - !!! hasło to: root  
 -- =========================================
+
 INSERT INTO pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
-SELECT 'Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com',
+VALUES 
+('Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 50.00,
-       stanowisko_id FROM stanowisko WHERE nazwa = 'Manager';
-
-INSERT INTO pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
-SELECT 'Anna', 'Nowak', '987654321', 'anna.nowak@example.com',
+       (SELECT stanowisko_id FROM stanowisko WHERE nazwa = 'Manager')),
+('Anna', 'Nowak', '987654321', 'anna.nowak@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 45.00,
-       stanowisko_id FROM stanowisko WHERE nazwa = 'Technik Budowlany';
-
-INSERT INTO pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
-SELECT 'Krzysztof', 'Nowak', '666777888', 'krzysztof.nowak@example.com',
+       (SELECT stanowisko_id FROM stanowisko WHERE nazwa = 'Elektromonter')),
+('Krzysztof', 'Nowak', '666777888', 'krzysztof.nowak@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 45.00,
-       stanowisko_id FROM stanowisko WHERE nazwa = 'Dekarz';
+       (SELECT stanowisko_id FROM stanowisko WHERE nazwa = 'Dekarz'));
 
 -- =========================================
 -- klient

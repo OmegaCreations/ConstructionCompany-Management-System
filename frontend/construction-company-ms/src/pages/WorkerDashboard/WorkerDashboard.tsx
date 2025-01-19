@@ -19,7 +19,7 @@ const WorkerDashboard: React.FC = () => {
 
   const { data: userData } = useFetchData(endpoint.USER_GET(_id));
   const { data: workHoursData } = useFetchData(
-    endpoint.WORKDAT_GET_TOTAL_HOURS()
+    endpoint.WORKDAT_GET_TOTAL_HOURS(_id)
   );
   const { data: workday } = useFetchData(
     endpoint.WORKDAY_GET_BY_DATE(

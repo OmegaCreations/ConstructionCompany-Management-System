@@ -111,7 +111,11 @@ const ManagerDashboard: React.FC = () => {
       </section>
       <section className={``}>
         <h3>Przepracowane godziny w tym miesiącu</h3>
-        <h3>{Math.floor(Number(workHoursData.total_hours))}</h3>
+        <h3>
+          {!workHoursData.total_hours
+            ? 0
+            : Math.floor(Number(workHoursData.total_hours))}
+        </h3>
       </section>
     </div>
   );

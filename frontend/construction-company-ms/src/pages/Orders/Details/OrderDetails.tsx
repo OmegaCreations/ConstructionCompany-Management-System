@@ -25,7 +25,7 @@ const OrderDetails: React.FC = () => {
     loading: costsLoading,
   } = useFetchData(endpoint.ORDER_GET_COSTS(Number(id)));
   const orderCosts: OrderCosts = costsData as unknown as OrderCosts;
-
+  console.log(order);
   if (error || costsError) return error;
 
   return (
@@ -50,7 +50,7 @@ const OrderDetails: React.FC = () => {
           </span>
           <span>
             <strong>Data rozpoczęcia: </strong>
-            {order.data_zakonczenia
+            {order.data_rozpoczecia
               ? new Date(order.data_rozpoczecia).toLocaleDateString("pl-PL")
               : "Brak"}
           </span>

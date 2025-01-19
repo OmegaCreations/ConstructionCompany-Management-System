@@ -35,7 +35,7 @@ const Workers: React.FC = () => {
       </h3>
       <DataTable
         endpoint={endpoint.POSITION_GET_ALL()}
-        editEndpoint={"TODO"}
+        editEndpoint={endpoint.POSITION_UPDATE()}
         deleteEndpoint={endpoint.POSITION_DELETE()}
         addEndpoint={endpoint.POSITION_CREATE()}
         subPageURL={""}
