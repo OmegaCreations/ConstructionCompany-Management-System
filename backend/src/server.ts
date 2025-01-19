@@ -1,7 +1,10 @@
 import app from "./app";
+import dotenv from "dotenv";
 import { connectToDatabase } from "./config/db";
 
-const PORT = 8080;
+dotenv.config();
+
+const PORT = process.env.PORT || 8080;
 
 // starts server and connects to database
 const startServer = async () => {
