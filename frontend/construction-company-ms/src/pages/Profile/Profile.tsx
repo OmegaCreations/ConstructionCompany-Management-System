@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store/store";
 import Loading from "../../components/Loading/Loading";
 import { endpoint } from "../../utils/endpoints";
-import { useState } from "react";
 import style from "./Profile.module.css";
 import useFetchUser from "../../hooks/useFetchUser";
 

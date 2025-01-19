@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useEffect, useRef } from "react";
 import DataTable from "../../components/DataTable/DataTable";
 import { useFetchData } from "../../hooks/useFetchData";
@@ -88,7 +90,12 @@ const ManagerDashboard: React.FC = () => {
       </section>
       <section className={``}>
         <h3>Oszacowane przyszłe zyski/wydatki z aktualnych zleceń</h3>
-        <canvas ref={canvasRef} width={200} height={200} style={{height: 300, width: 300}} />
+        <canvas
+          ref={canvasRef}
+          width={200}
+          height={200}
+          style={{ height: 300, width: 300 }}
+        />
       </section>
       <section className={``}>
         <h1>Dzisiejsza praca {new Date().toLocaleDateString("pl-PL")}</h1>

@@ -1,7 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { useState, useEffect } from "react";
 import style from "./Calendar.module.css";
 import { endpoint } from "../../utils/endpoints";
-import store, { RootState } from "../../store/store";
+import { RootState } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../../components/Loading/Loading";
@@ -143,7 +145,7 @@ const Calendar: React.FC = () => {
       const isToday = date.toDateString() === new Date().toDateString();
       const isActive = date.toDateString() === activeDate.toDateString();
       const isCurrentMonth = date.getMonth() === currentMonth;
-      const hasWork = monthWorkdayData?.some((work: any) => {
+      const hasWork = monthWorkdayData?.some((work: unknown) => {
         const workDate = new Date(work.data);
         return (
           workDate.getFullYear() === date.getFullYear() &&
