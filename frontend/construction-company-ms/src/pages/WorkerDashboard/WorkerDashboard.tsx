@@ -5,7 +5,7 @@ import { RootState } from "../../store/store";
 import { endpoint } from "../../utils/endpoints";
 import { useFetchData } from "../../hooks/useFetchData";
 import { useParams } from "react-router";
-import style from "./WorkerDashboard.module.css";
+import style from "@/WorkerDashboard.module.css";
 
 // we want it to be publicly visible for managers but worker can only access his own page
 const WorkerDashboard: React.FC = () => {

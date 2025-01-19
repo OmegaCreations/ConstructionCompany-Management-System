@@ -1,7 +1,7 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
 import { initialResourceState } from "../../utils/types";
-import style from "./Resources.module.css";
+import style from "@/Resources.module.css";
 
 const Resources: React.FC = () => {
   return (

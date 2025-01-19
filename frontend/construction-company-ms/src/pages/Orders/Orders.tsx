@@ -1,7 +1,7 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
 import { initialOrderState } from "../../utils/types";
-import style from "./Orders.module.css";
+import style from "@/Orders.module.css";
 
 const Orders: React.FC = () => {
   return (

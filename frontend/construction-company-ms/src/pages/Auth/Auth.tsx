@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import style from "./Auth.module.css";
+import style from "@/Auth.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../store/slices/authSlice";
 import { RootState } from "../../store/store";

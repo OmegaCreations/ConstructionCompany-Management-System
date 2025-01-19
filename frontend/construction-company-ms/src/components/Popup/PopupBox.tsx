@@ -1,4 +1,4 @@
-import style from "./PopupBox.module.css";
+import style from "@/PopupBox.module.css";
 
 interface PopupProps {
   responseData: object | null;

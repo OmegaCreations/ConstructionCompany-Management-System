@@ -1,7 +1,7 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
 import { initialPositionState, initialUserState } from "../../utils/types";
-import style from "./Workers.module.css";
+import style from "@/Workers.module.css";
 
 const Workers: React.FC = () => {
   return (

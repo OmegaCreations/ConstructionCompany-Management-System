@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useFetchData } from "../../../hooks/useFetchData";
 import { endpoint } from "../../../utils/endpoints";
-import style from "./OrderDetails.module.css";
+import style from "@/OrderDetails.module.css";
 import {
   initialOrderResourceState,
   OrderCosts,
