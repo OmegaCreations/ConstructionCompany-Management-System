@@ -36,17 +36,17 @@ CREATE TABLE pracownik (
     pracownik_id SERIAL PRIMARY KEY,
     imie VARCHAR(50) NOT NULL,
     nazwisko VARCHAR(50) NOT NULL,
-    telefon VARCHAR(15),
+    telefon VARCHAR(15), -- telefon nie obowiązkowy ze względu na oczekiwania potencjalnego klienta
     email VARCHAR(50) NOT NULL UNIQUE,
     haslo VARCHAR(255) NOT NULL,
-    stawka_godzinowa DECIMAL NOT NULL,
+    stawka_godzinowa DECIMAL NOT NULL CHECK (stawka_godzinowa >= 0),
     stanowisko_id INT NOT NULL REFERENCES stanowisko(stanowisko_id)
 );
 
 CREATE TABLE klient (
     klient_id SERIAL PRIMARY KEY,
-    imie VARCHAR(50),
-    nazwisko VARCHAR(50),
+    imie VARCHAR(50) NOT NULL,
+    nazwisko VARCHAR(50) NOT NULL,
     firma VARCHAR(50) NOT NULL,
     telefon VARCHAR(15),
     email VARCHAR(50) UNIQUE,
@@ -80,7 +80,7 @@ CREATE TABLE zasob (
     nazwa VARCHAR(50) NOT NULL,
     jednostka VARCHAR(20) NOT NULL,
     typ TEXT CHECK (typ IN ('material', 'sprzet')) NOT NULL, -- enum? :)
-    koszt_jednostkowy DECIMAL NOT NULL,
+    koszt_jednostkowy DECIMAL NOT NULL CHECK (koszt_jednostkowy > 0),
     opis TEXT
 );
 

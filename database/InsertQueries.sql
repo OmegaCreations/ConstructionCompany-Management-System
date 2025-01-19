@@ -3,30 +3,27 @@ SET search_path TO construction_company;
 set client_encoding to 'UTF8';
 
 -- delete from all tables
-
 select from truncate_schema();
 
 -- =========================================
--- Tabela: stanowisko
+-- stanowisko
 -- =========================================
 
 INSERT INTO stanowisko (nazwa, opis)
 VALUES
-('Manager', 'Nadzór nad zespołem i planowanie strategiczne'),
-('Inżynier budowy', 'Projektowanie i nadzór nad budową'),
-('Technik budowlany', 'Wsparcie techniczne na placu budowy'),
-('Kierownik robót', 'Koordynacja i nadzorowanie prac budowlanych'),
+('Manager', 'Nadzór nad zespołem.'),
+('Inżynier budowy', 'Projektowanie i nadzór nad budową.'),
+('Technik budowlany', 'Wsparcie techniczne.'),
+('Kierownik robót', 'Koordynacja i nadzorowanie prac.'),
 ('Operator maszyn', 'Obsługa maszyn budowlanych'),
-('Specjalista ds. zaopatrzenia', 'Zaopatrzenie w materiały budowlane'),
-('Geodeta', 'Pomiary terenu i sporządzanie map'),
-('Elektromonter', 'Instalacje elektryczne na budowie'),
-('Murator', 'Murowanie ścian i budynków'),
-('Dekarz', 'Prace związane z pokryciem dachowym');
+('Specjalista ds. zaopatrzenia', 'Zaopatrzenie w materiały budowlane.'),
+('Geodeta', 'Pomiary terenu i sporządzanie map.'),
+('Elektromonter', 'Instalacje elektryczne'),
+('Dekarz', 'Prace związane z pokryciem dachowym.');
 
 -- =========================================
--- Tabela: pracownik  - !!! hasło to: root  
+-- pracownik  - !!! hasło to: root  
 -- =========================================
-
 INSERT INTO pracownik (imie, nazwisko, telefon, email, haslo, stawka_godzinowa, stanowisko_id)
 SELECT 'Jan', 'Kowalski', '123456789', 'jan.kowalski@example.com',
        '$2a$10$cgFUp2aez.kE2B.qiA0bxeIc0Stx30IaojVRxiN9oqk1m60JnSc6q', 50.00,
@@ -43,16 +40,16 @@ SELECT 'Krzysztof', 'Nowak', '666777888', 'krzysztof.nowak@example.com',
        stanowisko_id FROM stanowisko WHERE nazwa = 'Dekarz';
 
 -- =========================================
--- Tabela: klient
+-- klient
 -- =========================================
 
 INSERT INTO klient (imie, nazwisko, firma, telefon, email, adres)
 VALUES
-('Adam', 'Nowicki', 'BuildMasters', '500600700', 'adam.nowicki@buildmasters.com', 'Kraków, ul. Budowlana 15'),
-('Ewelina', 'Kowalczyk', 'SkyHigh Constructions', '600700800', 'ewelina.kowalczyk@skyhigh.pl', 'Warszawa, ul. Wieżowa 3');
+('Adam', 'Nowicki', 'OBI', '500600700', 'adam.nowicki@obi.com', 'Kraków, ul. Czarnowiejska 15'),
+('Ewelina', 'Kowalczyk', 'SkyHigh', '600700800', 'ewelina.kowalczyk@skyhigh.pl', 'Warszawa, ul. Krakowiaków 3');
 
 -- =========================================
--- Tabela: zlecenie
+-- zlecenie
 -- =========================================
 
 INSERT INTO zlecenie (klient_id, opis, data_zlozenia, data_rozpoczecia, lokalizacja)
@@ -68,55 +65,54 @@ FROM klient WHERE imie = 'Ewelina' AND nazwisko = 'Kowalczyk';
 -- =========================================
 
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-04'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-04'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Anna' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Budowa magazynu%';
 
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-05'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-05'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Anna' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-06'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-06'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Anna' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
-
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-04'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-04'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Krzysztof' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-05'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-05'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Krzysztof' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
 INSERT INTO dzien_pracy (pracownik_id, zlecenie_id, data)
-SELECT p.pracownik_id, z.zlecenie_id, '2024-12-06'
+SELECT p.pracownik_id, z.zlecenie_id, '2025-1-06'
 FROM pracownik p, zlecenie z
 WHERE p.imie = 'Krzysztof' AND p.nazwisko = 'Nowak' AND z.opis LIKE '%Konstrukcja stalowej hali%';
 
 -- =========================================
--- Tabela: zasob
+-- zasob
 -- =========================================
 
 INSERT INTO zasob (nazwa, jednostka, typ, koszt_jednostkowy, opis)
 VALUES 
-('Stal', 'kg', 'material', 5.0, 'Wysokiej jakości stal konstrukcyjna'),
+('Stal', 'kg', 'material', 5.0, 'Stal konstrukcyjna.'),
 ('Kabel', 'm', 'material', 2.5, 'Kabel miedziany o przekroju 2.5 mm^2'),
 ('Monitor', 'szt.', 'sprzet', 500.0, 'Monitor Full HD 24"'),
-('Laptop', 'szt.', 'sprzet', 3000.0, 'Laptop z procesorem i5 i 8GB RAM'),
+('Laptop', 'szt.', 'sprzet', 3000.0, 'Laptop lenovo Thinkpad.'),
 ('Drewno', 'm^3', 'material', 300.0, 'Drewno sosnowe konstrukcyjne'),
-('Farba', 'l', 'material', 50.0, 'Farba akrylowa do wnętrz'),
-('Śruba', 'szt.', 'material', 0.1, 'Śruby M8 z gwintem'),
+('Farba', 'l', 'material', 50.0, 'Farba akrylowa do wnętrz - śnieżka.'),
+('Śruba', 'szt.', 'material', 0.1, 'Śruby M8 z gwintem.'),
 ('Płyta gipsowa', 'szt.', 'material', 30.0, 'Płyta gipsowa 120x240 cm'),
-('Drukarka', 'szt.', 'sprzet', 800.0, 'Drukarka laserowa monochromatyczna'),
-('Router', 'szt.', 'sprzet', 250.0, 'Router WiFi 6');
+('Drukarka', 'szt.', 'sprzet', 800.0, 'Drukarka laserowa monochromatyczna.'),
+('Router', 'szt.', 'sprzet', 250.0, 'Router WiFi Orange');
 
 -- =========================================
--- Tabela: magazyn
+-- magazyn
 -- =========================================
 
 INSERT INTO magazyn (nazwa, lokalizacja)
@@ -125,7 +121,7 @@ VALUES
 ('Magazyn Warszawa', 'Warszawa, ul. Mokotowska 7');
 
 -- =========================================
--- Tabela: magazyn_zasob
+-- magazyn_zasob
 -- =========================================
 
 INSERT INTO magazyn_zasob (ilosc, magazyn_id, zasob_id)
@@ -134,7 +130,7 @@ VALUES
 (300, 1, 2),  -- 300 m kabla w magazynie 1
 (50, 2, 3),   -- 50 monitorów w magazynie 2
 (20, 2, 4),   -- 20 laptopów w magazynie 2
-(100, 1, 5),  -- 100 m³ drewna w magazynie 1
+(100, 1, 5),  -- 100 m^3 drewna w magazynie 1
 (40, 1, 6),   -- 40 litrów farby w magazynie 1
 (1000, 1, 7), -- 1000 śrub w magazynie 1
 (20, 2, 8),  -- 20 płyt gipsowych w magazynie 2
@@ -143,13 +139,13 @@ VALUES
 (5, 2, 1);  -- 5 kg stali w magazynie 2
 
 -- =========================================
--- Tabela: zasob_zlecenie
+-- zasob_zlecenie
 -- =========================================
 
 INSERT INTO zasob_zlecenie (zasob_id, zlecenie_id, ilosc_potrzebna)
 VALUES
-(1, 1, 200),   -- 20 kg stali użyte do instalacji sprzętu IT
+(1, 1, 200),
 (5, 1, 300),
 (8, 1, 30),
-(2, 2, 50),   -- 50 m kabla użyte do naprawy maszyn przemysłowych
-(3, 2, 2);    -- 2 monitory dostarczone do projektu wnętrz
+(2, 2, 50),
+(3, 2, 2);

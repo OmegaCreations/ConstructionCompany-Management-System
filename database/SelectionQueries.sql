@@ -24,7 +24,7 @@ BEGIN
         s.stanowisko_id,
         s.nazwa AS stanowisko_nazwa
     FROM pracownik p
-    JOIN stanowisko s ON p.stanowisko_id = s.stanowisko_id
+        JOIN stanowisko s ON p.stanowisko_id = s.stanowisko_id
     WHERE pracownik_id_param IS NULL OR p.pracownik_id = pracownik_id_param;
 END;
 $$ LANGUAGE plpgsql;
@@ -45,17 +45,17 @@ BEGIN
     SELECT 
         SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600)  
     INTO godziny
-    FROM dzien_pracy dp
+        FROM dzien_pracy dp
     WHERE dp.pracownik_id = pracownik_id_param 
-      AND dp.godzina_zakonczenia IS NOT NULL
-      AND dp.data >= date_trunc('month', CURRENT_DATE)  -- tylko dni z tego miesiąca
-      AND dp.data < (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month');
+        AND dp.godzina_zakonczenia IS NOT NULL
+        AND dp.data >= date_trunc('month', CURRENT_DATE)  -- tylko dni z tego miesiąca
+        AND dp.data < (date_trunc('month', CURRENT_DATE) + INTERVAL '1 month');
 
     -- stawka godzinowa
     SELECT 
         p.stawka_godzinowa
     INTO stawka
-    FROM pracownik p
+        FROM pracownik p
     WHERE p.pracownik_id = pracownik_id_param;
 
     -- jeśli nie ma przepracowanych to zwraca NULL'a, a chcemy 0.
@@ -87,7 +87,7 @@ RETURNS TABLE (
 BEGIN
     RETURN QUERY
     SELECT k.klient_id, k.imie, k.nazwisko, k.firma, k.telefon, k.email, k.adres
-    FROM klient k
+        FROM klient k
     WHERE klient_id_param IS NULL OR k.klient_id = klient_id_param;
 END;
 $$ LANGUAGE plpgsql;
@@ -98,18 +98,18 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION get_zyski() 
 RETURNS TABLE (zyski DECIMAL, wydatki DECIMAL) AS $$
 BEGIN
-    -- Obliczanie zysków (suma wycen zleceń w trakcie realizacji)
+    -- zyski (suma wycen zleceń w trakcie realizacji)
     SELECT COALESCE(SUM(z.wycena), 0)
-    INTO zyski
+        INTO zyski
     FROM zlecenie z
-    WHERE z.data_zakonczenia IS NULL;
+        WHERE z.data_zakonczenia IS NULL;
 
-    -- Obliczanie wydatków (zakupy zasobów dla roku tego lub kolejnych)
+    -- wydatki (zakupy zasobów dla roku tego lub kolejnych)
     SELECT COALESCE(SUM(zz.ilosc * zas.koszt_jednostkowy), 0)
-    INTO wydatki
+        INTO wydatki
     FROM zakupy_zasob zz
-    JOIN zasob zas USING (zasob_id)
-    JOIN zakupy zak USING (zakupy_id)
+        JOIN zasob zas USING (zasob_id)
+        JOIN zakupy zak USING (zakupy_id)
     WHERE date_trunc('year', CURRENT_DATE) >= date_trunc('year', CURRENT_DATE);
 
 
@@ -149,10 +149,15 @@ BEGIN
         to_char(z.data_zakonczenia, 'YYYY-MM-DD') AS data_zakonczenia, 
         z.lokalizacja
     FROM klient k
-    JOIN zlecenie z ON k.klient_id = z.klient_id
+        JOIN zlecenie z ON k.klient_id = z.klient_id
     WHERE k.klient_id = klient_id_param;
 END;
 $$ LANGUAGE plpgsql;
+
+
+-- =========================================
+-- Funkcja: Pobiera dane klienta z widoku klienta
+-- =========================================
 
 CREATE OR REPLACE FUNCTION get_klient_zlecenia_as_client(klient_id_param INT)
 RETURNS TABLE (
@@ -171,10 +176,8 @@ RETURNS TABLE (
     lokalizacja VARCHAR
 ) AS $$
 BEGIN
-    RETURN QUERY
-    SELECT *
-    FROM client_view c
-    WHERE c.klient_id = klient_id_param;
+    RETURN QUERY SELECT * FROM client_view c
+        WHERE c.klient_id = klient_id_param;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -209,7 +212,7 @@ BEGIN
         z.lokalizacja,
         z.wycena
     FROM zlecenie z
-    JOIN klient k ON z.klient_id = k.klient_id
+        JOIN klient k ON z.klient_id = k.klient_id
     WHERE zlecenie_id_param IS NULL OR z.zlecenie_id = zlecenie_id_param;
 END;
 $$ LANGUAGE plpgsql;
@@ -240,11 +243,11 @@ BEGIN
         zz.ilosc_potrzebna,
         COALESCE(SUM(mz.ilosc), 0) AS ilosc_w_magazynie
     FROM zasob_zlecenie zz
-    JOIN zlecenie z ON zz.zlecenie_id = z.zlecenie_id
-    JOIN zasob r ON zz.zasob_id = r.zasob_id
-    LEFT JOIN magazyn_zasob mz ON r.zasob_id = mz.zasob_id
+        JOIN zlecenie z ON zz.zlecenie_id = z.zlecenie_id
+        JOIN zasob r ON zz.zasob_id = r.zasob_id
+        LEFT JOIN magazyn_zasob mz ON r.zasob_id = mz.zasob_id
     WHERE zz.zlecenie_id = zlecenie_id_param
-    GROUP BY z.zlecenie_id, r.zasob_id, r.nazwa, r.jednostka, r.typ, r.koszt_jednostkowy, zz.ilosc_potrzebna;
+        GROUP BY z.zlecenie_id, r.zasob_id, r.nazwa, r.jednostka, r.typ, r.koszt_jednostkowy, zz.ilosc_potrzebna;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -264,16 +267,16 @@ BEGIN
                 ELSE 0
             END
         )
-    INTO koszt
+        INTO koszt
     FROM zasob_zlecenie zz
-    JOIN zasob zas USING (zasob_id)
-    LEFT JOIN (
-        SELECT zasob_id, SUM(ilosc) AS ilosc_sum
-        FROM magazyn_zasob
-        GROUP BY zasob_id
-    ) mz USING (zasob_id)
+        JOIN zasob zas USING (zasob_id)
+        LEFT JOIN (
+            SELECT zasob_id, SUM(ilosc) AS ilosc_sum
+            FROM magazyn_zasob
+            GROUP BY zasob_id
+        ) mz USING (zasob_id)
     WHERE zz.zlecenie_id = zlecenie_id_param 
-    AND zas.typ = 'material';
+        AND zas.typ = 'material';
 
     IF koszt IS NULL THEN
         koszt := 0;
@@ -297,12 +300,13 @@ BEGIN
     RETURN QUERY
     SELECT 
         COALESCE(COUNT(DISTINCT dp.pracownik_id), 0) AS liczba_pracownikow,
+        -- epoch zwraca czas w sekundach dlatego dzielimy przez 3600 aby dostać godziny
         COALESCE(SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600), 0) AS przepracowane_godziny,
         COALESCE(SUM(EXTRACT(EPOCH FROM (dp.godzina_zakonczenia - dp.godzina_rozpoczecia)) / 3600 * p.stawka_godzinowa), 0) AS koszty_pracownikow
     FROM dzien_pracy dp
-    JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
+        JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
     WHERE dp.zlecenie_id = zlecenie_id_param
-    GROUP BY dp.zlecenie_id;
+        GROUP BY dp.zlecenie_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -349,12 +353,12 @@ BEGIN
         dp.godzina_rozpoczecia,
         dp.godzina_zakonczenia
     FROM dzien_pracy dp
-    JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
-    JOIN zlecenie z ON dp.zlecenie_id = z.zlecenie_id
-    JOIN klient k ON z.klient_id = k.klient_id
+        JOIN pracownik p ON dp.pracownik_id = p.pracownik_id
+        JOIN zlecenie z ON dp.zlecenie_id = z.zlecenie_id
+        JOIN klient k ON z.klient_id = k.klient_id
     WHERE EXTRACT(YEAR FROM dp.data) = year_param
-      AND EXTRACT(MONTH FROM dp.data) = month_param
-      AND (pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param);
+        AND EXTRACT(MONTH FROM dp.data) = month_param
+        AND (pracownik_id_param IS NULL OR dp.pracownik_id = pracownik_id_param);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -409,20 +413,19 @@ $$ LANGUAGE plpgsql;
 -- =========================================
 -- Funkcja: Zwraca sumę przepracowanych godzin tego miesiąca
 -- =========================================
+
 CREATE OR REPLACE FUNCTION get_summed_work_hours(p_pracownik_id INT)
 RETURNS INTERVAL AS $$
 DECLARE
     total_hours INTERVAL := '0 hours';
 BEGIN
-    SELECT COALESCE(SUM(
-        godzina_zakonczenia - godzina_rozpoczecia
-    ), '0 hours')
-    INTO total_hours
+    SELECT COALESCE(SUM(godzina_zakonczenia - godzina_rozpoczecia), '0 hours')
+        INTO total_hours
     FROM dzien_pracy
     WHERE pracownik_id = p_pracownik_id
-    AND EXTRACT(MONTH FROM data) = EXTRACT(MONTH FROM CURRENT_DATE)
-    AND EXTRACT(YEAR FROM data) = EXTRACT(YEAR FROM CURRENT_DATE)
-    AND godzina_zakonczenia IS NOT NULL;
+        AND EXTRACT(MONTH FROM data) = EXTRACT(MONTH FROM CURRENT_DATE)
+        AND EXTRACT(YEAR FROM data) = EXTRACT(YEAR FROM CURRENT_DATE)
+        AND godzina_zakonczenia IS NOT NULL;
 
     RETURN total_hours;
 END;
@@ -481,7 +484,7 @@ BEGIN
         z.koszt_jednostkowy,
         z.opis
     FROM magazyn_zasob mz
-    JOIN zasob z ON mz.zasob_id = z.zasob_id
+        JOIN zasob z ON mz.zasob_id = z.zasob_id
     WHERE mz.magazyn_id = magazyn_id_param;
 END;
 $$ LANGUAGE plpgsql;
@@ -512,7 +515,7 @@ BEGIN
         v.ilosc,
         v.opis
     FROM view_zasoby_magazynu_pracownik v
-    WHERE v.magazyn_id = magazyn_id_param;
+        WHERE v.magazyn_id = magazyn_id_param;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -574,18 +577,9 @@ BEGIN
         z.koszt_jednostkowy,
         zz.ilosc,
         z.koszt_jednostkowy * zz.ilosc AS suma_kosztow
-    FROM 
-        zakupy za
-    JOIN 
-        zakupy_zasob zz ON za.zakupy_id = zz.zakupy_id
-    JOIN 
-        zasob z ON zz.zasob_id = z.zasob_id
-    WHERE 
-        DATE_TRUNC('month', za.miesiac) = DATE_TRUNC('month', p_month);
+    FROM zakupy za
+        JOIN zakupy_zasob zz ON za.zakupy_id = zz.zakupy_id
+        JOIN zasob z ON zz.zasob_id = z.zasob_id
+    WHERE DATE_TRUNC('month', za.miesiac) = DATE_TRUNC('month', p_month);
 END;
 $$ LANGUAGE plpgsql;
-
-
-
--- znajdz pracownika z danym adresem email
--- SELECT p.*, s.nazwa as stanowisko FROM pracownik p JOIN stanowisko s using(stanowisko_id) WHERE email = $1
