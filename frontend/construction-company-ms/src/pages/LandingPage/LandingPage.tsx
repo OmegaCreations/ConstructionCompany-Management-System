@@ -1,4 +1,4 @@
-import style from "@/LandingPage.module.css";
+import style from "./LandingPage.module.css";
 import heroImg from "../../assets/images/hero.png";
 import { useNavigate } from "react-router";
 

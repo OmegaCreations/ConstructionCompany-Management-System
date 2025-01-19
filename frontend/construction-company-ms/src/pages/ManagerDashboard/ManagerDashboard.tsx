@@ -8,7 +8,7 @@ import { initialShoppingListState } from "../../utils/types";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 
-import style from "@/ManagerDashboard.module.css";
+import style from "./ManagerDashboard.module.css";
 
 const ManagerDashboard: React.FC = () => {
   const { user_id } = useSelector((state: RootState) => state.auth);

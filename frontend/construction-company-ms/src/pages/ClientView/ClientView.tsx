@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { endpoint } from "../../utils/endpoints";
-import style from "@/ClientView.module.css";
+import style from "./ClientView.module.css";
 import Loading from "../../components/Loading/Loading";
 
 interface Order {

@@ -1,7 +1,7 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
 import { initialWarehouseState } from "../../utils/types";
-import style from "@/WarehouseData.module.css";
+import style from "./WarehouseData.module.css";
 
 const WarehouseData: React.FC = () => {
   return (

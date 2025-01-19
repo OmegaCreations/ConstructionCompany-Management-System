@@ -1,7 +1,7 @@
 import DataTable from "../../components/DataTable/DataTable";
 import { endpoint } from "../../utils/endpoints";
 import { initialClientState } from "../../utils/types";
-import style from "@/Clients.module.css";
+import style from "./Clients.module.css";
 
 const Clients: React.FC = () => {
   return (

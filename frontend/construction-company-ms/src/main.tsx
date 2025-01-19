@@ -1,28 +1,28 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Auth from "@/pages/Auth/Auth";
-import "@/style.css";
+import Auth from "./pages/Auth/Auth";
+import "./style.css";
 
 // Routes
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { Provider } from "react-redux";
-import store from "@/store/store";
-import Dashboard from "@/pages/Dashboard/Dashboard";
-import Navbar from "@/components/Navbar/Navbar";
-import Profile from "@/pages/Profile/Profile";
-import Workers from "@/pages/Workers/Workers";
-import Clients from "@/pages/Clients/Clients";
-import WarehouseData from "@/pages/WarehouseData/WarehouseData";
-import Resources from "@/pages/Resources/Resources";
-import Orders from "@/pages/Orders/Orders";
-import ClientDetails from "@/pages/Clients/Details/ClientDetails";
-import OrderDetails from "@/pages/Orders/Details/OrderDetails";
-import Calendar from "@/pages/Calendar/Calendar";
-import WarehouseDetails from "@/pages/WarehouseData/Details/WarehouseDetails";
-import WorkerDashboard from "@/pages/WorkerDashboard/WorkerDashboard";
-import ClientView from "@/pages/ClientView/ClientView.tsx";
-import LandingPage from "@/pages/LandingPage/LandingPage.tsx";
+import store from "./store/store";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import Navbar from "./components/Navbar/Navbar";
+import Profile from "./pages/Profile/Profile";
+import Workers from "./pages/Workers/Workers";
+import Clients from "./pages/Clients/Clients";
+import WarehouseData from "./pages/WarehouseData/WarehouseData";
+import Resources from "./pages/Resources/Resources";
+import Orders from "./pages/Orders/Orders";
+import ClientDetails from "./pages/Clients/Details/ClientDetails";
+import OrderDetails from "./pages/Orders/Details/OrderDetails";
+import Calendar from "./pages/Calendar/Calendar";
+import WarehouseDetails from "./pages/WarehouseData/Details/WarehouseDetails";
+import WorkerDashboard from "./pages/WorkerDashboard/WorkerDashboard";
+import ClientView from "./pages/ClientView/ClientView";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 // we have html structure for <nav> and <main>
 createRoot(document.getElementById("root")!).render(

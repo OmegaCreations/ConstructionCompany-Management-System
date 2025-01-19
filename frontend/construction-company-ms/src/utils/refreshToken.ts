@@ -1,4 +1,4 @@
-import { endpoint } from "@/endpoints";
+import { endpoint } from "./endpoints";
 
 export const refreshAccessToken = async () => {
   // DEBUG: console.log("REFRESH IN REFRESH ACCESS TOKEN!");

@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { useDispatch, useSelector } from "react-redux";
 import image from "../../assets/images/banner.png";
-import style from "@/Navbar.module.css";
+import style from "./Navbar.module.css";
 import { RootState } from "../../store/store";
 import { NavLink, useNavigate } from "react-router";
 import { useState } from "react";

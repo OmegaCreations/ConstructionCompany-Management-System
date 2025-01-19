@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useFetchData } from "../../../hooks/useFetchData";
 import { endpoint } from "../../../utils/endpoints";
-import style from "@/ClientDetails.module.css";
+import style from "./ClientDetails.module.css";
 import Loading from "../../../components/Loading/Loading";
 import { ClientData, initialOrderState } from "../../../utils/types";
 import DataTable from "../../../components/DataTable/DataTable";

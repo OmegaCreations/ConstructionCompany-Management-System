@@ -1,7 +1,7 @@
 import { useParams } from "react-router";
 import { useFetchData } from "../../../hooks/useFetchData";
 import { endpoint } from "../../../utils/endpoints";
-import style from "@/WarehouseDetails.module.css";
+import style from "./WarehouseDetails.module.css";
 import Loading from "../../../components/Loading/Loading";
 import DataTable from "../../../components/DataTable/DataTable";
 import { initialResourceState, Warehouse } from "../../../utils/types";

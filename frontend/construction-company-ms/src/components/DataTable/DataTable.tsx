@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useFetchData } from "../../hooks/useFetchData";
 import Loading from "../Loading/Loading";
-import style from "@/DataTable.module.css";
+import style from "./DataTable.module.css";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store/store";
