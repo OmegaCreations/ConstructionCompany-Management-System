@@ -6,6 +6,7 @@ import { login } from "../../store/slices/authSlice";
 import { RootState } from "../../store/store";
 import { endpoint } from "../../utils/endpoints";
 import { clearUserData } from "../../store/slices/userSlice";
+import authBgVideo from "../../assets/bg.mp4";
 
 const Auth: React.FC = () => {
   // auth variables
@@ -88,6 +89,14 @@ const Auth: React.FC = () => {
 
   return (
     <div className={style.authContainer}>
+      <video
+        className={style.authBg}
+        src={authBgVideo}
+        playsInline
+        autoPlay
+        muted
+        loop
+      ></video>
       <h2>Witaj ponownie!</h2>
       <form onSubmit={handleSubmit}>
         <div>
