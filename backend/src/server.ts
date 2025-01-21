@@ -4,7 +4,7 @@ import { connectToDatabase } from "./config/db";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 9007;
 
 // starts server and connects to database
 const startServer = async () => {

@@ -4,7 +4,7 @@ set client_encoding to 'UTF8';
 
 create schema construction_company;
 set search_path to construction_company;
-SET datestyle = 'ISO, DMY'; -- daty chcemy formatowane auropejski bo tak wysyłamy z frontendu
+SET datestyle = 'ISO, DMY'; -- daty chcemy tak formatowane bo tak wysyłamy z frontendu
 
 -- new user
 CREATE USER construction_company_admin WITH PASSWORD '<secret-password-to-tembo>'; -- tutaj hasło jest takie samo jak do tembo, po stronie serwera jest ono przechowywane w pliku .env
@@ -16,7 +16,6 @@ ALTER ROLE construction_company_admin SET search_path TO construction_company; -
 -- permissions
 GRANT USAGE, CREATE ON SCHEMA construction_company TO construction_company_admin_role;
 GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON ALL TABLES IN SCHEMA construction_company TO construction_company_admin_role;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA construction_company TO construction_company_admin_role;
 GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA construction_company TO construction_company_admin_role;
 
 -- add role to user
