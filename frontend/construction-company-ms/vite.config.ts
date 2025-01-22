@@ -11,9 +11,11 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 9006,
+    port: parseInt(process.env.PORT, 10) || 8080,
+    host: true,
   },
   server: {
-    port: 9006,
+    port: parseInt(process.env.PORT, 10) || 8080,
+    host: true,
   },
 });

@@ -24,7 +24,7 @@ const app: Application = express();
 
 // Middleware ===============================================================
 const corsOptions = {
-  origin: "http://localhost:9006", // frontend adress
+  origin: "https://ccmsystems.azurewebsites.net", // frontend adress
   credentials: true, // allow sending cookies
 };
 app.use(cors(corsOptions));
